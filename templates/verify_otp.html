@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify OTP | AyuTrace</title>
+    <style>
+        body { font-family: Arial; background: #fff3cd; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        form { background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 350px; }
+        input, button { width: 100%; margin: 10px 0; padding: 10px; }
+        button { background: #ffc107; color: black; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <form method="POST" action="{{ url_for('verify_otp') }}">
+        <h2>Verify OTP</h2>
+        <input type="hidden" name="mobile" value="{{ mobile }}">
+        <input type="text" name="otp" placeholder="Enter OTP" required>
+        <input type="password" name="new_password" placeholder="New Password" required>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+        <button type="submit">Reset Password</button>
+    </form>
+</body>
+</html>

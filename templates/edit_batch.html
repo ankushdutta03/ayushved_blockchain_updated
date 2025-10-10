@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Batch | AyushVed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #a8e6cf 75%, #4ecdc4 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            padding: 2rem 1rem;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="80" cy="80" r="0.5" fill="%23ffffff" opacity="0.08"/><circle cx="40" cy="60" r="0.5" fill="%23ffffff" opacity="0.09"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #ffffff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .edit-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.1),
+                0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.8s ease-out 0.2s both;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .edit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4ecdc4);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .form-title h2 {
+            color: #2d3748;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-title .batch-info {
+            color: #718096;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #2d3748;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #ffffff;
+            box-shadow: 
+                0 0 0 3px rgba(102, 126, 234, 0.1),
+                0 4px 20px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #a0aec0;
+            font-weight: 300;
+        }
+
+        .info-box {
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.05), rgba(240, 147, 251, 0.05));
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #4a5568;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .info-box::before {
+            content: 'ℹ️';
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: #ffffff;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.8);
+            color: #2d3748;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .btn-secondary::after {
+            content: '←';
+            margin-left: 0.5rem;
+        }
+
+        /* Success message */
+        .success-message {
+            background: linear-gradient(45deg, rgba(56, 161, 105, 0.1), rgba(152, 230, 180, 0.1));
+            border: 1px solid rgba(56, 161, 105, 0.3);
+            color: #2f855a;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: none;
+            font-weight: 500;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .success-message::before {
+            content: '✅';
+            margin-right: 8px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Loading state */
+        .loading {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .header {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .edit-card {
+                padding: 1.5rem;
+            }
+
+            .form-title h2 {
+                font-size: 1.5rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .edit-card {
+                padding: 1rem;
+                border-radius: 16px;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                padding: 0.8rem 1rem;
+            }
+        }
+
+        /* Form validation styles */
+        .form-group.error input,
+        .form-group.error textarea {
+            border-color: #e53e3e;
+            background: #fed7d7;
+        }
+
+        .form-group.success input,
+        .form-group.success textarea {
+            border-color: #38a169;
+            background: #f0fff4;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✏️ Edit Batch</h1>
+            <p>Update herb batch information</p>
+        </div>
+
+        <div class="edit-card">
+            <div class="form-title">
+                <h2>Batch #{{ batch.id }}</h2>
+                <p class="batch-info">Modify the details below to update this herb batch</p>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                Batch information updated successfully!
+            </div>
+
+            <div class="info-box">
+                Make sure all information is accurate before saving. Changes will be reflected immediately in the system.
+            </div>
+
+            <form method="POST" id="editForm">
+                <div class="form-group">
+                    <label for="herb_name">🌿 Herb Name</label>
+                    <input type="text" name="herb_name" id="herb_name" value="{{ batch.herb_name }}" required placeholder="Enter herb name">
+                    <div class="error-message" id="herbError">Please enter a valid herb name</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="collector">👤 Collector Name</label>
+                    <input type="text" name="collector" id="collector" value="{{ batch.collector }}" required placeholder="Enter collector name">
+                    <div class="error-message" id="collectorError">Please enter collector name</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="farm_location">📍 Farm Location</label>
+                    <input type="text" name="farm_location" id="farm_location" value="{{ batch.farm_location }}" required placeholder="Enter farm location">
+                    <div class="error-message" id="locationError">Please enter farm location</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="latitude">🌐 Latitude</label>
+                    <input type="text" name="latitude" id="latitude" value="{{ batch.latitude or '' }}" placeholder="Enter latitude (optional)">
+                </div>
+
+                <div class="form-group">
+                    <label for="longitude">🌐 Longitude</label>
+                    <input type="text" name="longitude" id="longitude" value="{{ batch.longitude or '' }}" placeholder="Enter longitude (optional)">
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">📝 Additional Notes</label>
+                    <textarea name="notes" id="notes" placeholder="Enter any additional information about this batch...">{{ batch.notes or '' }}</textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        💾 Update Batch
+                        <div class="loading" id="loadingSpinner"></div>
+                    </button>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                        Back to Dashboard
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Form validation
+        function validateForm() {
+            const herbName = document.getElementById('herb_name').value.trim();
+            const collector = document.getElementById('collector').value.trim();
+            const farmLocation = document.getElementById('farm_location').value.trim();
+            
+            let isValid = true;
+
+            // Reset all error states
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error', 'success');
+            });
+            
+            document.querySelectorAll('.error-message').forEach(msg => {
+                msg.style.display = 'none';
+            });
+
+            // Validate herb name
+            if (herbName.length < 2) {
+                showError('herb_name', 'herbError', 'Herb name must be at least 2 characters');
+                isValid = false;
+            } else {
+                showSuccess('herb_name');
+            }
+
+            // Validate collector
+            if (collector.length < 2) {
+                showError('collector', 'collectorError', 'Collector name must be at least 2 characters');
+                isValid = false;
+            } else {
+                showSuccess('collector');
+            }
+
+            // Validate farm location
+            if (farmLocation.length < 2) {
+                showError('farm_location', 'locationError', 'Farm location must be at least 2 characters');
+                isValid = false;
+            } else {
+                showSuccess('farm_location');
+            }
+
+            return isValid;
+        }
+
+        function showError(inputId, errorId, message) {
+            const input = document.getElementById(inputId);
+            const error = document.getElementById(errorId);
+            const group = input.closest('.form-group');
+            
+            group.classList.add('error');
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+
+        function showSuccess(inputId) {
+            const input = document.getElementById(inputId);
+            const group = input.closest('.form-group');
+            group.classList.add('success');
+        }
+
+        // Real-time validation
+        document.querySelectorAll('input[required]').forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.value.trim().length >= 2) {
+                    showSuccess(this.id);
+                }
+            });
+
+            input.addEventListener('input', function() {
+                const group = this.closest('.form-group');
+                if (group.classList.contains('error') && this.value.trim().length >= 2) {
+                    group.classList.remove('error');
+                    group.querySelector('.error-message').style.display = 'none';
+                    showSuccess(this.id);
+                }
+            });
+        });
+
+        // Form submission
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                return;
+            }
+
+            const button = this.querySelector('.btn-primary');
+            const buttonText = button.childNodes[0];
+            const loading = document.getElementById('loadingSpinner');
+            
+            // Show loading state
+            buttonText.textContent = '💾 Updating...';
+            loading.style.display = 'inline-block';
+            button.disabled = true;
+            
+            // Simulate update process (remove this in production)
+            setTimeout(() => {
+                const successMsg = document.getElementById('successMessage');
+                successMsg.style.display = 'block';
+                
+                buttonText.textContent = '✅ Updated!';
+                loading.style.display = 'none';
+                button.style.background = 'linear-gradient(45deg, #38a169, #48bb78)';
+                
+                setTimeout(() => {
+                    window.location.href = "{{ url_for('dashboard') }}";
+                }, 1500);
+            }, 1000);
+        });
+
+        // Add focus animations
+        document.querySelectorAll('input, textarea').forEach(element => {
+            element.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            element.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Auto-resize textarea
+        document.getElementById('notes').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    </script>
+</body>
+</html>

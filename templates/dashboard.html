@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <title>AyushVed Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    /* 🌿 Global Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Theme Variables */
+    :root {
+      /* Light Theme Variables */
+      --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #a8e6cf 75%, #4ecdc4 100%);
+      --text-primary: #2d3748;
+      --text-secondary: #718096;
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --card-border: rgba(255, 255, 255, 0.3);
+      --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+      --card-hover-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 20px rgba(0, 0, 0, 0.08);
+      --input-bg: #f8fafc;
+      --input-border: #e2e8f0;
+      --input-focus-bg: #ffffff;
+      --input-text: #2d3748;
+      --input-placeholder: #a0aec0;
+      --nav-bg: rgba(255, 255, 255, 0.15);
+      --nav-border: rgba(255, 255, 255, 0.2);
+      --nav-text: #fff;
+      --nav-text-secondary: rgba(255, 255, 255, 0.9);
+      --table-bg: #ffffff;
+      --table-row-even: rgba(102, 126, 234, 0.03);
+      --table-row-hover: linear-gradient(90deg, rgba(102, 126, 234, 0.05), rgba(240, 147, 251, 0.05));
+      --table-border: rgba(0, 0, 0, 0.08);
+      --footer-text: rgba(255, 255, 255, 0.8);
+      --footer-bg: rgba(255, 255, 255, 0.1);
+      --footer-border: rgba(255, 255, 255, 0.2);
+      --empty-row-text: #718096;
+      --h2-underline: linear-gradient(45deg, #667eea, #764ba2);
+    }
+
+    [data-theme="dark"] {
+      /* Dark Theme Variables */
+      --bg-gradient: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 25%, #2d2d2d 50%, #1e1e1e 75%, #0a0a0a 100%);
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --card-bg: rgba(20, 24, 32, 0.95);
+      --card-border: rgba(148, 163, 184, 0.15);
+      --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 5px 15px rgba(0, 0, 0, 0.3);
+      --card-hover-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 8px 20px rgba(0, 0, 0, 0.4);
+      --input-bg: #1e293b;
+      --input-border: #475569;
+      --input-focus-bg: #0f172a;
+      --input-text: #f8fafc;
+      --input-placeholder: #64748b;
+      --nav-bg: rgba(15, 23, 42, 0.9);
+      --nav-border: rgba(148, 163, 184, 0.2);
+      --nav-text: #f8fafc;
+      --nav-text-secondary: rgba(248, 250, 252, 0.8);
+      --table-bg: #1e293b;
+      --table-row-even: rgba(148, 163, 184, 0.08);
+      --table-row-hover: linear-gradient(90deg, rgba(148, 163, 184, 0.12), rgba(148, 163, 184, 0.18));
+      --table-border: rgba(148, 163, 184, 0.2);
+      --footer-text: rgba(248, 250, 252, 0.8);
+      --footer-bg: rgba(15, 23, 42, 0.8);
+      --footer-border: rgba(148, 163, 184, 0.2);
+      --empty-row-text: #94a3b8;
+      --h2-underline: linear-gradient(45deg, #3b82f6, #8b5cf6);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      position: relative;
+      transition: all 0.5s ease;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      transition: opacity 0.5s ease;
+      opacity: 0.3;
+    }
+
+    [data-theme="light"] body::before {
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="0.5" fill="%23ffffff" opacity="0.4"/><circle cx="80" cy="80" r="0.5" fill="%23ffffff" opacity="0.3"/><circle cx="40" cy="60" r="0.5" fill="%23ffffff" opacity="0.35"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    }
+
+    [data-theme="dark"] body::before {
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="0.5" fill="%23ffffff" opacity="0.02"/><circle cx="80" cy="80" r="0.5" fill="%23ffffff" opacity="0.015"/><circle cx="40" cy="60" r="0.5" fill="%23ffffff" opacity="0.025"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    }
+
+    /* 🌱 Navbar */
+    nav {
+      background: var(--nav-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--nav-border);
+      color: var(--nav-text);
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 10;
+      margin: 1rem 1rem 0 1rem;
+      border-radius: 16px;
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] nav {
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    }
+
+    nav .brand {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="light"] nav .brand {
+      background: linear-gradient(45deg, #ffffff, #f0f0f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    [data-theme="dark"] nav .brand {
+      background: linear-gradient(45deg, #f8fafc, #e2e8f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    nav .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1rem;
+      font-weight: 500;
+      flex-wrap: wrap;
+    }
+
+    nav .user-info span {
+      color: var(--nav-text-secondary);
+      transition: color 0.3s ease;
+    }
+
+    nav a.admin {
+      color: #fff;
+      text-decoration: none;
+      background: linear-gradient(45deg, #9333ea, #7c3aed);
+      padding: 0.6rem 1.2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    [data-theme="dark"] nav a.admin {
+      box-shadow: 0 4px 15px rgba(147, 51, 234, 0.5);
+    }
+
+    nav a.admin:hover {
+      background: linear-gradient(45deg, #7c3aed, #6b21a8);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(147, 51, 234, 0.4);
+    }
+
+    [data-theme="dark"] nav a.admin:hover {
+      box-shadow: 0 6px 20px rgba(147, 51, 234, 0.6);
+    }
+
+    nav a.profile {
+      color: #fff;
+      text-decoration: none;
+      background: linear-gradient(45deg, #4ecdc4, #44a08d);
+      padding: 0.6rem 1.2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    [data-theme="dark"] nav a.profile {
+      box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+    }
+
+    nav a.profile:hover {
+      background: linear-gradient(45deg, #44a08d, #2a9d8f);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
+    }
+
+    [data-theme="dark"] nav a.profile:hover {
+      box-shadow: 0 6px 20px rgba(78, 205, 196, 0.6);
+    }
+
+    nav a.logout {
+      color: #fff;
+      text-decoration: none;
+      background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+      padding: 0.6rem 1.2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 15px rgba(238, 90, 36, 0.3);
+    }
+
+    [data-theme="dark"] nav a.logout {
+      box-shadow: 0 4px 15px rgba(238, 90, 36, 0.5);
+    }
+
+    nav a.logout:hover {
+      background: linear-gradient(45deg, #ee5a24, #c0392b);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(238, 90, 36, 0.4);
+    }
+
+    [data-theme="dark"] nav a.logout:hover {
+      box-shadow: 0 6px 20px rgba(238, 90, 36, 0.6);
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle {
+      background: linear-gradient(45deg, #6366f1, #8b5cf6);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Poppins', sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    [data-theme="dark"] .theme-toggle {
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.5);
+    }
+
+    .theme-toggle::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .theme-toggle:hover::before {
+      left: 100%;
+    }
+
+    .theme-toggle:hover {
+      background: linear-gradient(45deg, #8b5cf6, #a855f7);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    [data-theme="dark"] .theme-toggle:hover {
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+    }
+
+    /* 🌾 Container */
+    .container {
+      flex: 1;
+      width: 95%;
+      max-width: 1200px;
+      margin: 2rem auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    h2 {
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+      font-size: 1.5rem;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: var(--h2-underline);
+      border-radius: 2px;
+    }
+
+    /* 🌿 Card */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: var(--card-shadow);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      border-radius: 20px 20px 0 0;
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="light"] .card::before {
+      background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4ecdc4);
+    }
+
+    [data-theme="dark"] .card::before {
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #10b981);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--card-hover-shadow);
+    }
+
+    /* 🌱 Form Styling */
+    form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    input, textarea, button[type="button"] {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      border: 2px solid var(--input-border);
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 400;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: var(--input-bg);
+      color: var(--input-text);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: var(--input-placeholder);
+      font-weight: 300;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      background: var(--input-focus-bg);
+      transform: translateY(-2px);
+    }
+
+    [data-theme="light"] input:focus,
+    [data-theme="light"] textarea:focus {
+      border-color: #667eea;
+      box-shadow: 
+        0 0 0 3px rgba(102, 126, 234, 0.1),
+        0 4px 20px rgba(102, 126, 234, 0.15);
+    }
+
+    [data-theme="dark"] input:focus,
+    [data-theme="dark"] textarea:focus {
+      border-color: #3b82f6;
+      box-shadow: 
+        0 0 0 3px rgba(59, 130, 246, 0.2),
+        0 4px 20px rgba(59, 130, 246, 0.25);
+    }
+
+    textarea {
+      grid-column: 1 / -1;
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    button[type="button"] {
+      background: linear-gradient(45deg, #4ecdc4, #44a08d);
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    button[type="button"]:hover {
+      background: linear-gradient(45deg, #44a08d, #2a9d8f);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(68, 160, 141, 0.4);
+    }
+
+    [data-theme="dark"] button[type="button"]:hover {
+      box-shadow: 0 8px 25px rgba(68, 160, 141, 0.6);
+    }
+
+    .btn-submit {
+      grid-column: 1 / -1;
+      justify-self: end;
+      color: #fff;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    [data-theme="light"] .btn-submit {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    }
+
+    [data-theme="dark"] .btn-submit {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+    }
+
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-submit:hover::before {
+      left: 100%;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-3px);
+    }
+
+    [data-theme="light"] .btn-submit:hover {
+      background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    [data-theme="dark"] .btn-submit:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%);
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5);
+    }
+
+    /* 🌾 Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      box-shadow: 0 8px 25px var(--table-border);
+      background: var(--table-bg);
+      transition: all 0.3s ease;
+    }
+
+    th, td {
+      padding: 1rem 1.2rem;
+      text-align: left;
+      color: var(--text-primary);
+      transition: color 0.3s ease;
+    }
+
+    th {
+      color: #fff !important;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    [data-theme="light"] th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    [data-theme="dark"] th {
+      background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+    }
+
+    tr:nth-child(even) {
+      background: var(--table-row-even);
+    }
+
+    tr:hover {
+      background: var(--table-row-hover);
+      transform: scale(1.01);
+      transition: all 0.2s ease;
+    }
+
+    .empty-row-text {
+      color: var(--empty-row-text) !important;
+      transition: color 0.3s ease;
+    }
+
+    .action-btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: #fff;
+      margin-right: 0.5rem;
+      font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .edit {
+      background: linear-gradient(45deg, #f4a261, #e76f51);
+    }
+
+    .edit:hover {
+      background: linear-gradient(45deg, #e76f51, #d62828);
+      box-shadow: 0 6px 20px rgba(231, 111, 81, 0.4);
+    }
+
+    [data-theme="dark"] .edit:hover {
+      box-shadow: 0 6px 20px rgba(231, 111, 81, 0.6);
+    }
+
+    .delete {
+      background: linear-gradient(45deg, #e63946, #d62828);
+    }
+
+    .delete:hover {
+      background: linear-gradient(45deg, #d62828, #ba181b);
+      box-shadow: 0 6px 20px rgba(214, 40, 40, 0.4);
+    }
+
+    [data-theme="dark"] .delete:hover {
+      box-shadow: 0 6px 20px rgba(214, 40, 40, 0.6);
+    }
+
+    .qr-btn {
+      background: linear-gradient(45deg, #2a9d8f, #264653);
+    }
+
+    .qr-btn:hover {
+      background: linear-gradient(45deg, #264653, #1d3557);
+      box-shadow: 0 6px 20px rgba(42, 157, 143, 0.4);
+    }
+
+    [data-theme="dark"] .qr-btn:hover {
+      box-shadow: 0 6px 20px rgba(42, 157, 143, 0.6);
+    }
+
+    .trace-btn {
+      background: linear-gradient(45deg, #f4d35e, #faa307);
+      color: #333;
+    }
+
+    .trace-btn:hover {
+      background: linear-gradient(45deg, #faa307, #f48c06);
+      box-shadow: 0 6px 20px rgba(244, 211, 94, 0.4);
+    }
+
+    [data-theme="dark"] .trace-btn:hover {
+      box-shadow: 0 6px 20px rgba(244, 211, 94, 0.6);
+    }
+
+    /* Scanner Section */
+    .scanner-section {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .scanner-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      border-radius: 20px 20px 0 0;
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="light"] .scanner-section::before {
+      background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4ecdc4);
+    }
+
+    [data-theme="dark"] .scanner-section::before {
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #10b981);
+    }
+
+    .scanner-section h3 {
+      color: var(--text-primary);
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    [data-theme="light"] .scanner-section h3 {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    [data-theme="dark"] .scanner-section h3 {
+      background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .scanner-section p {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+      transition: color 0.3s ease;
+    }
+
+    .scanner-btn-large {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    [data-theme="light"] .scanner-btn-large {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    [data-theme="dark"] .scanner-btn-large {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    .scanner-btn-large::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .scanner-btn-large:hover::before {
+      left: 100%;
+    }
+
+    .scanner-btn-large:hover {
+      transform: translateY(-3px);
+    }
+
+    [data-theme="light"] .scanner-btn-large:hover {
+      background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+    }
+
+    [data-theme="dark"] .scanner-btn-large:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%);
+      box-shadow: 0 12px 35px rgba(59, 130, 246, 0.5);
+    }
+
+    /* 🌿 Footer */
+    footer {
+      text-align: center;
+      color: var(--footer-text);
+      padding: 1.5rem 0;
+      margin: 2rem 1rem 1rem 1rem;
+      font-size: 0.9rem;
+      background: var(--footer-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      border: 1px solid var(--footer-border);
+      transition: all 0.3s ease;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+        margin: 0.5rem;
+        padding: 1rem;
+      }
+
+      nav .brand {
+        font-size: 1.5rem;
+      }
+
+      nav .user-info {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .container {
+        width: 95%;
+        margin: 1rem auto;
+        gap: 1.5rem;
+      }
+
+      .card, .scanner-section {
+        padding: 1.5rem;
+      }
+
+      form {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .btn-submit {
+        width: 100%;
+        justify-self: stretch;
+      }
+
+      table {
+        font-size: 0.8rem;
+      }
+
+      th, td {
+        padding: 0.7rem 0.5rem;
+      }
+
+      .action-btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+        margin: 0.2rem;
+        display: block;
+        margin-bottom: 0.3rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      nav {
+        margin: 0;
+        border-radius: 0;
+      }
+
+      .container {
+        width: 100%;
+        margin: 1rem 0;
+        padding: 0 0.5rem;
+      }
+
+      .card, .scanner-section {
+        margin: 0 0.5rem;
+        border-radius: 16px;
+      }
+
+      nav .user-info {
+        gap: 0.5rem;
+      }
+
+      nav a.admin,
+      nav a.profile,
+      nav a.logout,
+      .theme-toggle {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Loading Animation */
+    .loading {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #ffffff;
+      animation: spin 1s ease-in-out infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🌿 Navbar -->
+  <nav>
+    <div class="brand">🌿 AyushVed</div>
+    <div class="user-info">
+      <span>Welcome, {{ user.username if user else "User" }}</span>
+      {% if user and user.username == 'admin' %}
+        <a href="{{ url_for('admin_panel') }}" class="admin">
+          🔧 Admin Panel
+        </a>
+      {% endif %}
+      <a href="{{ url_for('profile') }}" class="profile">
+        👤 View Profile
+      </a>
+      <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="themeIcon">🌙</span>
+        <span id="themeText">Dark Mode</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}" style="
+              padding: 1rem 1.5rem; 
+              border-radius: 12px; 
+              margin-bottom: 1.5rem; 
+              font-weight: 500;
+              background: {% if category == 'success' %}linear-gradient(45deg, rgba(56, 161, 105, 0.15), rgba(152, 230, 180, 0.15)){% else %}linear-gradient(45deg, rgba(229, 62, 62, 0.15), rgba(252, 129, 129, 0.15)){% endif %};
+              border: 1px solid {% if category == 'success' %}rgba(56, 161, 105, 0.3){% else %}rgba(229, 62, 62, 0.3){% endif %};
+              color: {% if category == 'success' %}var(--text-primary){% else %}var(--text-primary){% endif %};
+              backdrop-filter: blur(10px);
+              transition: all 0.3s ease;">
+              {% if category == 'success' %}✅{% else %}⚠️{% endif %} {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- 🌱 Add Herb Batch -->
+    <div class="card">
+      <h2>Add New Herb Batch</h2>
+      <form method="POST" action="{{ url_for('add_batch') }}">
+        <input type="text" name="herb_name" placeholder="Herb Name" required>
+        <input type="text" name="collector_name" placeholder="Collector Name" required>
+        <input type="text" name="farm_location" placeholder="Farm Location" required>
+        <input type="text" name="latitude" id="latitude" placeholder="Latitude">
+        <input type="text" name="longitude" id="longitude" placeholder="Longitude">
+        <button type="button" onclick="getLocation()">📍 Get My Location</button>
+        <textarea name="notes" rows="3" placeholder="Additional notes about this herb batch..."></textarea>
+        <button type="submit" class="btn-submit">
+          <span>Add Batch</span>
+          <div class="loading"></div>
+        </button>
+      </form>
+    </div>
+
+    <!-- 🌿 Display Table -->
+    <div class="card">
+      <h2>Your Herb Batches</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Herb Name</th>
+            <th>Collector</th>
+            <th>Farm Location</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for batch in herb_batches %}
+          <tr>
+            <td>{{ batch.id }}</td>
+            <td>{{ batch.herb_name }}</td>
+            <td>{{ batch.collector }}</td>
+            <td>{{ batch.farm_location }}</td>
+            <td>{{ batch.latitude }}</td>
+            <td>{{ batch.longitude }}</td>
+            <td>{{ batch.notes }}</td>
+            <td>
+              <a href="{{ url_for('edit_batch', batch_id=batch.id) }}" class="action-btn edit">Edit</a>
+              <form method="POST" action="{{ url_for('delete_batch', batch_id=batch.id) }}" style="display:inline;">
+                <button class="action-btn delete" onclick="return confirm('Are you sure you want to delete this batch?')">Delete</button>
+              </form>
+              <a href="{{ url_for('generate_qr', batch_id=batch.id) }}" target="_blank" class="action-btn qr-btn">QR Code</a>
+              <a href="{{ url_for('provenance', batch_id=batch.id) }}" class="action-btn trace-btn">Trace</a>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="8" style="text-align:center; font-style: italic; padding: 2rem;" class="empty-row-text">
+              No herb batches added yet. Start by adding your first batch above! 🌱
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 📱 QR Scanner Section -->
+    <div class="scanner-section">
+      <h3>📱 QR Code Scanner</h3>
+      <p>Scan QR codes from herb batches to view their complete traceability information and verify authenticity.</p>
+      <a href="{{ url_for('scan') }}" class="scanner-btn-large">
+        📷 Open QR Scanner
+      </a>
+    </div>
+
+  </div>
+
+  <footer>
+    © 2025 AyushVed | Botanical Traceability System 🌿
+  </footer>
+
+  <script>
+    // Theme Toggle Functionality
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      console.log('Toggling theme from', currentTheme, 'to', newTheme);
+      
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      
+      // Update button text and icon
+      const themeIcon = document.getElementById('themeIcon');
+      const themeText = document.getElementById('themeText');
+      
+      if (newTheme === 'dark') {
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'Light Mode';
+        console.log('Switched to dark mode');
+      } else {
+        themeIcon.textContent = '🌙';
+        themeText.textContent = 'Dark Mode';
+        console.log('Switched to light mode');
+      }
+    }
+
+    // Load saved theme on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      const html = document.documentElement;
+      const themeIcon = document.getElementById('themeIcon');
+      const themeText = document.getElementById('themeText');
+      
+      console.log('Loading saved theme:', savedTheme);
+      
+      html.setAttribute('data-theme', savedTheme);
+      
+      if (savedTheme === 'dark') {
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'Light Mode';
+        console.log('Loaded dark mode');
+      } else {
+        themeIcon.textContent = '🌙';
+        themeText.textContent = 'Dark Mode';
+        console.log('Loaded light mode');
+      }
+    });
+
+    function getLocation() {
+      const button = event.target;
+      const originalText = button.textContent;
+      
+      if (navigator.geolocation) {
+        button.textContent = '📍 Getting location...';
+        button.disabled = true;
+        
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            document.getElementById('latitude').value = position.coords.latitude.toFixed(6);
+            document.getElementById('longitude').value = position.coords.longitude.toFixed(6);
+            button.textContent = '✅ Location captured!';
+            setTimeout(() => {
+              button.textContent = originalText;
+              button.disabled = false;
+            }, 2000);
+          },
+          function(error) {
+            alert("Error getting location: " + error.message);
+            button.textContent = originalText;
+            button.disabled = false;
+          }
+        );
+      } else {
+        alert("Geolocation is not supported by your browser.");
+      }
+    }
+
+    // Add form submission animation
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const button = document.querySelector('.btn-submit');
+      const span = button.querySelector('span');
+      const loading = button.querySelector('.loading');
+      
+      span.style.display = 'none';
+      loading.style.display = 'block';
+      button.disabled = true;
+    });
+
+    // Add smooth hover effects to cards
+    document.querySelectorAll('.card, .scanner-section').forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-5px) scale(1.02)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+      });
+    });
+  </script>
+
+</body>
+</html>
