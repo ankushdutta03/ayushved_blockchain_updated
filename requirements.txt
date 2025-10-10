@@ -6,3 +6,6 @@ Flask-SQLAlchemy
 Werkzeug
 Jinja2
 gunicorn
+Flask-PyMongo
+pymongo
+dnspython
