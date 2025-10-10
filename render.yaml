@@ -7,7 +7,7 @@ services:
     plan: free
     envVars:
       - key: MONGO_URI
-        value: mongodb+srv://nathbiswa920:<admin%401234>@cluster0.ijejoqb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+        value: mongodb+srv://nathbiswa920:<admin%401234>@cluster0.ijejoqb.mongodb.net/?retryWrites=true&w=majority&ayushved=Cluster0
       - key: SECRET_KEY
         value: supersecretkey
 

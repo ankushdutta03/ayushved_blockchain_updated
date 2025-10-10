@@ -13,7 +13,7 @@ if os.environ.get('MONGO_URI'):
     app.config["MONGO_URI"] = os.environ.get('MONGO_URI')
 else:
     # Local development - you can install MongoDB locally or use a local connection string
-    app.config["MONGO_URI"] = "mongodb://localhost:27017/ayutrace_dev"
+    app.config["MONGO_URI"] = " mongodb+srv://nathbiswa920:<admin%401234>@cluster0.ijejoqb.mongodb.net/?retryWrites=true&w=majority&ayushved=Cluster0"
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'supersecretkey')
 
