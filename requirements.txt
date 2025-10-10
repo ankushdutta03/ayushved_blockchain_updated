@@ -9,3 +9,5 @@ gunicorn
 Flask-PyMongo
 pymongo
 dnspython
+python-dotenv
+waitress
