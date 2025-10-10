@@ -1,38 +1,55 @@
+import os
 from flask import Flask, render_template, send_from_directory, redirect, url_for, request, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, HerbBatch, User
-import qrcode, os, random
+from flask_pymongo import PyMongo
+from bson.objectid import ObjectId
+from datetime import datetime
+import qrcode, random, tempfile
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ayutrace.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'supersecretkey'  # Change in production
 
-db.init_app(app)
+# MongoDB Configuration
+if os.environ.get('MONGO_URI'):
+    app.config["MONGO_URI"] = os.environ.get('MONGO_URI')
+else:
+    # Local development - you can install MongoDB locally or use a local connection string
+    app.config["MONGO_URI"] = "mongodb://localhost:27017/ayutrace_dev"
+
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'supersecretkey')
+
+mongo = PyMongo(app)
+
+# Database collections
+users = mongo.db.users
+herb_batches = mongo.db.herb_batches
 
 # Create uploads directory for profile photos
-os.makedirs('static/uploads', exist_ok=True)
+UPLOAD_DIR = os.path.join(tempfile.gettempdir(), 'uploads')
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-with app.app_context():
-    db.create_all()
-    
-    # Create admin user if it doesn't exist
-    admin_user = User.query.filter_by(username='admin').first()
+otp_store = {}  # Temporary OTP store
+
+# Create admin user if it doesn't exist
+def create_admin_user():
+    admin_user = users.find_one({"username": "admin"})
     if not admin_user:
-        admin_user = User(
-            full_name='admin',
-            username='admin',
-            password_hash=generate_password_hash('Vigilant@Voices'),
-            mobile_number='9999999999'
-        )
-        db.session.add(admin_user)
-        db.session.commit()
+        admin_user_data = {
+            'full_name': 'admin',
+            'username': 'admin',
+            'password_hash': generate_password_hash('Vigilant@Voices'),
+            'mobile_number': '9999999999',
+            'email': '',
+            'profile_photo': '',
+            'created_at': datetime.utcnow()
+        }
+        users.insert_one(admin_user_data)
         print("✅ Admin user created successfully!")
         print("Username: admin")
         print("Password: Vigilant@Voices")
         print("Mobile: 9999999999")
 
-otp_store = {}  # Temporary OTP store
+# Initialize admin user
+create_admin_user()
 
 # ---------- Debug Route ----------
 @app.route('/debug_session')
@@ -88,23 +105,25 @@ def signup():
             flash("Password must be at least 6 characters long", "danger")
             return redirect(url_for('signup'))
 
-        if User.query.filter_by(username=username).first():
+        if users.find_one({"username": username}):
             flash("Username already exists", "danger")
             return redirect(url_for('signup'))
 
-        if User.query.filter_by(mobile_number=mobile_number).first():
+        if users.find_one({"mobile_number": mobile_number}):
             flash("Mobile number already registered", "danger")
             return redirect(url_for('signup'))
 
         hashed_pw = generate_password_hash(password)
-        new_user = User(
-            full_name=full_name,
-            username=username,
-            password_hash=hashed_pw,
-            mobile_number=mobile_number
-        )
-        db.session.add(new_user)
-        db.session.commit()
+        new_user = {
+            'full_name': full_name,
+            'username': username,
+            'password_hash': hashed_pw,
+            'mobile_number': mobile_number,
+            'email': '',
+            'profile_photo': '',
+            'created_at': datetime.utcnow()
+        }
+        users.insert_one(new_user)
         flash(f"Signup successful. Your username is '{username}'. Please login.", "success")
         return redirect(url_for('login'))
     return render_template('signup.html')
@@ -121,25 +140,25 @@ def login():
             flash("Username and password are required", "danger")
             return render_template('login.html')
         
-        user = User.query.filter_by(username=username).first()
+        user = users.find_one({"username": username})
         print(f"🔍 User found in database: {user is not None}")  # Debug
         
         if user:
-            print(f"🔍 User details - ID: {user.id}, Username: {user.username}")  # Debug
-            password_match = check_password_hash(user.password_hash, password)
+            print(f"🔍 User details - ID: {user['_id']}, Username: {user['username']}")  # Debug
+            password_match = check_password_hash(user['password_hash'], password)
             print(f"🔍 Password match: {password_match}")  # Debug
             
             if password_match:
                 # Clear any existing flash messages before login
                 session.pop('_flashes', None)
                 
-                session['user_id'] = user.id
-                session['username'] = user.username
+                session['user_id'] = str(user['_id'])
+                session['username'] = user['username']
                 
                 print(f"✅ Login successful! Session set - User ID: {session['user_id']}")  # Debug
                 
                 # Show admin welcome message for admin user
-                if user.username == 'admin':
+                if user['username'] == 'admin':
                     flash("Welcome back, Administrator! 🔧", "success")
                     print("🔧 Admin user logged in!")  # Debug
                 else:
@@ -173,7 +192,7 @@ def forgot_password():
             flash("Mobile number is required", "danger")
             return redirect(url_for('forgot_password'))
         
-        user = User.query.filter_by(mobile_number=mobile).first()
+        user = users.find_one({"mobile_number": mobile})
         if not user:
             flash("Mobile number not found in our records", "danger")
             return redirect(url_for('forgot_password'))
@@ -208,10 +227,12 @@ def verify_otp():
         flash("Password must be at least 6 characters long", "danger")
         return redirect(url_for('forgot_password'))
 
-    user = User.query.filter_by(mobile_number=mobile).first()
+    user = users.find_one({"mobile_number": mobile})
     if user:
-        user.password_hash = generate_password_hash(new_password)
-        db.session.commit()
+        users.update_one(
+            {"_id": user["_id"]}, 
+            {"$set": {"password_hash": generate_password_hash(new_password)}}
+        )
         otp_store.pop(mobile, None)
         flash("Password reset successful! Please login with your new password.", "success")
     else:
@@ -223,7 +244,7 @@ def verify_otp():
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    user = User.query.get(session['user_id'])
+    user = users.find_one({"_id": ObjectId(session['user_id'])})
     if not user:
         flash("User not found", "danger")
         return redirect(url_for('login'))
@@ -243,17 +264,19 @@ def profile():
             return redirect(url_for('profile'))
         
         # Check if mobile number is already taken by another user
-        existing_user = User.query.filter(
-            User.mobile_number == mobile_number,
-            User.id != user.id
-        ).first()
+        existing_user = users.find_one({
+            "mobile_number": mobile_number,
+            "_id": {"$ne": ObjectId(session['user_id'])}
+        })
         if existing_user:
             flash("Mobile number is already registered to another account", "danger")
             return redirect(url_for('profile'))
         
-        user.full_name = full_name
-        user.email = email
-        user.mobile_number = mobile_number
+        update_data = {
+            'full_name': full_name,
+            'email': email,
+            'mobile_number': mobile_number
+        }
 
         # Handle password change
         new_password = request.form.get('new_password', '').strip()
@@ -266,7 +289,7 @@ def profile():
             if len(new_password) < 6:
                 flash("Password must be at least 6 characters long", "danger")
                 return redirect(url_for('profile'))
-            user.password_hash = generate_password_hash(new_password)
+            update_data['password_hash'] = generate_password_hash(new_password)
 
         # Handle profile photo upload
         if 'profile_photo' in request.files:
@@ -290,23 +313,25 @@ def profile():
                     return redirect(url_for('profile'))
                 
                 # Save file
-                filename = f"user_{user.id}_{file.filename}"
-                filepath = os.path.join('static/uploads', filename)
+                filename = f"user_{session['user_id']}_{file.filename}"
+                filepath = os.path.join(UPLOAD_DIR, filename)
                 
                 # Remove old profile photo if exists
-                if user.profile_photo:
-                    old_path = os.path.join('static/uploads', user.profile_photo)
+                if user.get('profile_photo'):
+                    old_path = os.path.join(UPLOAD_DIR, user['profile_photo'])
                     if os.path.exists(old_path):
                         os.remove(old_path)
                 
                 file.save(filepath)
-                user.profile_photo = filename
+                update_data['profile_photo'] = filename
 
         try:
-            db.session.commit()
+            users.update_one(
+                {"_id": ObjectId(session['user_id'])}, 
+                {"$set": update_data}
+            )
             flash("Profile updated successfully!", "success")
         except Exception as e:
-            db.session.rollback()
             flash("An error occurred while updating your profile. Please try again.", "danger")
         
         return redirect(url_for('profile'))
@@ -318,10 +343,10 @@ def profile():
 @login_required
 def dashboard():
     print(f"🔍 Dashboard accessed by user ID: {session.get('user_id')}")  # Debug
-    batches = HerbBatch.query.filter_by(user_id=session['user_id']).order_by(HerbBatch.id.desc()).all()
-    user = User.query.get(session['user_id'])
-    print(f"🔍 Dashboard loaded for user: {user.username if user else 'None'}")  # Debug
-    return render_template('dashboard.html', herb_batches=batches, user=user)
+    user_batches = herb_batches.find({"user_id": session['user_id']}).sort("created_at", -1)
+    user = users.find_one({"_id": ObjectId(session['user_id'])})
+    print(f"🔍 Dashboard loaded for user: {user['username'] if user else 'None'}")  # Debug
+    return render_template('dashboard.html', herb_batches=list(user_batches), user=user)
 
 # ---------- Add Batch ----------
 @app.route('/add_batch', methods=['POST'])
@@ -346,34 +371,41 @@ def add_batch():
         flash("Latitude and Longitude must be valid numbers", "danger")
         return redirect(url_for('dashboard'))
 
-    new_batch = HerbBatch(
-        herb_name=herb_name,
-        collector=collector,
-        farm_location=farm_location,
-        latitude=latitude,
-        longitude=longitude,
-        notes=notes,
-        user_id=session['user_id']
-    )
+    new_batch = {
+        'herb_name': herb_name,
+        'collector': collector,
+        'farm_location': farm_location,
+        'latitude': latitude,
+        'longitude': longitude,
+        'notes': notes,
+        'user_id': session['user_id'],
+        'created_at': datetime.utcnow()
+    }
     
     try:
-        db.session.add(new_batch)
-        db.session.commit()
+        herb_batches.insert_one(new_batch)
         flash("New herb batch added successfully!", "success")
     except Exception as e:
-        db.session.rollback()
         flash("An error occurred while adding the batch. Please try again.", "danger")
     
     return redirect(url_for('dashboard'))
 
 # ---------- Edit Batch ----------
-@app.route('/edit_batch/<int:batch_id>', methods=['GET', 'POST'])
+@app.route('/edit_batch/<batch_id>', methods=['GET', 'POST'])
 @login_required
 def edit_batch(batch_id):
-    batch = HerbBatch.query.get_or_404(batch_id)
+    try:
+        batch = herb_batches.find_one({"_id": ObjectId(batch_id)})
+    except:
+        flash("Invalid batch ID", "danger")
+        return redirect(url_for('dashboard'))
+    
+    if not batch:
+        flash("Batch not found", "danger")
+        return redirect(url_for('dashboard'))
     
     # Ensure user can only edit their own batches
-    if batch.user_id != session['user_id']:
+    if batch['user_id'] != session['user_id']:
         flash("You don't have permission to edit this batch", "danger")
         return redirect(url_for('dashboard'))
     
@@ -396,68 +428,95 @@ def edit_batch(batch_id):
             flash("Latitude and Longitude must be valid numbers", "danger")
             return redirect(url_for('edit_batch', batch_id=batch_id))
         
-        batch.herb_name = herb_name
-        batch.collector = collector
-        batch.farm_location = farm_location
-        batch.notes = notes
-        batch.latitude = latitude
-        batch.longitude = longitude
+        update_data = {
+            'herb_name': herb_name,
+            'collector': collector,
+            'farm_location': farm_location,
+            'notes': notes,
+            'latitude': latitude,
+            'longitude': longitude
+        }
         
         try:
-            db.session.commit()
+            herb_batches.update_one(
+                {"_id": ObjectId(batch_id)}, 
+                {"$set": update_data}
+            )
             flash("Batch updated successfully!", "success")
             return redirect(url_for('dashboard'))
         except Exception as e:
-            db.session.rollback()
             flash("An error occurred while updating the batch. Please try again.", "danger")
     
     return render_template('edit_batch.html', batch=batch)
 
 # ---------- Delete Batch ----------
-@app.route('/delete_batch/<int:batch_id>', methods=['POST'])
+@app.route('/delete_batch/<batch_id>', methods=['POST'])
 @login_required
 def delete_batch(batch_id):
-    batch = HerbBatch.query.get_or_404(batch_id)
+    try:
+        batch = herb_batches.find_one({"_id": ObjectId(batch_id)})
+    except:
+        flash("Invalid batch ID", "danger")
+        return redirect(url_for('dashboard'))
+    
+    if not batch:
+        flash("Batch not found", "danger")
+        return redirect(url_for('dashboard'))
     
     # Ensure user can only delete their own batches
-    if batch.user_id != session['user_id']:
+    if batch['user_id'] != session['user_id']:
         flash("You don't have permission to delete this batch", "danger")
         return redirect(url_for('dashboard'))
     
     try:
-        db.session.delete(batch)
-        db.session.commit()
+        herb_batches.delete_one({"_id": ObjectId(batch_id)})
         flash("Batch deleted successfully!", "info")
     except Exception as e:
-        db.session.rollback()
         flash("An error occurred while deleting the batch. Please try again.", "danger")
     
     return redirect(url_for('dashboard'))
 
 # ---------- Provenance/Trace ----------
-@app.route('/provenance/<int:batch_id>')
+@app.route('/provenance/<batch_id>')
 def provenance(batch_id):
-    batch = HerbBatch.query.get_or_404(batch_id)
-    return render_template('provenance.html', batch=batch)
+    try:
+        batch = herb_batches.find_one({"_id": ObjectId(batch_id)})
+        if not batch:
+            flash("Batch not found", "danger")
+            return redirect(url_for('login'))
+        return render_template('provenance.html', batch=batch)
+    except:
+        flash("Invalid batch ID", "danger")
+        return redirect(url_for('login'))
 
 # ---------- Generate QR ----------
-@app.route('/generate_qr/<int:batch_id>')
+@app.route('/generate_qr/<batch_id>')
 @login_required
 def generate_qr(batch_id):
-    batch = HerbBatch.query.get_or_404(batch_id)
+    try:
+        batch = herb_batches.find_one({"_id": ObjectId(batch_id)})
+    except:
+        flash("Invalid batch ID", "danger")
+        return redirect(url_for('dashboard'))
+    
+    if not batch:
+        flash("Batch not found", "danger")
+        return redirect(url_for('dashboard'))
     
     # Ensure user can only generate QR for their own batches
-    if batch.user_id != session['user_id']:
+    if batch['user_id'] != session['user_id']:
         flash("You don't have permission to generate QR code for this batch", "danger")
         return redirect(url_for('dashboard'))
     
     try:
         url = url_for('provenance', batch_id=batch_id, _external=True)
         img = qrcode.make(url)
-        os.makedirs('static', exist_ok=True)
-        out_path = os.path.join('static', f'qr_{batch_id}.png')
-        img.save(out_path)
-        return send_from_directory('static', f'qr_{batch_id}.png')
+        
+        qr_filename = f'qr_{batch_id}.png'
+        qr_path = os.path.join(tempfile.gettempdir(), qr_filename)
+        img.save(qr_path)
+        
+        return send_from_directory(tempfile.gettempdir(), qr_filename)
     except Exception as e:
         flash("An error occurred while generating QR code. Please try again.", "danger")
         return redirect(url_for('dashboard'))
@@ -472,17 +531,17 @@ def scan():
 @app.route('/admin')
 @login_required
 def admin_panel():
-    user = User.query.get(session['user_id'])
-    print(f"🔍 Admin panel access attempt by: {user.username if user else 'None'}")  # Debug
+    user = users.find_one({"_id": ObjectId(session['user_id'])})
+    print(f"🔍 Admin panel access attempt by: {user['username'] if user else 'None'}")  # Debug
     
-    if not user or user.username != 'admin':
+    if not user or user['username'] != 'admin':
         flash("Admin access required", "danger")
         return redirect(url_for('dashboard'))
     
     print("✅ Admin panel access granted")  # Debug
-    users = User.query.order_by(User.id.desc()).all()
-    batches = HerbBatch.query.order_by(HerbBatch.id.desc()).all()
-    return render_template('admin.html', users=users, batches=batches)
+    all_users = list(users.find().sort("created_at", -1))
+    all_batches = list(herb_batches.find().sort("created_at", -1))
+    return render_template('admin.html', users=all_users, batches=all_batches)
 
 # ---------- Error Handlers ----------
 @app.errorhandler(404)
@@ -492,7 +551,6 @@ def not_found(error):
 
 @app.errorhandler(500)
 def internal_error(error):
-    db.session.rollback()
     flash("An internal error occurred. Please try again.", "danger")
     return redirect(url_for('dashboard'))
 
