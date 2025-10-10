@@ -4,3 +4,4 @@ pillow
 SQLAlchemy
 Flask-SQLAlchemy
 Werkzeug
+Jinja2
