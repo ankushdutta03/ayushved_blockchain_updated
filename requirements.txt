@@ -5,3 +5,4 @@ SQLAlchemy
 Flask-SQLAlchemy
 Werkzeug
 Jinja2
+gunicorn
