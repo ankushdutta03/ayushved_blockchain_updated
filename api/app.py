@@ -1,7 +1,7 @@
 from flask import Flask, render_template, send_from_directory, redirect, url_for, request, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, HerbBatch, User
-import qrcode, os, random
+import qrcode, os, random, tempfile
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ayutrace.db'
@@ -10,8 +10,9 @@ app.config['SECRET_KEY'] = 'supersecretkey'  # Change in production
 
 db.init_app(app)
 
-# Create uploads directory for profile photos
-os.makedirs('static/uploads', exist_ok=True)
+# Create uploads directory for profile photos (using temp directory for serverless)
+UPLOAD_DIR = os.path.join(tempfile.gettempdir(), 'uploads')
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 with app.app_context():
     db.create_all()
@@ -214,7 +215,7 @@ def profile():
                 return redirect(url_for('profile'))
             user.password_hash = generate_password_hash(new_password)
 
-        # Handle profile photo upload
+        # Handle profile photo upload (modified for serverless)
         if 'profile_photo' in request.files:
             file = request.files['profile_photo']
             if file and file.filename:
@@ -235,13 +236,13 @@ def profile():
                     flash("File size too large. Please upload files smaller than 5MB.", "danger")
                     return redirect(url_for('profile'))
                 
-                # Save file
+                # Save file to temp directory for serverless
                 filename = f"user_{user.id}_{file.filename}"
-                filepath = os.path.join('static/uploads', filename)
+                filepath = os.path.join(UPLOAD_DIR, filename)
                 
                 # Remove old profile photo if exists
                 if user.profile_photo:
-                    old_path = os.path.join('static/uploads', user.profile_photo)
+                    old_path = os.path.join(UPLOAD_DIR, user.profile_photo)
                     if os.path.exists(old_path):
                         os.remove(old_path)
                 
@@ -398,10 +399,13 @@ def generate_qr(batch_id):
     try:
         url = url_for('provenance', batch_id=batch_id, _external=True)
         img = qrcode.make(url)
-        os.makedirs('static', exist_ok=True)
-        out_path = os.path.join('static', f'qr_{batch_id}.png')
-        img.save(out_path)
-        return send_from_directory('static', f'qr_{batch_id}.png')
+        
+        # Use temporary directory for serverless
+        qr_filename = f'qr_{batch_id}.png'
+        qr_path = os.path.join(tempfile.gettempdir(), qr_filename)
+        img.save(qr_path)
+        
+        return send_from_directory(tempfile.gettempdir(), qr_filename)
     except Exception as e:
         flash("An error occurred while generating QR code. Please try again.", "danger")
         return redirect(url_for('dashboard'))
@@ -437,5 +441,4 @@ def internal_error(error):
     flash("An internal error occurred. Please try again.", "danger")
     return redirect(url_for('dashboard'))
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# Removed the if __name__ == '__main__' block for Vercel deployment
