@@ -144,6 +144,30 @@
             display: block;
         }
 
+        /* MongoDB ObjectId Badge */
+        .batch-id-badge {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+            max-width: 250px;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .created-date {
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
         .info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -183,6 +207,7 @@
             font-size: 1.1rem;
             font-weight: 500;
             line-height: 1.4;
+            word-wrap: break-word;
         }
 
         .info-value.large {
@@ -203,6 +228,21 @@
             color: #2a9d8f;
         }
 
+        .coordinates-link {
+            display: inline-block;
+            margin-top: 0.5rem;
+            color: #4ecdc4;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .coordinates-link:hover {
+            color: #2a9d8f;
+            text-decoration: underline;
+        }
+
         .notes-section {
             background: linear-gradient(135deg, rgba(240, 147, 251, 0.05), rgba(168, 230, 207, 0.05));
             border: 1px solid rgba(240, 147, 251, 0.1);
@@ -220,6 +260,53 @@
             line-height: 1.6;
             color: #4a5568;
             font-style: italic;
+            white-space: pre-wrap;
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            margin-bottom: 2rem;
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-info {
+            background: linear-gradient(45deg, rgba(66, 153, 225, 0.1), rgba(159, 122, 234, 0.1));
+            border: 1px solid rgba(66, 153, 225, 0.3);
+            color: #3182ce;
+        }
+
+        .alert-info::before {
+            content: 'ℹ️';
+            margin-right: 8px;
+        }
+
+        .alert-danger {
+            background: linear-gradient(45deg, rgba(229, 62, 62, 0.1), rgba(252, 129, 129, 0.1));
+            border: 1px solid rgba(229, 62, 62, 0.3);
+            color: #c53030;
+        }
+
+        .alert-danger::before {
+            content: '❌';
+            margin-right: 8px;
         }
 
         .action-buttons {
@@ -243,6 +330,7 @@
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            font-family: 'Poppins', sans-serif;
         }
 
         .btn-primary {
@@ -255,6 +343,12 @@
             background: rgba(255, 255, 255, 0.8);
             color: #2d3748;
             border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 50%, #2f855a 100%);
+            color: #ffffff;
+            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.3);
         }
 
         .btn::before {
@@ -285,6 +379,32 @@
             background: rgba(102, 126, 234, 0.1);
             border-color: rgba(102, 126, 234, 0.3);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 12px 35px rgba(72, 187, 120, 0.4);
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 50%, #276749 100%);
+        }
+
+        .timestamp-info {
+            background: linear-gradient(135deg, rgba(159, 122, 234, 0.05), rgba(102, 126, 234, 0.05));
+            border: 1px solid rgba(159, 122, 234, 0.1);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .timestamp-info .info-label {
+            color: #9f7aea;
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .timestamp-info .info-value {
+            font-size: 0.9rem;
+            color: #4a5568;
+            font-weight: 500;
         }
 
         /* Responsive Design */
@@ -342,6 +462,11 @@
             .info-item {
                 padding: 1rem;
             }
+
+            .batch-id-badge {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.8rem;
+            }
         }
 
         /* Print styles */
@@ -364,6 +489,10 @@
             .action-buttons {
                 display: none;
             }
+
+            .flash-messages {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -375,8 +504,30 @@
         </div>
 
         <div class="provenance-card">
+            <!-- Flask Flash Messages for MongoDB -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'info' if category == 'info' else 'danger' }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
             <div class="herb-title">
                 <span class="herb-emoji">🌱</span>
+                <!-- MongoDB ObjectId Badge -->
+                <div class="batch-id-badge" title="{{ batch._id }}">
+                    Batch ID: {{ batch._id|string|truncate(16, True, '...') }}
+                </div>
+                {% if batch.created_at %}
+                    <div class="created-date">
+                        📅 Created: {{ batch.created_at.strftime('%B %d, %Y at %I:%M %p') if batch.created_at else 'Date not available' }}
+                    </div>
+                {% endif %}
                 <h2>{{ batch.herb_name }}</h2>
             </div>
 
@@ -401,18 +552,50 @@
                     </div>
                     <div class="info-value">
                         {% if batch.latitude and batch.longitude %}
-                            {{ "%.6f"|format(batch.latitude|float) }}, {{ "%.6f"|format(batch.longitude|float) }}
+                            {% set lat = batch.latitude|float %}
+                            {% set lng = batch.longitude|float %}
+                            {{ "%.6f"|format(lat) }}, {{ "%.6f"|format(lng) }}
+                            <a href="https://www.google.com/maps?q={{ lat }},{{ lng }}" 
+                               target="_blank" class="coordinates-link">
+                               📍 View on Maps
+                            </a>
                         {% else %}
                             Not provided
                         {% endif %}
                     </div>
                 </div>
 
+                {% if batch.created_by %}
                 <div class="info-item">
                     <div class="info-label">
-                        🔖 Batch ID
+                        👥 Added By
                     </div>
-                    <div class="info-value large">#{{ batch.id }}</div>
+                    <div class="info-value">{{ batch.created_by }}</div>
+                </div>
+                {% endif %}
+
+                {% if batch.updated_at and batch.updated_at != batch.created_at %}
+                <div class="info-item">
+                    <div class="info-label">
+                        🔄 Last Updated
+                    </div>
+                    <div class="info-value">
+                        {{ batch.updated_at.strftime('%B %d, %Y at %I:%M %p') }}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="info-item">
+                    <div class="info-label">
+                        🔢 Batch Count
+                    </div>
+                    <div class="info-value large">
+                        {% if batch.quantity %}
+                            {{ batch.quantity }} {{ batch.unit or 'units' }}
+                        {% else %}
+                            Single Batch
+                        {% endif %}
+                    </div>
                 </div>
             </div>
 
@@ -425,9 +608,26 @@
             </div>
             {% endif %}
 
+            <!-- MongoDB Document Metadata -->
+            <div class="timestamp-info">
+                <div class="info-label">🔧 SYSTEM INFORMATION</div>
+                <div class="info-value">
+                    MongoDB Document ID: {{ batch._id }} | 
+                    {% if batch.created_at %}
+                        Created: {{ batch.created_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}
+                    {% endif %}
+                    {% if batch.updated_at and batch.updated_at != batch.created_at %}
+                        | Modified: {{ batch.updated_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}
+                    {% endif %}
+                </div>
+            </div>
+
             <div class="action-buttons">
                 <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
                     ← Back to Dashboard
+                </a>
+                <a href="{{ url_for('edit_batch', batch_id=batch._id) }}" class="btn btn-success">
+                    ✏️ Edit Batch
                 </a>
                 <button onclick="window.print()" class="btn btn-secondary">
                     🖨️ Print Report
@@ -450,6 +650,25 @@
                     item.style.transform = 'translateY(0)';
                 }, 600 + (index * 100));
             });
+
+            // Enhanced coordinate display
+            const coordinatesElement = document.querySelector('.coordinates .info-value');
+            if (coordinatesElement && coordinatesElement.textContent.includes(',')) {
+                const coords = coordinatesElement.textContent.trim().split(',');
+                if (coords.length === 2) {
+                    const lat = parseFloat(coords[0]);
+                    const lng = parseFloat(coords[1]);
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        // Add coordinate precision info
+                        const precisionInfo = document.createElement('div');
+                        precisionInfo.style.fontSize = '0.8rem';
+                        precisionInfo.style.color = '#718096';
+                        precisionInfo.style.marginTop = '0.3rem';
+                        precisionInfo.textContent = `Precision: ±${Math.abs(lat) > 1 ? '~111m' : '~11m'} (6 decimal places)`;
+                        coordinatesElement.appendChild(precisionInfo);
+                    }
+                }
+            }
         });
 
         // Add interactive hover effects
@@ -460,6 +679,44 @@
             
             item.addEventListener('mouseleave', function() {
                 this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Copy batch ID functionality
+        document.querySelector('.batch-id-badge').addEventListener('click', function() {
+            const batchId = this.getAttribute('title');
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(batchId).then(() => {
+                    const originalText = this.textContent;
+                    this.textContent = 'Copied! ✓';
+                    this.style.background = 'linear-gradient(45deg, #38a169, #48bb78)';
+                    
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                        this.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
+                    }, 2000);
+                });
+            }
+        });
+
+        // Auto-hide flash messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.alert');
+            flashMessages.forEach(msg => {
+                setTimeout(() => {
+                    if (msg.parentNode) {
+                        msg.style.opacity = '0';
+                        msg.style.transform = 'translateY(-10px)';
+                        setTimeout(() => msg.remove(), 300);
+                    }
+                }, 8000);
+            });
+        });
+
+        // Print optimization
+        window.addEventListener('beforeprint', function() {
+            document.querySelectorAll('.info-item').forEach(item => {
+                item.style.pageBreakInside = 'avoid';
             });
         });
     </script>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Signup | AyushVed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
         
@@ -93,6 +94,84 @@
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
             border-radius: 2px;
         }
+
+        /* Flash Messages */
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-weight: 500;
+            position: relative;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: linear-gradient(45deg, rgba(56, 161, 105, 0.1), rgba(152, 230, 180, 0.1));
+            border: 1px solid rgba(56, 161, 105, 0.3);
+            color: #2f855a;
+        }
+
+        .alert-success::before {
+            content: '✅';
+            margin-right: 8px;
+        }
+
+        .alert-danger {
+            background: linear-gradient(45deg, rgba(229, 62, 62, 0.1), rgba(252, 129, 129, 0.1));
+            border: 1px solid rgba(229, 62, 62, 0.3);
+            color: #c53030;
+        }
+
+        .alert-danger::before {
+            content: '❌';
+            margin-right: 8px;
+        }
+
+        .alert-info {
+            background: linear-gradient(45deg, rgba(66, 153, 225, 0.1), rgba(159, 122, 234, 0.1));
+            border: 1px solid rgba(66, 153, 225, 0.3);
+            color: #3182ce;
+        }
+
+        .alert-info::before {
+            content: 'ℹ️';
+            margin-right: 8px;
+        }
+
+        /* Welcome message for new users */
+        .welcome-box {
+            background: linear-gradient(45deg, rgba(78, 205, 196, 0.1), rgba(68, 160, 141, 0.1));
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #2d6a4f;
+            font-size: 14px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .welcome-box::before {
+            content: '🌱';
+            display: block;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
         
         .form-group {
             position: relative;
@@ -110,6 +189,7 @@
             font-weight: 400;
             outline: none;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Poppins', sans-serif;
         }
         
         .form-group input::placeholder {
@@ -124,6 +204,59 @@
                 0 0 0 3px rgba(102, 126, 234, 0.1),
                 0 4px 20px rgba(102, 126, 234, 0.15);
             transform: translateY(-2px);
+        }
+
+        /* Input validation styles */
+        .form-group.error input {
+            border-color: #e53e3e;
+            background: #fed7d7;
+        }
+
+        .form-group.success input {
+            border-color: #38a169;
+            background: #f0fff4;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-message {
+            color: #38a169;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* Password strength indicator */
+        .password-strength {
+            margin-top: 5px;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .password-strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        
+        .strength-weak { background: #e53e3e; width: 25%; }
+        .strength-fair { background: #dd6b20; width: 50%; }
+        .strength-good { background: #38a169; width: 75%; }
+        .strength-strong { background: #25a00c; width: 100%; }
+
+        .strength-text {
+            font-size: 11px;
+            margin-top: 3px;
+            font-weight: 500;
         }
         
         .signup-btn {
@@ -140,6 +273,7 @@
             position: relative;
             overflow: hidden;
             margin-top: 10px;
+            font-family: 'Poppins', sans-serif;
         }
         
         .signup-btn::before {
@@ -161,6 +295,12 @@
             transform: translateY(-3px);
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
             background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
+        }
+
+        .signup-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
         }
         
         .signup-btn:active {
@@ -247,104 +387,32 @@
             transform: translateY(-50%) rotate(45deg);
         }
         
-        .leaf:nth-child(1) { 
-            left: 10%; 
-            animation-delay: 0s; 
-            animation-duration: 15s;
-        }
-        .leaf:nth-child(2) { 
-            left: 20%; 
-            animation-delay: 2s; 
-            animation-duration: 12s;
-        }
-        .leaf:nth-child(3) { 
-            left: 30%; 
-            animation-delay: 4s; 
-            animation-duration: 18s;
-        }
-        .leaf:nth-child(4) { 
-            left: 40%; 
-            animation-delay: 1s; 
-            animation-duration: 14s;
-        }
-        .leaf:nth-child(5) { 
-            left: 50%; 
-            animation-delay: 6s; 
-            animation-duration: 16s;
-        }
-        .leaf:nth-child(6) { 
-            left: 60%; 
-            animation-delay: 3s; 
-            animation-duration: 13s;
-        }
-        .leaf:nth-child(7) { 
-            left: 70%; 
-            animation-delay: 5s; 
-            animation-duration: 17s;
-        }
-        .leaf:nth-child(8) { 
-            left: 80%; 
-            animation-delay: 7s; 
-            animation-duration: 11s;
-        }
-        .leaf:nth-child(9) { 
-            left: 90%; 
-            animation-delay: 8s; 
-            animation-duration: 19s;
-        }
-        .leaf:nth-child(10) { 
-            left: 15%; 
-            animation-delay: 9s; 
-            animation-duration: 20s;
-        }
+        .leaf:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 15s; }
+        .leaf:nth-child(2) { left: 20%; animation-delay: 2s; animation-duration: 12s; }
+        .leaf:nth-child(3) { left: 30%; animation-delay: 4s; animation-duration: 18s; }
+        .leaf:nth-child(4) { left: 40%; animation-delay: 1s; animation-duration: 14s; }
+        .leaf:nth-child(5) { left: 50%; animation-delay: 6s; animation-duration: 16s; }
+        .leaf:nth-child(6) { left: 60%; animation-delay: 3s; animation-duration: 13s; }
+        .leaf:nth-child(7) { left: 70%; animation-delay: 5s; animation-duration: 17s; }
+        .leaf:nth-child(8) { left: 80%; animation-delay: 7s; animation-duration: 11s; }
+        .leaf:nth-child(9) { left: 90%; animation-delay: 8s; animation-duration: 19s; }
+        .leaf:nth-child(10) { left: 15%; animation-delay: 9s; animation-duration: 20s; }
         
         @keyframes float-leaf {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.8;
-            }
-            90% {
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateY(-100vh) rotate(360deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
         }
         
-        /* Different leaf variations - keeping them all green */
-        .leaf:nth-child(2n)::before {
-            background: #68d391;
-            border-radius: 50% 0 50% 0;
-        }
+        .leaf:nth-child(2n)::before { background: #68d391; border-radius: 50% 0 50% 0; }
+        .leaf:nth-child(3n)::before { background: #38a169; border-radius: 0 50% 0 50%; }
+        .leaf:nth-child(4n)::before { background: #2f855a; }
+        .leaf:nth-child(5n)::before { background: #9ae6b4; }
+        .leaf:nth-child(4n) { width: 15px; height: 15px; }
+        .leaf:nth-child(5n) { width: 25px; height: 25px; }
         
-        .leaf:nth-child(3n)::before {
-            background: #38a169;
-            border-radius: 0 50% 0 50%;
-        }
-        
-        .leaf:nth-child(4n)::before {
-            background: #2f855a;
-        }
-        
-        .leaf:nth-child(5n)::before {
-            background: #9ae6b4;
-        }
-        
-        .leaf:nth-child(4n) {
-            width: 15px;
-            height: 15px;
-        }
-        
-        .leaf:nth-child(5n) {
-            width: 25px;
-            height: 25px;
-        }
-        
-        /* Add some colorful floating elements */
+        /* Color orbs */
         .color-orb {
             position: absolute;
             border-radius: 50%;
@@ -353,82 +421,28 @@
         }
         
         .orb1 {
-            width: 60px;
-            height: 60px;
+            width: 60px; height: 60px;
             background: linear-gradient(45deg, #ff6b6b, #ff8e53);
-            top: 20%;
-            left: 10%;
-            animation-delay: 0s;
+            top: 20%; left: 10%; animation-delay: 0s;
         }
         
         .orb2 {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             background: linear-gradient(45deg, #4ecdc4, #44a08d);
-            top: 60%;
-            right: 15%;
-            animation-delay: 5s;
+            top: 60%; right: 15%; animation-delay: 5s;
         }
         
         .orb3 {
-            width: 80px;
-            height: 80px;
+            width: 80px; height: 80px;
             background: linear-gradient(45deg, #667eea, #764ba2);
-            bottom: 30%;
-            left: 20%;
-            animation-delay: 10s;
+            bottom: 30%; left: 20%; animation-delay: 10s;
         }
         
         @keyframes float-orb {
-            0%, 100% {
-                transform: translateY(0px) translateX(0px) scale(1);
-            }
-            25% {
-                transform: translateY(-20px) translateX(10px) scale(1.1);
-            }
-            50% {
-                transform: translateY(-10px) translateX(-15px) scale(0.9);
-            }
-            75% {
-                transform: translateY(-30px) translateX(5px) scale(1.05);
-            }
-        }
-        
-        /* Password strength indicator */
-        .password-strength {
-            margin-top: 5px;
-            height: 4px;
-            background: #e2e8f0;
-            border-radius: 2px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .password-strength-fill {
-            height: 100%;
-            width: 0%;
-            transition: all 0.3s ease;
-            border-radius: 2px;
-        }
-        
-        .strength-weak { 
-            background: #e53e3e; 
-            width: 25%; 
-        }
-        
-        .strength-fair { 
-            background: #dd6b20; 
-            width: 50%; 
-        }
-        
-        .strength-good { 
-            background: #38a169; 
-            width: 75%; 
-        }
-        
-        .strength-strong { 
-            background: #25a00c; 
-            width: 100%; 
+            0%, 100% { transform: translateY(0px) translateX(0px) scale(1); }
+            25% { transform: translateY(-20px) translateX(10px) scale(1.1); }
+            50% { transform: translateY(-10px) translateX(-15px) scale(0.9); }
+            75% { transform: translateY(-30px) translateX(5px) scale(1.05); }
         }
         
         /* Responsive design */
@@ -439,28 +453,11 @@
                 margin: 20px;
             }
             
-            .logo h2 {
-                font-size: 24px;
-            }
-            
-            .form-group input {
-                padding: 12px 16px;
-                font-size: 15px;
-            }
-            
-            .signup-btn {
-                padding: 12px;
-                font-size: 15px;
-            }
-            
-            .leaf {
-                width: 15px;
-                height: 15px;
-            }
-            
-            .color-orb {
-                display: none;
-            }
+            .logo h2 { font-size: 24px; }
+            .form-group input { padding: 12px 16px; font-size: 15px; }
+            .signup-btn { padding: 12px; font-size: 15px; }
+            .leaf { width: 15px; height: 15px; }
+            .color-orb { display: none; }
         }
         
         /* Loading animation */
@@ -472,36 +469,11 @@
             border-radius: 50%;
             border-top-color: #ffffff;
             animation: spin 1s ease-in-out infinite;
-            margin: 0 auto;
+            margin-left: 10px;
         }
         
         @keyframes spin {
             to { transform: rotate(360deg); }
-        }
-
-        /* Form validation styles */
-        .form-group.error input {
-            border-color: #e53e3e;
-            background: #fed7d7;
-        }
-
-        .form-group.success input {
-            border-color: #38a169;
-            background: #f0fff4;
-        }
-
-        .error-message {
-            color: #e53e3e;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .success-message {
-            color: #38a169;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
         }
     </style>
 </head>
@@ -525,82 +497,299 @@
     
     <form method="POST" class="container" id="signupForm">
         <div class="logo">
-            <h2>AyuTrace</h2>
+            <h2>🌱 AyushVed</h2>
+        </div>
+
+        <!-- Flask Flash Messages for MongoDB -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else ('info' if category == 'info' else 'danger') }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Welcome message for new users -->
+        {% if not get_flashed_messages() %}
+        <div class="welcome-box">
+            Join AyushVed Family<br>
+            <small>Create your account to start tracing Ayurvedic herbs</small>
+        </div>
+        {% endif %}
+        
+        <div class="form-group" id="nameGroup">
+            <input type="text" 
+                   name="full_name" 
+                   id="fullName" 
+                   placeholder="Full Name" 
+                   required 
+                   minlength="2"
+                   autocomplete="name">
+            <div class="error-message" id="nameError">Please enter your full name (at least 2 characters)</div>
         </div>
         
-        <div class="form-group">
-            <input type="text" name="full_name" id="fullName" placeholder="Full Name" required>
-            <div class="error-message" id="nameError">Please enter your full name</div>
+        <div class="form-group" id="usernameGroup">
+            <input type="text" 
+                   name="username" 
+                   id="username" 
+                   placeholder="Username" 
+                   required 
+                   minlength="3"
+                   pattern="[a-zA-Z0-9_]+"
+                   autocomplete="username">
+            <div class="error-message" id="usernameError">Username must be 3+ characters (letters, numbers, underscore only)</div>
         </div>
         
-        <div class="form-group">
-            <input type="tel" name="mobile_number" id="mobile" placeholder="Mobile Number" required>
-            <div class="error-message" id="mobileError">Please enter a valid mobile number</div>
+        <div class="form-group" id="mobileGroup">
+            <input type="tel" 
+                   name="mobile_number" 
+                   id="mobile" 
+                   placeholder="Mobile Number" 
+                   required 
+                   maxlength="10"
+                   pattern="[0-9]{10}"
+                   autocomplete="tel">
+            <div class="error-message" id="mobileError">Please enter a valid 10-digit mobile number</div>
         </div>
         
-        <div class="form-group">
-            <input type="password" name="password" id="password" placeholder="Password" required>
+        <div class="form-group" id="passwordGroup">
+            <input type="password" 
+                   name="password" 
+                   id="password" 
+                   placeholder="Password" 
+                   required 
+                   minlength="8"
+                   autocomplete="new-password">
             <div class="password-strength">
                 <div class="password-strength-fill" id="strengthFill"></div>
             </div>
-            <div class="error-message" id="passwordError">Password must be at least 8 characters</div>
+            <div class="strength-text" id="strengthText"></div>
+            <div class="error-message" id="passwordError">Password must be at least 8 characters with letters and numbers</div>
         </div>
         
-        <div class="form-group">
-            <input type="password" name="confirm_password" id="confirmPassword" placeholder="Confirm Password" required>
+        <div class="form-group" id="confirmPasswordGroup">
+            <input type="password" 
+                   name="confirm_password" 
+                   id="confirmPassword" 
+                   placeholder="Confirm Password" 
+                   required 
+                   minlength="8"
+                   autocomplete="new-password">
             <div class="error-message" id="confirmError">Passwords do not match</div>
-            <div class="success-message" id="confirmSuccess">Passwords match!</div>
+            <div class="success-message" id="confirmSuccess">✓ Passwords match!</div>
         </div>
         
-        <button type="submit" class="signup-btn">
-            <span class="btn-text">Create Account</span>
-            <div class="loading"></div>
+        <button type="submit" class="signup-btn" id="signupBtn">
+            <span class="btn-text">🚀 Create Account</span>
+            <div class="loading" id="loadingSpinner"></div>
         </button>
         
         <div class="links">
-            <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+            <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
         </div>
     </form>
 
     <script>
-        // Password strength checker
+        // Enhanced password strength checker for MongoDB
         function checkPasswordStrength(password) {
             const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
             let strength = 0;
+            let feedback = [];
             
-            if (password.length >= 8) strength++;
-            if (password.match(/[a-z]/)) strength++;
-            if (password.match(/[A-Z]/)) strength++;
-            if (password.match(/[0-9]/)) strength++;
-            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+            if (password.length >= 8) {
+                strength++;
+            } else {
+                feedback.push('8+ characters');
+            }
+            
+            if (password.match(/[a-z]/)) {
+                strength++;
+            } else {
+                feedback.push('lowercase');
+            }
+            
+            if (password.match(/[A-Z]/)) {
+                strength++;
+            } else {
+                feedback.push('uppercase');
+            }
+            
+            if (password.match(/[0-9]/)) {
+                strength++;
+            } else {
+                feedback.push('number');
+            }
+            
+            if (password.match(/[^a-zA-Z0-9]/)) {
+                strength++;
+            } else {
+                feedback.push('symbol');
+            }
             
             strengthFill.className = 'password-strength-fill';
+            
+            let strengthLevel = '';
+            let strengthColor = '';
             
             switch(strength) {
                 case 0:
                 case 1:
                     strengthFill.classList.add('strength-weak');
+                    strengthLevel = 'Weak';
+                    strengthColor = '#e53e3e';
                     break;
                 case 2:
                     strengthFill.classList.add('strength-fair');
+                    strengthLevel = 'Fair';
+                    strengthColor = '#dd6b20';
                     break;
                 case 3:
                 case 4:
                     strengthFill.classList.add('strength-good');
+                    strengthLevel = 'Good';
+                    strengthColor = '#38a169';
                     break;
                 case 5:
                     strengthFill.classList.add('strength-strong');
+                    strengthLevel = 'Strong';
+                    strengthColor = '#25a00c';
                     break;
+            }
+            
+            strengthText.style.color = strengthColor;
+            if (password.length > 0) {
+                strengthText.textContent = `${strengthLevel}${feedback.length > 0 ? ' (Need: ' + feedback.join(', ') + ')' : ' ✓'}`;
+            } else {
+                strengthText.textContent = '';
             }
             
             return strength >= 3;
         }
 
+        // Enhanced form validation for MongoDB
+        function validateForm() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            let isValid = true;
+
+            // Reset error states
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error', 'success');
+                group.querySelector('.error-message').style.display = 'none';
+                const successMsg = group.querySelector('.success-message');
+                if (successMsg) successMsg.style.display = 'none';
+            });
+
+            // Validate full name
+            if (fullName.length < 2) {
+                showError('nameGroup', 'nameError', 'Full name must be at least 2 characters');
+                isValid = false;
+            } else {
+                document.getElementById('nameGroup').classList.add('success');
+            }
+
+            // Validate username
+            if (username.length < 3) {
+                showError('usernameGroup', 'usernameError', 'Username must be at least 3 characters');
+                isValid = false;
+            } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+                showError('usernameGroup', 'usernameError', 'Username can only contain letters, numbers, and underscore');
+                isValid = false;
+            } else {
+                document.getElementById('usernameGroup').classList.add('success');
+            }
+
+            // Validate mobile
+            if (mobile.length !== 10 || !/^\d{10}$/.test(mobile)) {
+                showError('mobileGroup', 'mobileError', 'Please enter a valid 10-digit mobile number');
+                isValid = false;
+            } else {
+                document.getElementById('mobileGroup').classList.add('success');
+            }
+
+            // Validate password
+            if (!checkPasswordStrength(password)) {
+                showError('passwordGroup', 'passwordError', 'Password must be stronger (at least 8 characters with letters and numbers)');
+                isValid = false;
+            } else {
+                document.getElementById('passwordGroup').classList.add('success');
+            }
+
+            // Validate password confirmation
+            if (password !== confirmPassword) {
+                showError('confirmPasswordGroup', 'confirmError', 'Passwords do not match');
+                isValid = false;
+            } else if (confirmPassword.length > 0) {
+                document.getElementById('confirmPasswordGroup').classList.add('success');
+                document.getElementById('confirmSuccess').style.display = 'block';
+            }
+
+            return isValid;
+        }
+
+        function showError(groupId, errorId, message) {
+            const group = document.getElementById(groupId);
+            const error = document.getElementById(errorId);
+            
+            group.classList.add('error');
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+
         // Real-time validation
+        document.getElementById('fullName').addEventListener('input', function() {
+            const group = document.getElementById('nameGroup');
+            if (this.value.trim().length >= 2) {
+                group.classList.remove('error');
+                group.classList.add('success');
+                document.getElementById('nameError').style.display = 'none';
+            }
+        });
+
+        document.getElementById('username').addEventListener('input', function() {
+            const group = document.getElementById('usernameGroup');
+            const value = this.value.trim();
+            if (value.length >= 3 && /^[a-zA-Z0-9_]+$/.test(value)) {
+                group.classList.remove('error');
+                group.classList.add('success');
+                document.getElementById('usernameError').style.display = 'none';
+            }
+        });
+
+        // Mobile number validation and formatting
+        document.getElementById('mobile').addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, '');
+            if (value.length > 10) value = value.slice(0, 10);
+            this.value = value;
+            
+            const group = document.getElementById('mobileGroup');
+            if (value.length === 10) {
+                group.classList.remove('error');
+                group.classList.add('success');
+                document.getElementById('mobileError').style.display = 'none';
+            }
+        });
+
+        // Password validation
         document.getElementById('password').addEventListener('input', function() {
             const password = this.value;
             const isStrong = checkPasswordStrength(password);
             const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (isStrong) {
+                document.getElementById('passwordGroup').classList.remove('error');
+                document.getElementById('passwordGroup').classList.add('success');
+                document.getElementById('passwordError').style.display = 'none';
+            }
             
             if (confirmPassword) {
                 checkPasswordMatch();
@@ -610,7 +799,7 @@
         function checkPasswordMatch() {
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-            const confirmGroup = document.getElementById('confirmPassword').parentElement;
+            const confirmGroup = document.getElementById('confirmPasswordGroup');
             const errorMsg = document.getElementById('confirmError');
             const successMsg = document.getElementById('confirmSuccess');
             
@@ -619,7 +808,7 @@
                 confirmGroup.classList.remove('success');
                 errorMsg.style.display = 'block';
                 successMsg.style.display = 'none';
-            } else if (confirmPassword && password === confirmPassword) {
+            } else if (confirmPassword && password === confirmPassword && password.length >= 8) {
                 confirmGroup.classList.remove('error');
                 confirmGroup.classList.add('success');
                 errorMsg.style.display = 'none';
@@ -629,48 +818,27 @@
 
         document.getElementById('confirmPassword').addEventListener('input', checkPasswordMatch);
 
-        // Mobile number validation
-        document.getElementById('mobile').addEventListener('input', function() {
-            const mobile = this.value.replace(/\D/g, '');
-            const group = this.parentElement;
-            const errorMsg = document.getElementById('mobileError');
-            
-            if (mobile.length === 10) {
-                group.classList.remove('error');
-                group.classList.add('success');
-                errorMsg.style.display = 'none';
-            } else {
-                group.classList.add('error');
-                group.classList.remove('success');
-                errorMsg.style.display = 'block';
-            }
-        });
-
-        // Form submission
+        // Enhanced form submission for MongoDB
         document.getElementById('signupForm').addEventListener('submit', function(e) {
-            const button = document.querySelector('.signup-btn');
-            const btnText = document.querySelector('.btn-text');
-            const loading = document.querySelector('.loading');
-            
-            // Basic validation
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (password !== confirmPassword) {
+            // Client-side validation
+            if (!validateForm()) {
                 e.preventDefault();
-                alert('Passwords do not match!');
                 return;
             }
+
+            const button = document.getElementById('signupBtn');
+            const btnText = button.querySelector('.btn-text');
+            const loading = document.getElementById('loadingSpinner');
             
-            if (password.length < 8) {
-                e.preventDefault();
-                alert('Password must be at least 8 characters long!');
-                return;
-            }
-            
+            // Show loading state (Flask will handle the actual registration)
             btnText.style.display = 'none';
-            loading.style.display = 'block';
+            loading.style.display = 'inline-block';
             button.disabled = true;
+            
+            // Add success styling to all inputs
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.add('success');
+            });
         });
 
         // Add focus animations
@@ -682,6 +850,31 @@
             input.addEventListener('blur', function() {
                 this.parentElement.style.transform = 'scale(1)';
             });
+        });
+
+        // Auto-hide flash messages after 8 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.alert');
+            flashMessages.forEach(msg => {
+                setTimeout(() => {
+                    if (msg.parentNode) {
+                        msg.style.opacity = '0';
+                        msg.style.transform = 'translateY(-10px)';
+                        setTimeout(() => {
+                            if (msg.parentNode) {
+                                msg.remove();
+                            }
+                        }, 300);
+                    }
+                }, 8000);
+            });
+        });
+
+        // Keyboard accessibility
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && (e.target.type === 'text' || e.target.type === 'tel' || e.target.type === 'password')) {
+                e.target.closest('form').requestSubmit();
+            }
         });
     </script>
 </body>

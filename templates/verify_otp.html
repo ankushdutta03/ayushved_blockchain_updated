@@ -2,22 +2,1019 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Verify OTP | AyuTrace</title>
+    <title>Verify OTP | AyushVed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial; background: #fff3cd; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        form { background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 350px; }
-        input, button { width: 100%; margin: 10px 0; padding: 10px; }
-        button { background: #ffc107; color: black; border: none; cursor: pointer; }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 25%, #fecfef 50%, #a8e6cf 75%, #81c784 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="80" cy="80" r="1" fill="%23ffffff" opacity="0.08"/><circle cx="40" cy="60" r="1" fill="%23ffffff" opacity="0.09"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(-50px, -50px) rotate(0deg); }
+            50% { transform: translate(50px, 50px) rotate(180deg); }
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.1),
+                0 5px 15px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            width: 400px;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo h2 {
+            color: #2d3748;
+            font-size: 28px;
+            font-weight: 700;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        
+        .logo p {
+            color: #718096;
+            font-size: 16px;
+            font-weight: 400;
+        }
+        
+        .logo h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            border-radius: 2px;
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-weight: 500;
+            position: relative;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: linear-gradient(45deg, rgba(56, 161, 105, 0.1), rgba(152, 230, 180, 0.1));
+            border: 1px solid rgba(56, 161, 105, 0.3);
+            color: #2f855a;
+        }
+
+        .alert-success::before {
+            content: '✅';
+            margin-right: 8px;
+        }
+
+        .alert-danger {
+            background: linear-gradient(45deg, rgba(229, 62, 62, 0.1), rgba(252, 129, 129, 0.1));
+            border: 1px solid rgba(229, 62, 62, 0.3);
+            color: #c53030;
+        }
+
+        .alert-danger::before {
+            content: '❌';
+            margin-right: 8px;
+        }
+
+        .alert-info {
+            background: linear-gradient(45deg, rgba(66, 153, 225, 0.1), rgba(159, 122, 234, 0.1));
+            border: 1px solid rgba(66, 153, 225, 0.3);
+            color: #3182ce;
+        }
+
+        .alert-info::before {
+            content: 'ℹ️';
+            margin-right: 8px;
+        }
+
+        /* Mobile Info Display */
+        .mobile-info {
+            background: linear-gradient(45deg, rgba(78, 205, 196, 0.1), rgba(68, 160, 141, 0.1));
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #2d6a4f;
+        }
+
+        .mobile-info::before {
+            content: '📱';
+            display: block;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .mobile-number {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #2a9d8f;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .form-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #2d3748;
+            font-size: 16px;
+            font-weight: 400;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .form-group input::placeholder {
+            color: #a0aec0;
+            font-weight: 300;
+        }
+        
+        .form-group input:focus {
+            background: #ffffff;
+            border-color: #667eea;
+            box-shadow: 
+                0 0 0 3px rgba(102, 126, 234, 0.1),
+                0 4px 20px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .form-group label {
+            position: absolute;
+            top: -8px;
+            left: 12px;
+            background: #ffffff;
+            padding: 0 8px;
+            color: #667eea;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus + label,
+        .form-group input:not(:placeholder-shown) + label {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Input validation styles */
+        .form-group.error input {
+            border-color: #e53e3e;
+            background: #fed7d7;
+        }
+
+        .form-group.success input {
+            border-color: #38a169;
+            background: #f0fff4;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* OTP Input Special Styling */
+        .otp-input {
+            text-align: center;
+            font-family: 'Courier New', monospace !important;
+            font-size: 24px !important;
+            font-weight: 700 !important;
+            letter-spacing: 8px !important;
+        }
+
+        /* Password Strength Indicator */
+        .password-strength {
+            margin-top: 5px;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .password-strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strength-weak { background: #e53e3e; width: 25%; }
+        .strength-fair { background: #dd6b20; width: 50%; }
+        .strength-good { background: #38a169; width: 75%; }
+        .strength-strong { background: #25a00c; width: 100%; }
+
+        .strength-text {
+            font-size: 11px;
+            margin-top: 3px;
+            font-weight: 500;
+        }
+        
+        .verify-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            border: none;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .verify-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .verify-btn:hover::before {
+            left: 100%;
+        }
+        
+        .verify-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
+        }
+
+        .verify-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .verify-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .links {
+            text-align: center;
+            margin-top: 25px;
+        }
+        
+        .links a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .links a::before {
+            content: '←';
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+        
+        .links a:hover::before {
+            transform: translateX(-3px);
+        }
+        
+        .links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            transition: width 0.3s ease;
+        }
+        
+        .links a:hover {
+            color: #5a67d8;
+        }
+        
+        .links a:hover::after {
+            width: 100%;
+        }
+        
+        .links p {
+            color: #718096;
+            margin: 15px 0 8px;
+            font-size: 14px;
+        }
+
+        /* Timer Display */
+        .timer-section {
+            background: linear-gradient(45deg, rgba(240, 147, 251, 0.1), rgba(102, 126, 234, 0.1));
+            border: 1px solid rgba(240, 147, 251, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .timer-display {
+            font-size: 24px;
+            font-weight: 700;
+            color: #764ba2;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer-text {
+            font-size: 14px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .resend-section {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .resend-btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .resend-btn:hover {
+            background: linear-gradient(45deg, #44a08d, #2a9d8f);
+            transform: translateY(-2px);
+        }
+
+        /* Info box */
+        .info-box {
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.1));
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .info-box::before {
+            content: '🔐';
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 16px;
+        }
+        
+        /* Floating leaves animation */
+        .leaves {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        
+        .leaf {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            opacity: 0.8;
+            animation: float-leaf 12s infinite linear;
+        }
+        
+        .leaf::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #48bb78;
+            border-radius: 0 100% 0 100%;
+            transform: rotate(45deg);
+            box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .leaf::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: #38a169;
+            transform: translateY(-50%) rotate(45deg);
+        }
+        
+        .leaf:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 15s; }
+        .leaf:nth-child(2) { left: 20%; animation-delay: 2s; animation-duration: 12s; }
+        .leaf:nth-child(3) { left: 30%; animation-delay: 4s; animation-duration: 18s; }
+        .leaf:nth-child(4) { left: 40%; animation-delay: 1s; animation-duration: 14s; }
+        .leaf:nth-child(5) { left: 50%; animation-delay: 6s; animation-duration: 16s; }
+        .leaf:nth-child(6) { left: 60%; animation-delay: 3s; animation-duration: 13s; }
+        .leaf:nth-child(7) { left: 70%; animation-delay: 5s; animation-duration: 17s; }
+        .leaf:nth-child(8) { left: 80%; animation-delay: 7s; animation-duration: 11s; }
+        
+        @keyframes float-leaf {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .leaf:nth-child(2n)::before { background: #68d391; border-radius: 50% 0 50% 0; }
+        .leaf:nth-child(3n)::before { background: #38a169; border-radius: 0 50% 0 50%; }
+        .leaf:nth-child(4n)::before { background: #2f855a; }
+        .leaf:nth-child(5n)::before { background: #9ae6b4; }
+        .leaf:nth-child(4n) { width: 15px; height: 15px; }
+        .leaf:nth-child(5n) { width: 25px; height: 25px; }
+        
+        /* Color orbs */
+        .color-orb {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float-orb 20s infinite ease-in-out;
+        }
+        
+        .orb1 {
+            width: 60px; height: 60px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            top: 20%; left: 10%; animation-delay: 0s;
+        }
+        
+        .orb2 {
+            width: 40px; height: 40px;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            top: 60%; right: 15%; animation-delay: 5s;
+        }
+        
+        .orb3 {
+            width: 80px; height: 80px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            bottom: 30%; left: 20%; animation-delay: 10s;
+        }
+        
+        @keyframes float-orb {
+            0%, 100% { transform: translateY(0px) translateX(0px) scale(1); }
+            25% { transform: translateY(-20px) translateX(10px) scale(1.1); }
+            50% { transform: translateY(-10px) translateX(-15px) scale(0.9); }
+            75% { transform: translateY(-30px) translateX(5px) scale(1.05); }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .container {
+                width: 90%;
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .logo h2 { font-size: 24px; }
+            .form-group input { padding: 12px 16px; font-size: 15px; }
+            .verify-btn { padding: 12px; font-size: 15px; }
+            .leaf { width: 15px; height: 15px; }
+            .color-orb { display: none; }
+        }
+        
+        /* Loading animation */
+        .loading {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
-    <form method="POST" action="{{ url_for('verify_otp') }}">
-        <h2>Verify OTP</h2>
+    <div class="color-orb orb1"></div>
+    <div class="color-orb orb2"></div>
+    <div class="color-orb orb3"></div>
+    
+    <div class="leaves">
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+    </div>
+    
+    <form method="POST" action="{{ url_for('verify_otp') }}" class="container" id="otpForm">
+        <div class="logo">
+            <h2>🔐 Verify OTP</h2>
+            <p>Enter the code sent to your mobile</p>
+        </div>
+
+        <!-- Flask Flash Messages for MongoDB -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else ('info' if category == 'info' else 'danger') }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Mobile Number Display -->
+        <div class="mobile-info">
+            OTP sent to<br>
+            <span class="mobile-number">{{ mobile }}</span>
+        </div>
+
+        <!-- OTP Timer -->
+        <div class="timer-section">
+            <div class="timer-display" id="timerDisplay">05:00</div>
+            <div class="timer-text">Time remaining to enter OTP</div>
+        </div>
+
+        <div class="info-box">
+            Enter the 6-digit OTP sent to your registered mobile number and create a new secure password.
+        </div>
+        
+        <!-- Hidden field for MongoDB user lookup -->
         <input type="hidden" name="mobile" value="{{ mobile }}">
-        <input type="text" name="otp" placeholder="Enter OTP" required>
-        <input type="password" name="new_password" placeholder="New Password" required>
-        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
-        <button type="submit">Reset Password</button>
+        
+        <div class="form-group" id="otpGroup">
+            <input type="text" 
+                   name="otp" 
+                   id="otp" 
+                   class="otp-input"
+                   placeholder="000000" 
+                   maxlength="6" 
+                   pattern="[0-9]{6}"
+                   required>
+            <label for="otp">OTP Code</label>
+            <div class="error-message" id="otpError">Please enter a valid 6-digit OTP</div>
+        </div>
+        
+        <div class="form-group" id="passwordGroup">
+            <input type="password" 
+                   name="new_password" 
+                   id="new_password" 
+                   placeholder="Create new password" 
+                   minlength="8"
+                   required>
+            <label for="new_password">New Password</label>
+            <div class="password-strength">
+                <div class="password-strength-fill" id="strengthFill"></div>
+            </div>
+            <div class="strength-text" id="strengthText"></div>
+            <div class="error-message" id="passwordError">Password must be at least 8 characters</div>
+        </div>
+        
+        <div class="form-group" id="confirmPasswordGroup">
+            <input type="password" 
+                   name="confirm_password" 
+                   id="confirm_password" 
+                   placeholder="Confirm new password" 
+                   minlength="8"
+                   required>
+            <label for="confirm_password">Confirm Password</label>
+            <div class="error-message" id="confirmError">Passwords do not match</div>
+        </div>
+
+        <!-- Resend OTP Section -->
+        <div class="resend-section">
+            <button type="button" class="resend-btn" id="resendBtn" onclick="resendOTP()">
+                📲 Resend OTP
+            </button>
+        </div>
+        
+        <button type="submit" class="verify-btn" id="verifyBtn">
+            🔓 Reset Password
+            <div class="loading" id="loadingSpinner"></div>
+        </button>
+        
+        <div class="links">
+            <p><a href="{{ url_for('login') }}">Back to Login</a></p>
+        </div>
     </form>
+
+    <script>
+        // OTP Timer functionality
+        let timeLeft = 300; // 5 minutes in seconds
+        const timerDisplay = document.getElementById('timerDisplay');
+        const resendBtn = document.getElementById('resendBtn');
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 0) {
+                timerDisplay.textContent = '00:00';
+                timerDisplay.style.color = '#e53e3e';
+                resendBtn.style.display = 'inline-block';
+                document.getElementById('verifyBtn').disabled = true;
+                document.getElementById('verifyBtn').textContent = 'OTP Expired';
+                return;
+            }
+            
+            timeLeft--;
+            setTimeout(updateTimer, 1000);
+        }
+
+        // Start timer
+        updateTimer();
+
+        // Enhanced password strength checker for MongoDB
+        function checkPasswordStrength(password) {
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            let strength = 0;
+            let feedback = [];
+            
+            if (password.length >= 8) {
+                strength++;
+            } else {
+                feedback.push('8+ characters');
+            }
+            
+            if (password.match(/[a-z]/)) {
+                strength++;
+            } else {
+                feedback.push('lowercase');
+            }
+            
+            if (password.match(/[A-Z]/)) {
+                strength++;
+            } else {
+                feedback.push('uppercase');
+            }
+            
+            if (password.match(/[0-9]/)) {
+                strength++;
+            } else {
+                feedback.push('number');
+            }
+            
+            if (password.match(/[^a-zA-Z0-9]/)) {
+                strength++;
+            } else {
+                feedback.push('symbol');
+            }
+            
+            strengthFill.className = 'password-strength-fill';
+            
+            let strengthLevel = '';
+            let strengthColor = '';
+            
+            switch(strength) {
+                case 0:
+                case 1:
+                    strengthFill.classList.add('strength-weak');
+                    strengthLevel = 'Weak';
+                    strengthColor = '#e53e3e';
+                    break;
+                case 2:
+                    strengthFill.classList.add('strength-fair');
+                    strengthLevel = 'Fair';
+                    strengthColor = '#dd6b20';
+                    break;
+                case 3:
+                case 4:
+                    strengthFill.classList.add('strength-good');
+                    strengthLevel = 'Good';
+                    strengthColor = '#38a169';
+                    break;
+                case 5:
+                    strengthFill.classList.add('strength-strong');
+                    strengthLevel = 'Strong';
+                    strengthColor = '#25a00c';
+                    break;
+            }
+            
+            strengthText.style.color = strengthColor;
+            if (password.length > 0) {
+                strengthText.textContent = `${strengthLevel}${feedback.length > 0 ? ' (Need: ' + feedback.join(', ') + ')' : ' ✓'}`;
+            } else {
+                strengthText.textContent = '';
+            }
+            
+            return strength >= 3;
+        }
+
+        // Enhanced form validation for MongoDB
+        function validateForm() {
+            const otp = document.getElementById('otp').value.trim();
+            const newPassword = document.getElementById('new_password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            let isValid = true;
+
+            // Reset error states
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error', 'success');
+                group.querySelector('.error-message').style.display = 'none';
+            });
+
+            // Validate OTP
+            if (!/^\d{6}$/.test(otp)) {
+                showError('otpGroup', 'otpError', 'Please enter a valid 6-digit OTP');
+                isValid = false;
+            } else {
+                document.getElementById('otpGroup').classList.add('success');
+            }
+
+            // Validate password strength
+            if (!checkPasswordStrength(newPassword)) {
+                showError('passwordGroup', 'passwordError', 'Password must be stronger (at least 8 characters with mixed case, numbers)');
+                isValid = false;
+            } else {
+                document.getElementById('passwordGroup').classList.add('success');
+            }
+
+            // Validate password confirmation
+            if (newPassword !== confirmPassword) {
+                showError('confirmPasswordGroup', 'confirmError', 'Passwords do not match');
+                isValid = false;
+            } else if (confirmPassword.length > 0) {
+                document.getElementById('confirmPasswordGroup').classList.add('success');
+            }
+
+            return isValid;
+        }
+
+        function showError(groupId, errorId, message) {
+            const group = document.getElementById(groupId);
+            const error = document.getElementById(errorId);
+            
+            group.classList.add('error');
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+
+        // OTP input formatting
+        document.getElementById('otp').addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, '');
+            if (value.length > 6) value = value.slice(0, 6);
+            this.value = value;
+            
+            const group = document.getElementById('otpGroup');
+            if (value.length === 6) {
+                group.classList.remove('error');
+                group.classList.add('success');
+                document.getElementById('otpError').style.display = 'none';
+            }
+        });
+
+        // Password validation
+        document.getElementById('new_password').addEventListener('input', function() {
+            const password = this.value;
+            const isStrong = checkPasswordStrength(password);
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            if (isStrong) {
+                document.getElementById('passwordGroup').classList.remove('error');
+                document.getElementById('passwordGroup').classList.add('success');
+                document.getElementById('passwordError').style.display = 'none';
+            }
+            
+            if (confirmPassword) {
+                checkPasswordMatch();
+            }
+        });
+
+        function checkPasswordMatch() {
+            const password = document.getElementById('new_password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const confirmGroup = document.getElementById('confirmPasswordGroup');
+            const errorMsg = document.getElementById('confirmError');
+            
+            if (confirmPassword && password !== confirmPassword) {
+                confirmGroup.classList.add('error');
+                confirmGroup.classList.remove('success');
+                errorMsg.style.display = 'block';
+            } else if (confirmPassword && password === confirmPassword && password.length >= 8) {
+                confirmGroup.classList.remove('error');
+                confirmGroup.classList.add('success');
+                errorMsg.style.display = 'none';
+            }
+        }
+
+        document.getElementById('confirm_password').addEventListener('input', checkPasswordMatch);
+
+        // Enhanced form submission for MongoDB
+        document.getElementById('otpForm').addEventListener('submit', function(e) {
+            // Client-side validation
+            if (!validateForm()) {
+                e.preventDefault();
+                return;
+            }
+
+            const button = document.getElementById('verifyBtn');
+            const loading = document.getElementById('loadingSpinner');
+            
+            // Show loading state (Flask will handle the actual verification)
+            button.disabled = true;
+            loading.style.display = 'inline-block';
+            button.style.opacity = '0.7';
+            
+            // Add success styling to all inputs
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.add('success');
+            });
+        });
+
+        // Resend OTP functionality for MongoDB
+        function resendOTP() {
+            const mobile = "{{ mobile }}";
+            resendBtn.disabled = true;
+            resendBtn.textContent = 'Sending...';
+            
+            // Send request to Flask backend to resend OTP
+            fetch("{{ url_for('forgot_password') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `mobile_number=${mobile}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reset timer
+                    timeLeft = 300;
+                    timerDisplay.style.color = '#764ba2';
+                    resendBtn.style.display = 'none';
+                    document.getElementById('verifyBtn').disabled = false;
+                    document.getElementById('verifyBtn').textContent = '🔓 Reset Password';
+                    updateTimer();
+                    
+                    showTemporaryMessage('OTP resent successfully!', 'success');
+                } else {
+                    showTemporaryMessage('Failed to resend OTP. Please try again.', 'danger');
+                }
+            })
+            .catch(error => {
+                showTemporaryMessage('Network error. Please try again.', 'danger');
+            })
+            .finally(() => {
+                resendBtn.disabled = false;
+                resendBtn.textContent = '📲 Resend OTP';
+            });
+        }
+
+        function showTemporaryMessage(message, type) {
+            const existingMsg = document.querySelector('.temp-message');
+            if (existingMsg) existingMsg.remove();
+
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `alert alert-${type} temp-message`;
+            msgDiv.textContent = message;
+            
+            const flashContainer = document.querySelector('.flash-messages') || 
+                                 document.createElement('div');
+            flashContainer.className = 'flash-messages';
+            flashContainer.appendChild(msgDiv);
+            
+            if (!document.querySelector('.flash-messages')) {
+                document.querySelector('.mobile-info').after(flashContainer);
+            }
+            
+            setTimeout(() => msgDiv.remove(), 5000);
+        }
+
+        // Add focus animations
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Auto-hide flash messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.alert:not(.temp-message)');
+            flashMessages.forEach(msg => {
+                setTimeout(() => {
+                    if (msg.parentNode) {
+                        msg.style.opacity = '0';
+                        msg.style.transform = 'translateY(-10px)';
+                        setTimeout(() => msg.remove(), 300);
+                    }
+                }, 8000);
+            });
+        });
+
+        // Keyboard accessibility
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && (e.target.type === 'text' || e.target.type === 'password')) {
+                e.target.closest('form').requestSubmit();
+            }
+        });
+    </script>
 </body>
 </html>

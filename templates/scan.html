@@ -121,6 +121,63 @@
             border-radius: 20px 20px 0 0;
         }
 
+        /* Flash Messages */
+        .flash-messages {
+            margin-bottom: 2rem;
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: linear-gradient(45deg, rgba(56, 161, 105, 0.1), rgba(152, 230, 180, 0.1));
+            border: 1px solid rgba(56, 161, 105, 0.3);
+            color: #2f855a;
+        }
+
+        .alert-success::before {
+            content: '✅';
+            margin-right: 8px;
+        }
+
+        .alert-danger {
+            background: linear-gradient(45deg, rgba(229, 62, 62, 0.1), rgba(252, 129, 129, 0.1));
+            border: 1px solid rgba(229, 62, 62, 0.3);
+            color: #c53030;
+        }
+
+        .alert-danger::before {
+            content: '❌';
+            margin-right: 8px;
+        }
+
+        .alert-info {
+            background: linear-gradient(45deg, rgba(66, 153, 225, 0.1), rgba(159, 122, 234, 0.1));
+            border: 1px solid rgba(66, 153, 225, 0.3);
+            color: #3182ce;
+        }
+
+        .alert-info::before {
+            content: 'ℹ️';
+            margin-right: 8px;
+        }
+
         .scanner-area {
             background: #f8fafc;
             border: 3px dashed #cbd5e0;
@@ -179,6 +236,7 @@
             overflow: hidden;
             margin: 1.5rem 0;
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            font-family: 'Poppins', sans-serif;
         }
 
         .scan-button::before {
@@ -200,6 +258,95 @@
             transform: translateY(-3px);
             box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
             background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
+        }
+
+        .scan-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Manual Input Section */
+        .manual-input-section {
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.05), rgba(168, 230, 207, 0.05));
+            border: 1px solid rgba(78, 205, 196, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .manual-input-section h3 {
+            color: #2d3748;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #2d3748;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            background: #ffffff;
+            box-shadow: 
+                0 0 0 3px rgba(78, 205, 196, 0.1),
+                0 4px 20px rgba(78, 205, 196, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .input-group input::placeholder {
+            color: #a0aec0;
+            font-weight: 300;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 50%, #2a9d8f 100%);
+            color: #ffffff;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.3);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(78, 205, 196, 0.4);
+            background: linear-gradient(135deg, #44a08d 0%, #2a9d8f 50%, #1a7169 100%);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .instructions {
@@ -290,6 +437,7 @@
             border: 2px solid rgba(102, 126, 234, 0.2);
             position: relative;
             overflow: hidden;
+            font-family: 'Poppins', sans-serif;
         }
 
         .back-button::before {
@@ -360,6 +508,17 @@
             line-height: 1.4;
         }
 
+        /* Video preview for camera */
+        #videoPreview {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin: 1rem 0;
+            display: none;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             body {
@@ -391,6 +550,14 @@
                 grid-template-columns: 1fr;
                 gap: 1rem;
             }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .input-group input {
+                margin-bottom: 0.5rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -408,7 +575,8 @@
             }
 
             .scan-button,
-            .back-button {
+            .back-button,
+            .search-btn {
                 width: 100%;
                 justify-content: center;
             }
@@ -439,10 +607,24 @@
         </div>
 
         <div class="scanner-card">
+            <!-- Flask Flash Messages for MongoDB -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'success' if category == 'success' else ('info' if category == 'info' else 'danger') }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
             <div class="scanner-area" id="scannerArea">
                 <span class="scanner-icon">📷</span>
                 <div class="scanner-text">Ready to Scan</div>
                 <div class="scanner-subtext">Position the QR code within the camera frame</div>
+                <video id="videoPreview" autoplay muted playsinline></video>
                 <div class="loading-spinner" id="loadingSpinner"></div>
             </div>
 
@@ -457,14 +639,36 @@
             </div>
         </div>
 
+        <!-- Manual Input Section for MongoDB -->
+        <div class="manual-input-section">
+            <h3>🔍 Search by Batch ID</h3>
+            <p style="color: #718096; margin-bottom: 1rem; font-size: 0.9rem;">
+                Enter MongoDB batch ID or scan QR code to view herb details
+            </p>
+            <form method="POST" action="{{ url_for('scan') }}" id="searchForm">
+                <div class="input-group">
+                    <input type="text" 
+                           name="batch_id" 
+                           id="batchIdInput" 
+                           placeholder="Enter Batch ID (e.g., 507f1f77bcf86cd799439011)" 
+                           pattern="[a-fA-F0-9]{24}"
+                           title="Enter valid MongoDB ObjectId (24 hex characters)">
+                    <button type="submit" class="search-btn" id="searchBtn">
+                        🔍 Search
+                    </button>
+                </div>
+            </form>
+        </div>
+
         <div class="instructions">
-            <h3>📋 How to Scan</h3>
+            <h3>📋 How to Use</h3>
             <ul>
-                <li>Click "Start Camera" to activate your device's camera</li>
-                <li>Allow camera permissions when prompted</li>
-                <li>Hold your device steady and point at the QR code</li>
-                <li>The app will automatically detect and process the code</li>
-                <li>View detailed herb information instantly</li>
+                <li><strong>QR Scanning:</strong> Click "Start Camera" to activate your device's camera</li>
+                <li><strong>Manual Search:</strong> Enter a 24-character MongoDB batch ID directly</li>
+                <li><strong>Allow Permissions:</strong> Grant camera access when prompted</li>
+                <li><strong>Position Code:</strong> Hold device steady and point at QR code</li>
+                <li><strong>Auto Detection:</strong> App automatically detects and processes codes</li>
+                <li><strong>View Details:</strong> Get instant herb traceability information</li>
             </ul>
         </div>
 
@@ -472,19 +676,19 @@
             <div class="feature-card">
                 <span class="feature-icon">🔍</span>
                 <div class="feature-title">Instant Recognition</div>
-                <div class="feature-desc">Advanced QR detection technology</div>
+                <div class="feature-desc">Advanced QR detection with MongoDB integration</div>
             </div>
             
             <div class="feature-card">
                 <span class="feature-icon">🌿</span>
                 <div class="feature-title">Full Traceability</div>
-                <div class="feature-desc">Complete herb journey information</div>
+                <div class="feature-desc">Complete herb journey from MongoDB records</div>
             </div>
             
             <div class="feature-card">
                 <span class="feature-icon">🔒</span>
-                <div class="feature-title">Secure Verification</div>
-                <div class="feature-desc">Blockchain-powered authenticity</div>
+                <div class="feature-title">Secure Database</div>
+                <div class="feature-desc">MongoDB-powered data integrity</div>
             </div>
         </div>
 
@@ -500,8 +704,12 @@
         const scannerArea = document.getElementById('scannerArea');
         const statusMessage = document.getElementById('statusMessage');
         const loadingSpinner = document.getElementById('loadingSpinner');
+        const videoPreview = document.getElementById('videoPreview');
+        const searchForm = document.getElementById('searchForm');
+        const batchIdInput = document.getElementById('batchIdInput');
 
         let isScanning = false;
+        let stream = null;
 
         scanButton.addEventListener('click', function() {
             if (!isScanning) {
@@ -511,17 +719,29 @@
             }
         });
 
-        function startScanning() {
-            isScanning = true;
-            scanButton.textContent = '⏹️ Stop Camera';
-            scanButton.style.background = 'linear-gradient(45deg, #e53e3e, #fc8181)';
-            
-            // Show loading
-            loadingSpinner.style.display = 'block';
-            
-            // Simulate camera initialization
-            setTimeout(() => {
+        async function startScanning() {
+            try {
+                isScanning = true;
+                scanButton.textContent = '⏹️ Stop Camera';
+                scanButton.style.background = 'linear-gradient(45deg, #e53e3e, #fc8181)';
+                
+                // Show loading
+                loadingSpinner.style.display = 'block';
+                showStatus('Requesting camera access...', 'info');
+
+                // Get camera stream
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
+                
                 loadingSpinner.style.display = 'none';
+                videoPreview.srcObject = stream;
+                videoPreview.style.display = 'block';
+                
                 scannerArea.style.background = 'linear-gradient(45deg, rgba(56, 161, 105, 0.1), rgba(152, 230, 180, 0.1))';
                 scannerArea.style.borderColor = '#38a169';
                 
@@ -533,16 +753,23 @@
                 scannerText.textContent = 'Camera Active';
                 scannerSubtext.textContent = 'Point camera at QR code to scan';
                 
-                showStatus('Camera started successfully! Point at a QR code.', 'success');
+                showStatus('Camera started successfully! Point at a QR code containing batch ID.', 'success');
                 
-                // Simulate QR detection after 3 seconds
+                // Note: In a real implementation, you would integrate a QR code library
+                // like jsQR or ZXing to decode QR codes from the video stream
+                
+                // Simulate QR detection for demo (remove in production)
                 setTimeout(() => {
                     if (isScanning) {
                         simulateQRDetection();
                     }
-                }, 3000);
+                }, 5000);
                 
-            }, 1500);
+            } catch (error) {
+                console.error('Camera error:', error);
+                showStatus('Camera access denied or not available. Please use manual search.', 'error');
+                stopScanning();
+            }
         }
 
         function stopScanning() {
@@ -550,6 +777,12 @@
             scanButton.textContent = '📷 Start Camera';
             scanButton.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)';
             
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            
+            videoPreview.style.display = 'none';
             scannerArea.style.background = '#f8fafc';
             scannerArea.style.borderColor = '#cbd5e0';
             
@@ -574,23 +807,73 @@
             
             scannerIcon.textContent = '✅';
             scannerText.textContent = 'QR Code Detected!';
-            scannerSubtext.textContent = 'Processing herb information...';
+            scannerSubtext.textContent = 'Processing MongoDB batch information...';
             
-            showStatus('QR code detected! Fetching herb details...', 'success');
+            showStatus('QR code detected! Fetching herb details from database...', 'success');
             
-            // Simulate redirect to provenance page
+            // Simulate batch ID found in QR code
+            const simulatedBatchId = '507f1f77bcf86cd799439011';
+            
             setTimeout(() => {
-                showStatus('Redirecting to herb details...', 'info');
-                // In real implementation: window.location.href = '/provenance/batch_id';
+                showStatus('Redirecting to herb provenance...', 'info');
+                // Redirect to provenance page with MongoDB ObjectId
+                window.location.href = `{{ url_for('provenance', batch_id='BATCH_ID') }}`.replace('BATCH_ID', simulatedBatchId);
             }, 2000);
         }
+
+        // Enhanced manual search with MongoDB validation
+        searchForm.addEventListener('submit', function(e) {
+            const batchId = batchIdInput.value.trim();
+            const searchBtn = document.getElementById('searchBtn');
+            
+            // Validate MongoDB ObjectId format (24 hex characters)
+            const objectIdRegex = /^[a-fA-F0-9]{24}$/;
+            
+            if (!batchId) {
+                e.preventDefault();
+                showStatus('Please enter a batch ID', 'error');
+                return;
+            }
+            
+            if (!objectIdRegex.test(batchId)) {
+                e.preventDefault();
+                showStatus('Invalid batch ID format. Please enter a valid 24-character MongoDB ObjectId.', 'error');
+                batchIdInput.style.borderColor = '#e53e3e';
+                batchIdInput.style.background = '#fed7d7';
+                return;
+            }
+            
+            // Show loading state
+            searchBtn.disabled = true;
+            searchBtn.textContent = '🔍 Searching...';
+            searchBtn.style.opacity = '0.7';
+            
+            showStatus('Searching MongoDB for batch information...', 'info');
+        });
+
+        // Real-time validation for batch ID input
+        batchIdInput.addEventListener('input', function() {
+            const value = this.value.trim();
+            const objectIdRegex = /^[a-fA-F0-9]{24}$/;
+            
+            if (value.length === 0) {
+                this.style.borderColor = '#e2e8f0';
+                this.style.background = '#f8fafc';
+            } else if (objectIdRegex.test(value)) {
+                this.style.borderColor = '#38a169';
+                this.style.background = '#f0fff4';
+            } else {
+                this.style.borderColor = '#e53e3e';
+                this.style.background = '#fed7d7';
+            }
+        });
 
         function showStatus(message, type) {
             statusMessage.textContent = message;
             statusMessage.className = `status-message status-${type}`;
             statusMessage.style.display = 'block';
             
-            // Auto hide after 5 seconds
+            // Auto hide after 5 seconds for non-success messages
             setTimeout(() => {
                 if (type !== 'success') {
                     statusMessage.style.display = 'none';
@@ -603,8 +886,20 @@
             statusMessage.style.display = 'block';
         }, 1000);
 
-        // Add smooth animations on page load
+        // Auto-hide flash messages
         document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.alert');
+            flashMessages.forEach(msg => {
+                setTimeout(() => {
+                    if (msg.parentNode) {
+                        msg.style.opacity = '0';
+                        msg.style.transform = 'translateY(-10px)';
+                        setTimeout(() => msg.remove(), 300);
+                    }
+                }, 8000);
+            });
+
+            // Add smooth animations on page load
             const cards = document.querySelectorAll('.feature-card');
             cards.forEach((card, index) => {
                 card.style.opacity = '0';
@@ -616,6 +911,13 @@
                     card.style.transform = 'translateY(0)';
                 }, 800 + (index * 200));
             });
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
         });
     </script>
 </body>

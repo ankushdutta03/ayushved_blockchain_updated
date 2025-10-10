@@ -284,10 +284,13 @@
             padding: 0.3rem 0.8rem;
             border-radius: 20px;
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             display: inline-block;
-            min-width: 40px;
+            max-width: 200px;
             text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         /* Status indicators */
@@ -417,30 +420,6 @@
                 margin-top: 1rem;
             }
         }
-
-        /* Loading animation */
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 2rem;
-            color: #718096;
-        }
-
-        .loading::before {
-            content: '';
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid #e2e8f0;
-            border-radius: 50%;
-            border-top-color: #667eea;
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 1rem;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
@@ -493,7 +472,7 @@
                     <tbody>
                         {% for user in users %}
                         <tr>
-                            <td><span class="id-badge">{{ user.id }}</span></td>
+                            <td><span class="id-badge" title="{{ user._id }}">{{ user._id|string|truncate(8, True, '...') }}</span></td>
                             <td>{{ user.full_name }}</td>
                             <td>{{ user.username }}</td>
                             <td>{{ user.mobile_number }}</td>
@@ -535,7 +514,7 @@
                     <tbody>
                         {% for batch in batches %}
                         <tr>
-                            <td><span class="id-badge">{{ batch.id }}</span></td>
+                            <td><span class="id-badge" title="{{ batch._id }}">{{ batch._id|string|truncate(8, True, '...') }}</span></td>
                             <td><strong>{{ batch.herb_name }}</strong></td>
                             <td>{{ batch.collector }}</td>
                             <td>{{ batch.farm_location }}</td>
@@ -553,7 +532,7 @@
                                     <em style="color: #a0aec0;">No notes</em>
                                 {% endif %}
                             </td>
-                            <td>User #{{ batch.user_id }}</td>
+                            <td><span class="id-badge" title="{{ batch.user_id }}">User: {{ batch.user_id|string|truncate(8, True, '...') }}</span></td>
                         </tr>
                         {% else %}
                         <tr>
@@ -617,7 +596,6 @@
                 row.style.display = found ? '' : 'none';
             }
         });
-        
 
         // Filter functionality
         function filterUsers(type) {

@@ -145,6 +145,21 @@
             font-weight: 400;
         }
 
+        .batch-id-display {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         .form-group {
             margin-bottom: 1.5rem;
             position: relative;
@@ -197,6 +212,114 @@
         .form-group textarea::placeholder {
             color: #a0aec0;
             font-weight: 300;
+        }
+
+        /* Location section styling */
+        .location-section {
+            background: linear-gradient(45deg, rgba(78, 205, 196, 0.05), rgba(68, 160, 141, 0.05));
+            border: 2px solid rgba(78, 205, 196, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .location-section h3 {
+            color: #2d3748;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .location-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .geolocation-btn {
+            grid-column: 1 / -1;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: #ffffff;
+            border: none;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .geolocation-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .geolocation-btn:hover::before {
+            left: 100%;
+        }
+
+        .geolocation-btn:hover {
+            background: linear-gradient(45deg, #44a08d, #2a9d8f);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+        }
+
+        .geolocation-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .location-status {
+            grid-column: 1 / -1;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+            display: none;
+        }
+
+        .location-status.success {
+            background: linear-gradient(45deg, rgba(56, 161, 105, 0.1), rgba(152, 230, 180, 0.1));
+            border: 1px solid rgba(56, 161, 105, 0.3);
+            color: #2f855a;
+            display: block;
+        }
+
+        .location-status.error {
+            background: linear-gradient(45deg, rgba(229, 62, 62, 0.1), rgba(252, 129, 129, 0.1));
+            border: 1px solid rgba(229, 62, 62, 0.3);
+            color: #c53030;
+            display: block;
+        }
+
+        .location-status.loading {
+            background: linear-gradient(45deg, rgba(66, 153, 225, 0.1), rgba(159, 122, 234, 0.1));
+            border: 1px solid rgba(66, 153, 225, 0.3);
+            color: #3182ce;
+            display: block;
         }
 
         .info-box {
@@ -351,6 +474,10 @@
                 font-size: 1.5rem;
             }
 
+            .location-grid {
+                grid-template-columns: 1fr;
+            }
+
             .button-group {
                 flex-direction: column;
                 align-items: stretch;
@@ -374,6 +501,10 @@
             .form-group input,
             .form-group textarea {
                 padding: 0.8rem 1rem;
+            }
+
+            .location-section {
+                padding: 1rem;
             }
         }
 
@@ -407,7 +538,10 @@
 
         <div class="edit-card">
             <div class="form-title">
-                <h2>Batch #{{ batch.id }}</h2>
+                <div class="batch-id-display" title="{{ batch._id }}">
+                    Batch ID: {{ batch._id|string|truncate(12, True, '...') }}
+                </div>
+                <h2>Edit Herb Batch</h2>
                 <p class="batch-info">Modify the details below to update this herb batch</p>
             </div>
 
@@ -438,14 +572,23 @@
                     <div class="error-message" id="locationError">Please enter farm location</div>
                 </div>
 
-                <div class="form-group">
-                    <label for="latitude">🌐 Latitude</label>
-                    <input type="text" name="latitude" id="latitude" value="{{ batch.latitude or '' }}" placeholder="Enter latitude (optional)">
-                </div>
-
-                <div class="form-group">
-                    <label for="longitude">🌐 Longitude</label>
-                    <input type="text" name="longitude" id="longitude" value="{{ batch.longitude or '' }}" placeholder="Enter longitude (optional)">
+                <!-- Enhanced Location Section -->
+                <div class="location-section">
+                    <h3>🌍 Geographic Location</h3>
+                    <div class="location-grid">
+                        <div class="form-group">
+                            <label for="latitude">🌐 Latitude</label>
+                            <input type="text" name="latitude" id="latitude" value="{{ batch.latitude or '' }}" placeholder="Enter latitude">
+                        </div>
+                        <div class="form-group">
+                            <label for="longitude">🌐 Longitude</label>
+                            <input type="text" name="longitude" id="longitude" value="{{ batch.longitude or '' }}" placeholder="Enter longitude">
+                        </div>
+                        <button type="button" class="geolocation-btn" id="getLocationBtn" onclick="getLocation()">
+                            📍 Get My Current Location
+                        </button>
+                        <div class="location-status" id="locationStatus"></div>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -467,6 +610,91 @@
     </div>
 
     <script>
+        // Enhanced geolocation function
+        function getLocation() {
+            const button = document.getElementById('getLocationBtn');
+            const status = document.getElementById('locationStatus');
+            const latInput = document.getElementById('latitude');
+            const lngInput = document.getElementById('longitude');
+            
+            if (!navigator.geolocation) {
+                showLocationStatus('error', '❌ Geolocation is not supported by your browser');
+                return;
+            }
+            
+            // Show loading state
+            button.disabled = true;
+            button.innerHTML = '📍 Getting location...';
+            showLocationStatus('loading', '🔍 Locating your position...');
+            
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 60000
+            };
+            
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude.toFixed(6);
+                    const lng = position.coords.longitude.toFixed(6);
+                    const accuracy = position.coords.accuracy;
+                    
+                    latInput.value = lat;
+                    lngInput.value = lng;
+                    
+                    // Add success styling to location inputs
+                    latInput.closest('.form-group').classList.add('success');
+                    lngInput.closest('.form-group').classList.add('success');
+                    
+                    showLocationStatus('success', `✅ Location captured successfully! (Accuracy: ${Math.round(accuracy)}m)`);
+                    
+                    button.innerHTML = '✅ Location Captured!';
+                    button.style.background = 'linear-gradient(45deg, #38a169, #48bb78)';
+                    
+                    setTimeout(() => {
+                        button.innerHTML = '📍 Get My Current Location';
+                        button.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
+                        button.disabled = false;
+                    }, 3000);
+                },
+                function(error) {
+                    let errorMessage = '';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = '❌ Location access denied. Please enable location permissions.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = '❌ Location information unavailable. Please try again.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = '❌ Location request timed out. Please try again.';
+                            break;
+                        default:
+                            errorMessage = '❌ An unknown error occurred while getting location.';
+                            break;
+                    }
+                    
+                    showLocationStatus('error', errorMessage);
+                    
+                    button.innerHTML = '📍 Get My Current Location';
+                    button.disabled = false;
+                },
+                options
+            );
+        }
+        
+        function showLocationStatus(type, message) {
+            const status = document.getElementById('locationStatus');
+            status.className = `location-status ${type}`;
+            status.textContent = message;
+            
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 5000);
+            }
+        }
+
         // Form validation
         function validateForm() {
             const herbName = document.getElementById('herb_name').value.trim();
@@ -560,20 +788,6 @@
             buttonText.textContent = '💾 Updating...';
             loading.style.display = 'inline-block';
             button.disabled = true;
-            
-            // Simulate update process (remove this in production)
-            setTimeout(() => {
-                const successMsg = document.getElementById('successMessage');
-                successMsg.style.display = 'block';
-                
-                buttonText.textContent = '✅ Updated!';
-                loading.style.display = 'none';
-                button.style.background = 'linear-gradient(45deg, #38a169, #48bb78)';
-                
-                setTimeout(() => {
-                    window.location.href = "{{ url_for('dashboard') }}";
-                }, 1500);
-            }, 1000);
         });
 
         // Add focus animations
@@ -591,6 +805,16 @@
         document.getElementById('notes').addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // Show current location if available
+        document.addEventListener('DOMContentLoaded', function() {
+            const latInput = document.getElementById('latitude');
+            const lngInput = document.getElementById('longitude');
+            
+            if (latInput.value && lngInput.value) {
+                showLocationStatus('success', `📍 Current coordinates: ${latInput.value}, ${lngInput.value}`);
+            }
         });
     </script>
 </body>
