@@ -1,7 +1,7 @@
 from flask import Flask, render_template, send_from_directory, redirect, url_for, request, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, HerbBatch, User
-import qrcode, os, random, tempfile
+import qrcode, os, random
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ayutrace.db'
@@ -10,14 +10,43 @@ app.config['SECRET_KEY'] = 'supersecretkey'  # Change in production
 
 db.init_app(app)
 
-# Create uploads directory for profile photos (using temp directory for serverless)
-UPLOAD_DIR = os.path.join(tempfile.gettempdir(), 'uploads')
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+# Create uploads directory for profile photos
+os.makedirs('static/uploads', exist_ok=True)
 
 with app.app_context():
     db.create_all()
+    
+    # Create admin user if it doesn't exist
+    admin_user = User.query.filter_by(username='admin').first()
+    if not admin_user:
+        admin_user = User(
+            full_name='admin',
+            username='admin',
+            password_hash=generate_password_hash('Vigilant@Voices'),
+            mobile_number='9999999999'
+        )
+        db.session.add(admin_user)
+        db.session.commit()
+        print("✅ Admin user created successfully!")
+        print("Username: admin")
+        print("Password: Vigilant@Voices")
+        print("Mobile: 9999999999")
 
 otp_store = {}  # Temporary OTP store
+
+# ---------- Debug Route ----------
+@app.route('/debug_session')
+def debug_session():
+    """Debug route to check session data"""
+    return f"""
+    <h2>Session Debug Info</h2>
+    <p><strong>Session Data:</strong> {dict(session)}</p>
+    <p><strong>User ID:</strong> {session.get('user_id', 'Not set')}</p>
+    <p><strong>Username:</strong> {session.get('username', 'Not set')}</p>
+    <p><strong>Is logged in:</strong> {'Yes' if 'user_id' in session else 'No'}</p>
+    <br>
+    <a href="/dashboard">Go to Dashboard</a> | <a href="/login">Go to Login</a>
+    """
 
 # ---------- Auth Guard ----------
 def login_required(f):
@@ -86,25 +115,49 @@ def login():
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
         
+        print(f"🔍 Login attempt - Username: '{username}'")  # Debug
+        
         if not username or not password:
             flash("Username and password are required", "danger")
             return render_template('login.html')
         
         user = User.query.filter_by(username=username).first()
-        if user and check_password_hash(user.password_hash, password):
-            # Clear any existing flash messages before login
-            session.pop('_flashes', None)
+        print(f"🔍 User found in database: {user is not None}")  # Debug
+        
+        if user:
+            print(f"🔍 User details - ID: {user.id}, Username: {user.username}")  # Debug
+            password_match = check_password_hash(user.password_hash, password)
+            print(f"🔍 Password match: {password_match}")  # Debug
             
-            session['user_id'] = user.id
-            session['username'] = user.username
-            flash("Welcome back!", "success")
-            return redirect(url_for('dashboard'))
+            if password_match:
+                # Clear any existing flash messages before login
+                session.pop('_flashes', None)
+                
+                session['user_id'] = user.id
+                session['username'] = user.username
+                
+                print(f"✅ Login successful! Session set - User ID: {session['user_id']}")  # Debug
+                
+                # Show admin welcome message for admin user
+                if user.username == 'admin':
+                    flash("Welcome back, Administrator! 🔧", "success")
+                    print("🔧 Admin user logged in!")  # Debug
+                else:
+                    flash("Welcome back!", "success")
+                
+                return redirect(url_for('dashboard'))
+            else:
+                flash("Invalid password", "danger")
+                print("❌ Password mismatch")  # Debug
         else:
-            flash("Invalid username or password", "danger")
+            flash("Username not found", "danger")
+            print("❌ Username not found in database")  # Debug
+    
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
+    print(f"🔍 Logout - Current user: {session.get('username', 'None')}")  # Debug
     # Clear all session data including flash messages
     session.clear()
     flash("You have been logged out successfully", "info")
@@ -215,7 +268,7 @@ def profile():
                 return redirect(url_for('profile'))
             user.password_hash = generate_password_hash(new_password)
 
-        # Handle profile photo upload (modified for serverless)
+        # Handle profile photo upload
         if 'profile_photo' in request.files:
             file = request.files['profile_photo']
             if file and file.filename:
@@ -236,13 +289,13 @@ def profile():
                     flash("File size too large. Please upload files smaller than 5MB.", "danger")
                     return redirect(url_for('profile'))
                 
-                # Save file to temp directory for serverless
+                # Save file
                 filename = f"user_{user.id}_{file.filename}"
-                filepath = os.path.join(UPLOAD_DIR, filename)
+                filepath = os.path.join('static/uploads', filename)
                 
                 # Remove old profile photo if exists
                 if user.profile_photo:
-                    old_path = os.path.join(UPLOAD_DIR, user.profile_photo)
+                    old_path = os.path.join('static/uploads', user.profile_photo)
                     if os.path.exists(old_path):
                         os.remove(old_path)
                 
@@ -264,8 +317,10 @@ def profile():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    print(f"🔍 Dashboard accessed by user ID: {session.get('user_id')}")  # Debug
     batches = HerbBatch.query.filter_by(user_id=session['user_id']).order_by(HerbBatch.id.desc()).all()
     user = User.query.get(session['user_id'])
+    print(f"🔍 Dashboard loaded for user: {user.username if user else 'None'}")  # Debug
     return render_template('dashboard.html', herb_batches=batches, user=user)
 
 # ---------- Add Batch ----------
@@ -399,13 +454,10 @@ def generate_qr(batch_id):
     try:
         url = url_for('provenance', batch_id=batch_id, _external=True)
         img = qrcode.make(url)
-        
-        # Use temporary directory for serverless
-        qr_filename = f'qr_{batch_id}.png'
-        qr_path = os.path.join(tempfile.gettempdir(), qr_filename)
-        img.save(qr_path)
-        
-        return send_from_directory(tempfile.gettempdir(), qr_filename)
+        os.makedirs('static', exist_ok=True)
+        out_path = os.path.join('static', f'qr_{batch_id}.png')
+        img.save(out_path)
+        return send_from_directory('static', f'qr_{batch_id}.png')
     except Exception as e:
         flash("An error occurred while generating QR code. Please try again.", "danger")
         return redirect(url_for('dashboard'))
@@ -421,10 +473,13 @@ def scan():
 @login_required
 def admin_panel():
     user = User.query.get(session['user_id'])
+    print(f"🔍 Admin panel access attempt by: {user.username if user else 'None'}")  # Debug
+    
     if not user or user.username != 'admin':
         flash("Admin access required", "danger")
         return redirect(url_for('dashboard'))
     
+    print("✅ Admin panel access granted")  # Debug
     users = User.query.order_by(User.id.desc()).all()
     batches = HerbBatch.query.order_by(HerbBatch.id.desc()).all()
     return render_template('admin.html', users=users, batches=batches)
@@ -441,4 +496,5 @@ def internal_error(error):
     flash("An internal error occurred. Please try again.", "danger")
     return redirect(url_for('dashboard'))
 
-# Removed the if __name__ == '__main__' block for Vercel deployment
+if __name__ == '__main__':
+    app.run(debug=True)
