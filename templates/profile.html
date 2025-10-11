@@ -1,11 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <title>Profile | AyushVed</title>
+    <title>Profile | AyushVed Blockchain</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        /* Theme Variables */
+        :root {
+            /* Light Theme Variables */
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #a8e6cf 75%, #4ecdc4 100%);
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(255, 255, 255, 0.3);
+            --header-bg: rgba(255, 255, 255, 0.15);
+            --header-border: rgba(255, 255, 255, 0.2);
+            --header-text: #ffffff;
+            --input-bg: #f8fafc;
+            --input-border: #e2e8f0;
+            --input-focus-bg: #ffffff;
+            --input-text: #2d3748;
+            --input-placeholder: #a0aec0;
+            --section-bg: rgba(102, 126, 234, 0.02);
+            --section-border: rgba(102, 126, 234, 0.1);
+            --grain-pattern: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="80" cy="80" r="0.5" fill="%23ffffff" opacity="0.08"/><circle cx="40" cy="60" r="0.5" fill="%23ffffff" opacity="0.09"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            --brand-gradient: linear-gradient(45deg, #667eea, #764ba2);
+            --button-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --button-hover-gradient: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme Variables */
+            --bg-gradient: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 25%, #2d2d2d 50%, #1e1e1e 75%, #0a0a0a 100%);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --card-bg: rgba(20, 24, 32, 0.95);
+            --card-border: rgba(148, 163, 184, 0.3);
+            --header-bg: rgba(15, 23, 42, 0.3);
+            --header-border: rgba(148, 163, 184, 0.2);
+            --header-text: #f8fafc;
+            --input-bg: #1e293b;
+            --input-border: #475569;
+            --input-focus-bg: #0f172a;
+            --input-text: #f8fafc;
+            --input-placeholder: #64748b;
+            --section-bg: rgba(59, 130, 246, 0.08);
+            --section-border: rgba(59, 130, 246, 0.2);
+            --grain-pattern: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="0.5" fill="%23ffffff" opacity="0.02"/><circle cx="80" cy="80" r="0.5" fill="%23ffffff" opacity="0.015"/><circle cx="40" cy="60" r="0.5" fill="%23ffffff" opacity="0.025"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            --brand-gradient: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            --button-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+            --button-hover-gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%);
+        }
         
         * {
             margin: 0;
@@ -15,11 +62,12 @@
         
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #a8e6cf 75%, #4ecdc4 100%);
+            background: var(--bg-gradient);
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
             padding: 2rem 1rem;
+            transition: all 0.5s ease;
         }
         
         body::before {
@@ -29,7 +77,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="80" cy="80" r="0.5" fill="%23ffffff" opacity="0.08"/><circle cx="40" cy="60" r="0.5" fill="%23ffffff" opacity="0.09"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            background: var(--grain-pattern);
             pointer-events: none;
             z-index: 0;
         }
@@ -42,16 +90,21 @@
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.15);
+            background: var(--header-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--header-border);
             padding: 2rem;
             border-radius: 20px;
             margin-bottom: 2rem;
             text-align: center;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             animation: slideDown 0.8s ease-out;
+            transition: all 0.5s ease;
+        }
+
+        [data-theme="dark"] .header {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
         }
 
         @keyframes slideDown {
@@ -66,12 +119,20 @@
         }
 
         .header h1 {
-            color: #ffffff;
+            color: var(--header-text);
             font-size: 2.5rem;
             font-weight: 700;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
             margin-bottom: 0.5rem;
             background: linear-gradient(45deg, #ffffff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .header h1 {
+            background: linear-gradient(45deg, #f8fafc, #e2e8f0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -81,13 +142,14 @@
             color: rgba(255, 255, 255, 0.9);
             font-size: 1.1rem;
             font-weight: 400;
+            transition: color 0.3s ease;
         }
 
         .profile-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--card-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid var(--card-border);
             border-radius: 20px;
             padding: 2.5rem;
             box-shadow: 
@@ -97,6 +159,13 @@
             overflow: hidden;
             animation: slideUp 0.8s ease-out 0.2s both;
             margin-bottom: 2rem;
+            transition: all 0.5s ease;
+        }
+
+        [data-theme="dark"] .profile-card {
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.4),
+                0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         @keyframes slideUp {
@@ -117,8 +186,16 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4ecdc4);
             border-radius: 20px 20px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .profile-card::before {
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4ecdc4);
+        }
+
+        [data-theme="dark"] .profile-card::before {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #10b981);
         }
 
         .profile-header {
@@ -126,6 +203,11 @@
             margin-bottom: 2rem;
             padding-bottom: 1.5rem;
             border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+            transition: border-color 0.3s ease;
+        }
+
+        [data-theme="dark"] .profile-header {
+            border-bottom-color: rgba(59, 130, 246, 0.2);
         }
 
         .profile-photo-container {
@@ -144,16 +226,24 @@
             transition: all 0.3s ease;
         }
 
+        [data-theme="dark"] .profile-photo {
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
         .profile-photo:hover {
             transform: scale(1.05);
             box-shadow: 0 12px 35px rgba(102, 126, 234, 0.2);
+        }
+
+        [data-theme="dark"] .profile-photo:hover {
+            box-shadow: 0 12px 35px rgba(59, 130, 246, 0.3);
         }
 
         .default-avatar {
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: var(--brand-gradient);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -161,6 +251,11 @@
             color: white;
             border: 4px solid rgba(102, 126, 234, 0.2);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .default-avatar {
+            border-color: rgba(59, 130, 246, 0.3);
         }
 
         .user-id-badge {
@@ -180,19 +275,21 @@
         }
 
         .profile-name {
-            color: #2d3748;
+            color: var(--text-primary);
             font-size: 1.8rem;
             font-weight: 600;
             margin: 0.5rem 0;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: var(--brand-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            transition: all 0.3s ease;
         }
 
         .profile-info {
-            color: #718096;
+            color: var(--text-secondary);
             font-size: 1rem;
+            transition: color 0.3s ease;
         }
 
         /* Flash Messages */
@@ -206,6 +303,7 @@
             margin-bottom: 1rem;
             font-weight: 500;
             animation: slideIn 0.5s ease;
+            transition: all 0.3s ease;
         }
 
         @keyframes slideIn {
@@ -225,6 +323,12 @@
             color: #2f855a;
         }
 
+        [data-theme="dark"] .alert-success {
+            background: linear-gradient(45deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.15));
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #22c55e;
+        }
+
         .alert-success::before {
             content: '✅';
             margin-right: 8px;
@@ -234,6 +338,12 @@
             background: linear-gradient(45deg, rgba(229, 62, 62, 0.1), rgba(252, 129, 129, 0.1));
             border: 1px solid rgba(229, 62, 62, 0.3);
             color: #c53030;
+        }
+
+        [data-theme="dark"] .alert-danger {
+            background: linear-gradient(45deg, rgba(248, 113, 113, 0.15), rgba(239, 68, 68, 0.15));
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            color: #f87171;
         }
 
         .alert-danger::before {
@@ -247,6 +357,12 @@
             color: #3182ce;
         }
 
+        [data-theme="dark"] .alert-info {
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #60a5fa;
+        }
+
         .alert-info::before {
             content: 'ℹ️';
             margin-right: 8px;
@@ -258,20 +374,22 @@
         }
 
         .form-section {
-            background: rgba(102, 126, 234, 0.02);
-            border: 1px solid rgba(102, 126, 234, 0.1);
+            background: var(--section-bg);
+            border: 1px solid var(--section-border);
             border-radius: 16px;
             padding: 2rem;
+            transition: all 0.3s ease;
         }
 
         .section-title {
-            color: #2d3748;
+            color: var(--text-primary);
             font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            transition: color 0.3s ease;
         }
 
         .form-grid {
@@ -295,16 +413,21 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        [data-theme="dark"] .form-group label {
+            color: #94a3b8;
         }
 
         .form-group input,
         .form-group textarea {
             width: 100%;
             padding: 1rem 1.2rem;
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--input-border);
             border-radius: 12px;
-            background: #f8fafc;
-            color: #2d3748;
+            background: var(--input-bg);
+            color: var(--input-text);
             font-size: 1rem;
             font-weight: 400;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -314,29 +437,57 @@
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
+            background: var(--input-focus-bg);
+            transform: translateY(-2px);
+        }
+
+        [data-theme="light"] .form-group input:focus,
+        [data-theme="light"] .form-group textarea:focus {
             border-color: #667eea;
-            background: #ffffff;
             box-shadow: 
                 0 0 0 3px rgba(102, 126, 234, 0.1),
                 0 4px 20px rgba(102, 126, 234, 0.15);
-            transform: translateY(-2px);
+        }
+
+        [data-theme="dark"] .form-group input:focus,
+        [data-theme="dark"] .form-group textarea:focus {
+            border-color: #3b82f6;
+            box-shadow: 
+                0 0 0 3px rgba(59, 130, 246, 0.2),
+                0 4px 20px rgba(59, 130, 246, 0.25);
         }
 
         .form-group input::placeholder,
         .form-group textarea::placeholder {
-            color: #a0aec0;
+            color: var(--input-placeholder);
             font-weight: 300;
         }
 
         /* Input validation styles */
         .form-group.error input {
             border-color: #e53e3e;
+        }
+
+        [data-theme="light"] .form-group.error input {
             background: #fed7d7;
+        }
+
+        [data-theme="dark"] .form-group.error input {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
         }
 
         .form-group.success input {
             border-color: #38a169;
+        }
+
+        [data-theme="light"] .form-group.success input {
             background: #f0fff4;
+        }
+
+        [data-theme="dark"] .form-group.success input {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: #22c55e;
         }
 
         .file-upload {
@@ -407,15 +558,27 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: var(--button-gradient);
             color: #ffffff;
+        }
+
+        [data-theme="light"] .btn-primary {
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        [data-theme="dark"] .btn-primary {
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
         }
 
         .btn-secondary {
             background: rgba(255, 255, 255, 0.8);
-            color: #2d3748;
+            color: var(--text-primary);
             border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        [data-theme="dark"] .btn-secondary {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(59, 130, 246, 0.3);
         }
 
         .btn::before {
@@ -438,14 +601,30 @@
         }
 
         .btn-primary:hover {
+            background: var(--button-hover-gradient);
+        }
+
+        [data-theme="light"] .btn-primary:hover {
             box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
-            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
+        }
+
+        [data-theme="dark"] .btn-primary:hover {
+            box-shadow: 0 12px 35px rgba(59, 130, 246, 0.5);
         }
 
         .btn-secondary:hover {
-            background: rgba(102, 126, 234, 0.1);
             border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        [data-theme="light"] .btn-secondary:hover {
+            background: rgba(102, 126, 234, 0.1);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        [data-theme="dark"] .btn-secondary:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
         }
 
         .btn:disabled {
@@ -528,8 +707,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>👤 My Profile</h1>
-            <p>Manage your account information and settings</p>
+            <h1>👤⛓️ Blockchain Profile</h1>
+            <p>Manage your immutable account information and blockchain settings</p>
         </div>
 
         <div class="profile-card">
@@ -549,12 +728,12 @@
             <div class="profile-header">
                 <!-- MongoDB ObjectId Badge -->
                 <div class="user-id-badge" title="{{ user._id }}">
-                    User ID: {{ user._id|string|truncate(12, True, '...') }}
+                    ⛓️ Blockchain ID: {{ user._id|string|truncate(12, True, '...') }}
                 </div>
                 
                 <div class="profile-photo-container">
                     {% if user.profile_photo %}
-                        <img src="{{ url_for('static', filename='uploads/' + user.profile_photo) }}" 
+                        <img src="{{ url_for('static', filename='uploads/profiles/' + user.profile_photo) }}" 
                              alt="Profile Photo" class="profile-photo">
                     {% else %}
                         <div class="default-avatar">
@@ -562,24 +741,34 @@
                         </div>
                     {% endif %}
                 </div>
-                <h2 class="profile-name">{{ user.full_name or user.username or 'User' }}</h2>
+                <h2 class="profile-name">{{ user.full_name or user.username or 'Blockchain User' }}</h2>
                 <p class="profile-info">
                     {% if user.email %}
-                        {{ user.email }}
+                        📧 {{ user.email }}
                     {% elif user.mobile_number %}
                         📱 {{ user.mobile_number }}
                     {% else %}
                         @{{ user.username }}
                     {% endif %}
                 </p>
+                {% if user.created_at %}
+                <p class="profile-meta">
+                    🗓️ Member since {{ user.created_at.strftime('%B %Y') }}
+                </p>
+                {% endif %}
             </div>
 
             <form method="POST" enctype="multipart/form-data" id="profileForm">
+                <!-- CSRF Token for Flask-WTF if used -->
+                {% if csrf_token %}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}"/>
+                {% endif %}
+                
                 <div class="form-sections">
                     <!-- Personal Information -->
                     <div class="form-section">
                         <h3 class="section-title">
-                            👤 Personal Information
+                            👤⛓️ Blockchain Identity
                         </h3>
                         <div class="form-grid">
                             <div class="form-group" id="fullNameGroup">
@@ -587,38 +776,81 @@
                                 <input type="text" name="full_name" id="full_name" 
                                        value="{{ user.full_name or '' }}" 
                                        placeholder="Enter your full name" 
-                                       required minlength="2">
+                                       required minlength="2" maxlength="100"
+                                       autocomplete="name">
                             </div>
                             <div class="form-group" id="usernameGroup">
                                 <label for="username">👤 Username</label>
                                 <input type="text" name="username" id="username" 
                                        value="{{ user.username or '' }}" 
                                        placeholder="Enter your username" 
-                                       required minlength="3"
-                                       pattern="[a-zA-Z0-9_]+">
+                                       required minlength="3" maxlength="30"
+                                       pattern="[a-zA-Z0-9_]+"
+                                       autocomplete="username">
                             </div>
                             <div class="form-group" id="emailGroup">
                                 <label for="email">📧 Email Address</label>
                                 <input type="email" name="email" id="email" 
                                        value="{{ user.email or '' }}" 
-                                       placeholder="Enter your email address">
+                                       placeholder="Enter your email address"
+                                       maxlength="150"
+                                       autocomplete="email">
                             </div>
                             <div class="form-group" id="mobileGroup">
                                 <label for="mobile_number">📱 Mobile Number</label>
                                 <input type="tel" name="mobile_number" id="mobile_number" 
                                        value="{{ user.mobile_number or '' }}" 
-                                       placeholder="Enter your mobile number" 
-                                       required maxlength="10" pattern="[0-9]{10}">
+                                       placeholder="Enter 10-digit mobile number" 
+                                       required maxlength="10" pattern="[6-9][0-9]{9}"
+                                       autocomplete="tel">
                             </div>
                             <div class="form-group">
                                 <label for="profile_photo">📷 Profile Photo</label>
                                 <div class="file-upload">
                                     <input type="file" name="profile_photo" id="profile_photo" 
-                                           accept="image/*">
+                                           accept="image/jpeg,image/jpg,image/png,image/gif"
+                                           max-size="5242880">
                                     <label for="profile_photo" class="file-upload-label">
-                                        📁 Choose New Photo
+                                        📁 Choose New Photo (Max 5MB)
                                     </label>
+                                    {% if user.profile_photo %}
+                                    <small class="current-file">
+                                        Current: {{ user.profile_photo }}
+                                    </small>
+                                    {% endif %}
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Profile Information -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            ℹ️⛓️ Additional Information
+                        </h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="designation">💼 Designation</label>
+                                <input type="text" name="designation" id="designation" 
+                                       value="{{ user.designation or '' }}" 
+                                       placeholder="Your role/designation"
+                                       maxlength="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="organization">🏢 Organization</label>
+                                <input type="text" name="organization" id="organization" 
+                                       value="{{ user.organization or '' }}" 
+                                       placeholder="Your organization/company"
+                                       maxlength="150">
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label for="bio">📋 Bio</label>
+                                <textarea name="bio" id="bio" rows="3" 
+                                         placeholder="Tell us about yourself..."
+                                         maxlength="500">{{ user.bio or '' }}</textarea>
+                                <small class="char-count">
+                                    <span id="bioCount">{{ user.bio|length if user.bio else 0 }}</span>/500 characters
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -626,25 +858,34 @@
                     <!-- Password Change -->
                     <div class="form-section password-section">
                         <h3 class="section-title">
-                            🔒 Change Password
+                            🔒⛓️ Secure Password Management
                         </h3>
+                        <div class="password-info">
+                            <p>🔐 To change your password, you must provide your current password for security verification.</p>
+                        </div>
                         <div class="password-grid">
                             <div class="form-group" id="currentPasswordGroup">
                                 <label for="current_password">🔐 Current Password</label>
                                 <input type="password" name="current_password" id="current_password" 
-                                       placeholder="Enter current password (required to change password)">
+                                       placeholder="Enter current password (required to change password)"
+                                       autocomplete="current-password">
                             </div>
                             <div class="form-group" id="newPasswordGroup">
                                 <label for="new_password">🔑 New Password</label>
                                 <input type="password" name="new_password" id="new_password" 
                                        placeholder="Enter new password (leave blank to keep current)"
-                                       minlength="8">
+                                       minlength="8" maxlength="128"
+                                       autocomplete="new-password">
+                                <small class="password-help">
+                                    Minimum 8 characters, include letters and numbers
+                                </small>
                             </div>
                             <div class="form-group" id="confirmPasswordGroup">
-                                <label for="confirm_password">✅ Confirm Password</label>
+                                <label for="confirm_password">✅ Confirm New Password</label>
                                 <input type="password" name="confirm_password" id="confirm_password" 
                                        placeholder="Confirm new password"
-                                       minlength="8">
+                                       minlength="8" maxlength="128"
+                                       autocomplete="new-password">
                             </div>
                         </div>
                     </div>
@@ -652,23 +893,98 @@
 
                 <div class="button-group">
                     <button type="submit" class="btn btn-primary" id="saveBtn">
-                        💾 Save Changes
+                        💾⛓️ Update Blockchain Profile
                         <div class="loading" id="loadingSpinner"></div>
                     </button>
                     <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
                         ← Back to Dashboard
                     </a>
+                    {% if current_user and current_user.is_admin %}
+                    <a href="{{ url_for('admin_panel') }}" class="btn btn-admin">
+                        🔧 Admin Panel
+                    </a>
+                    {% endif %}
                 </div>
             </form>
         </div>
     </div>
 
     <script>
+        // 🌟 THEME SYNCHRONIZATION SYSTEM (Dashboard-Controlled) 🌟
+        
+        // Initialize theme immediately (before DOMContentLoaded) for seamless loading
+        (function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            console.log('🎨 Profile: Initializing with saved theme:', savedTheme);
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+
+        // Listen for theme changes from dashboard or other pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme' && e.newValue) {
+                console.log('🔄 Profile: Received theme change from dashboard:', e.newValue);
+                document.documentElement.setAttribute('data-theme', e.newValue);
+            }
+        });
+
+        // Listen for custom theme change events (for same-page components)
+        window.addEventListener('themeChanged', function(e) {
+            console.log('🔄 Profile: Received theme change event:', e.detail.theme);
+            document.documentElement.setAttribute('data-theme', e.detail.theme);
+        });
+
+        // Enhanced DOMContentLoaded with theme synchronization
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Profile: DOM loaded, setting up theme synchronization...');
+            
+            // Ensure theme is properly loaded
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            
+            console.log('📊 Profile: Current theme:', currentTheme, '| Saved theme:', savedTheme);
+            
+            // Sync if there's a mismatch
+            if (currentTheme !== savedTheme) {
+                console.log('🔧 Profile: Syncing theme mismatch...');
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+            
+            // Auto-hide flash messages
+            const flashMessages = document.querySelectorAll('.alert:not(.temp-message)');
+            flashMessages.forEach(msg => {
+                setTimeout(() => {
+                    if (msg.parentNode) {
+                        msg.style.opacity = '0';
+                        msg.style.transform = 'translateY(-10px)';
+                        setTimeout(() => msg.remove(), 300);
+                    }
+                }, 8000);
+            });
+
+            console.log('✅ Profile: Theme synchronization setup complete!');
+        });
+
+        // Sync theme when page becomes visible (handles browser tab switching)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                
+                if (currentTheme !== savedTheme) {
+                    console.log('👁️ Profile: Page visible - syncing theme:', savedTheme);
+                    document.documentElement.setAttribute('data-theme', savedTheme);
+                }
+            }
+        });
+
+        // 🔧 ENHANCED FORM FUNCTIONALITY
+
         // Enhanced form validation for MongoDB
         function validateForm() {
             const fullName = document.getElementById('full_name').value.trim();
             const username = document.getElementById('username').value.trim();
             const mobile = document.getElementById('mobile_number').value.trim();
+            const email = document.getElementById('email').value.trim();
             const currentPassword = document.getElementById('current_password').value;
             const newPassword = document.getElementById('new_password').value;
             const confirmPassword = document.getElementById('confirm_password').value;
@@ -702,10 +1018,19 @@
                 document.getElementById('usernameGroup').classList.add('success');
             }
 
-            // Validate mobile
-            if (mobile.length !== 10 || !/^\d{10}$/.test(mobile)) {
+            // Validate email (if provided)
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('emailGroup').classList.add('error');
+                showTemporaryMessage('Please enter a valid email address', 'danger');
+                isValid = false;
+            } else if (email) {
+                document.getElementById('emailGroup').classList.add('success');
+            }
+
+            // Validate mobile (Indian format)
+            if (mobile.length !== 10 || !/^[6-9]\d{9}$/.test(mobile)) {
                 document.getElementById('mobileGroup').classList.add('error');
-                showTemporaryMessage('Please enter a valid 10-digit mobile number', 'danger');
+                showTemporaryMessage('Please enter a valid 10-digit Indian mobile number', 'danger');
                 isValid = false;
             } else {
                 document.getElementById('mobileGroup').classList.add('success');
@@ -728,10 +1053,23 @@
                     showTemporaryMessage('New password must be at least 8 characters', 'danger');
                     isValid = false;
                 }
+                if (newPassword && !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/.test(newPassword)) {
+                    document.getElementById('newPasswordGroup').classList.add('error');
+                    showTemporaryMessage('Password must contain at least one letter and one number', 'danger');
+                    isValid = false;
+                }
                 if (isValid && newPassword) {
                     document.getElementById('newPasswordGroup').classList.add('success');
                     document.getElementById('confirmPasswordGroup').classList.add('success');
+                    document.getElementById('currentPasswordGroup').classList.add('success');
                 }
+            }
+
+            // File size validation
+            const photoFile = document.getElementById('profile_photo').files[0];
+            if (photoFile && photoFile.size > 5 * 1024 * 1024) { // 5MB
+                showTemporaryMessage('Profile photo must be less than 5MB', 'danger');
+                isValid = false;
             }
 
             return isValid;
@@ -757,12 +1095,28 @@
             setTimeout(() => msgDiv.remove(), 5000);
         }
 
-        // File upload preview
+        // File upload preview and validation
         document.getElementById('profile_photo').addEventListener('change', function() {
             const file = this.files[0];
             const label = this.nextElementSibling;
             
             if (file) {
+                // Validate file size
+                if (file.size > 5 * 1024 * 1024) {
+                    showTemporaryMessage('File size must be less than 5MB', 'danger');
+                    this.value = '';
+                    label.textContent = '📁 Choose New Photo (Max 5MB)';
+                    return;
+                }
+
+                // Validate file type
+                if (!file.type.match(/^image\/(jpeg|jpg|png|gif)$/)) {
+                    showTemporaryMessage('Please select a valid image file (JPEG, PNG, GIF)', 'danger');
+                    this.value = '';
+                    label.textContent = '📁 Choose New Photo (Max 5MB)';
+                    return;
+                }
+
                 label.textContent = `📁 ${file.name}`;
                 label.style.background = 'linear-gradient(45deg, #38a169, #48bb78)';
                 
@@ -787,21 +1141,38 @@
                 };
                 reader.readAsDataURL(file);
             } else {
-                label.textContent = '📁 Choose New Photo';
+                label.textContent = '📁 Choose New Photo (Max 5MB)';
                 label.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
             }
         });
 
-        // Real-time validation
+        // Real-time mobile number validation
         document.getElementById('mobile_number').addEventListener('input', function() {
             let value = this.value.replace(/\D/g, '');
             if (value.length > 10) value = value.slice(0, 10);
             this.value = value;
             
             const group = document.getElementById('mobileGroup');
-            if (value.length === 10) {
+            if (value.length === 10 && /^[6-9]/.test(value)) {
                 group.classList.remove('error');
                 group.classList.add('success');
+            } else if (value.length > 0) {
+                group.classList.remove('success', 'error');
+            }
+        });
+
+        // Bio character count
+        document.getElementById('bio').addEventListener('input', function() {
+            const count = this.value.length;
+            const counter = document.getElementById('bioCount');
+            counter.textContent = count;
+            
+            if (count > 450) {
+                counter.parentElement.style.color = '#e53e3e';
+            } else if (count > 400) {
+                counter.parentElement.style.color = '#f59e0b';
+            } else {
+                counter.parentElement.style.color = 'var(--text-secondary)';
             }
         });
 
@@ -835,10 +1206,14 @@
             // Show loading state
             button.disabled = true;
             loading.style.display = 'inline-block';
+            button.querySelector('.btn-text') ? 
+                (button.querySelector('.btn-text').style.display = 'none') : 
+                (button.childNodes[0].textContent = '💾 Updating...');
             
             // Add success styling to validated inputs
             document.querySelectorAll('.form-group:not(.error)').forEach(group => {
-                if (group.querySelector('input').value.trim()) {
+                const input = group.querySelector('input, textarea');
+                if (input && input.value.trim()) {
                     group.classList.add('success');
                 }
             });
@@ -855,18 +1230,19 @@
             });
         });
 
-        // Auto-hide flash messages
-        document.addEventListener('DOMContentLoaded', function() {
-            const flashMessages = document.querySelectorAll('.alert:not(.temp-message)');
-            flashMessages.forEach(msg => {
-                setTimeout(() => {
-                    if (msg.parentNode) {
-                        msg.style.opacity = '0';
-                        msg.style.transform = 'translateY(-10px)';
-                        setTimeout(() => msg.remove(), 300);
-                    }
-                }, 8000);
-            });
+        // Username availability check (optional)
+        let usernameTimeout;
+        document.getElementById('username').addEventListener('input', function() {
+            const username = this.value.trim();
+            
+            clearTimeout(usernameTimeout);
+            
+            if (username.length >= 3 && /^[a-zA-Z0-9_]+$/.test(username)) {
+                usernameTimeout = setTimeout(() => {
+                    // Optional: Add AJAX call to check username availability
+                    console.log('Checking username availability:', username);
+                }, 500);
+            }
         });
     </script>
 </body>

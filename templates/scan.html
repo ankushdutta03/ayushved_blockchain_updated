@@ -1,11 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <title>Scan | AyushVed</title>
+    <title>Scan | AyushVed Blockchain</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        /* Theme Variables */
+        :root {
+            /* Light Theme Variables */
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #a8e6cf 75%, #4ecdc4 100%);
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(255, 255, 255, 0.3);
+            --header-bg: rgba(255, 255, 255, 0.15);
+            --header-border: rgba(255, 255, 255, 0.2);
+            --header-text: #ffffff;
+            --scanner-bg: #f8fafc;
+            --scanner-border: #cbd5e0;
+            --scanner-hover-bg: rgba(102, 126, 234, 0.02);
+            --scanner-icon-color: #a0aec0;
+            --scanner-icon-hover: #667eea;
+            --input-bg: #f8fafc;
+            --input-border: #e2e8f0;
+            --input-focus-bg: #ffffff;
+            --input-text: #2d3748;
+            --input-placeholder: #a0aec0;
+            --feature-bg: rgba(255, 255, 255, 0.8);
+            --feature-border: rgba(102, 126, 234, 0.1);
+            --manual-section-bg: linear-gradient(135deg, rgba(78, 205, 196, 0.05), rgba(168, 230, 207, 0.05));
+            --manual-section-border: rgba(78, 205, 196, 0.1);
+            --instructions-bg: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(240, 147, 251, 0.05));
+            --instructions-border: rgba(102, 126, 234, 0.1);
+            --grain-pattern: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="80" cy="80" r="0.5" fill="%23ffffff" opacity="0.08"/><circle cx="40" cy="60" r="0.5" fill="%23ffffff" opacity="0.09"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            --button-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --button-hover-gradient: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
+            --search-button-gradient: linear-gradient(135deg, #4ecdc4 0%, #44a08d 50%, #2a9d8f 100%);
+            --search-button-hover: linear-gradient(135deg, #44a08d 0%, #2a9d8f 50%, #1a7169 100%);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme Variables */
+            --bg-gradient: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 25%, #2d2d2d 50%, #1e1e1e 75%, #0a0a0a 100%);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --card-bg: rgba(20, 24, 32, 0.95);
+            --card-border: rgba(148, 163, 184, 0.3);
+            --header-bg: rgba(15, 23, 42, 0.3);
+            --header-border: rgba(148, 163, 184, 0.2);
+            --header-text: #f8fafc;
+            --scanner-bg: #1e293b;
+            --scanner-border: #475569;
+            --scanner-hover-bg: rgba(59, 130, 246, 0.08);
+            --scanner-icon-color: #64748b;
+            --scanner-icon-hover: #3b82f6;
+            --input-bg: #1e293b;
+            --input-border: #475569;
+            --input-focus-bg: #0f172a;
+            --input-text: #f8fafc;
+            --input-placeholder: #64748b;
+            --feature-bg: rgba(30, 41, 59, 0.8);
+            --feature-border: rgba(59, 130, 246, 0.2);
+            --manual-section-bg: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(20, 184, 166, 0.08));
+            --manual-section-border: rgba(16, 185, 129, 0.2);
+            --instructions-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.08));
+            --instructions-border: rgba(59, 130, 246, 0.2);
+            --grain-pattern: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="0.5" fill="%23ffffff" opacity="0.02"/><circle cx="80" cy="80" r="0.5" fill="%23ffffff" opacity="0.015"/><circle cx="40" cy="60" r="0.5" fill="%23ffffff" opacity="0.025"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            --button-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+            --button-hover-gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%);
+            --search-button-gradient: linear-gradient(135deg, #0891b2 0%, #0e7490 50%, #155e75 100%);
+            --search-button-hover: linear-gradient(135deg, #0e7490 0%, #155e75 50%, #164e63 100%);
+        }
         
         * {
             margin: 0;
@@ -15,11 +82,12 @@
         
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #a8e6cf 75%, #4ecdc4 100%);
+            background: var(--bg-gradient);
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
             padding: 2rem 1rem;
+            transition: all 0.5s ease;
         }
         
         body::before {
@@ -29,7 +97,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="80" cy="80" r="0.5" fill="%23ffffff" opacity="0.08"/><circle cx="40" cy="60" r="0.5" fill="%23ffffff" opacity="0.09"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            background: var(--grain-pattern);
             pointer-events: none;
             z-index: 0;
         }
@@ -42,16 +110,21 @@
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.15);
+            background: var(--header-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--header-border);
             padding: 2rem;
             border-radius: 20px;
             margin-bottom: 2rem;
             text-align: center;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             animation: slideDown 0.8s ease-out;
+            transition: all 0.5s ease;
+        }
+
+        [data-theme="dark"] .header {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
         }
 
         @keyframes slideDown {
@@ -66,12 +139,20 @@
         }
 
         .header h1 {
-            color: #ffffff;
+            color: var(--header-text);
             font-size: 2.5rem;
             font-weight: 700;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
             margin-bottom: 0.5rem;
             background: linear-gradient(45deg, #ffffff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .header h1 {
+            background: linear-gradient(45deg, #f8fafc, #e2e8f0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -81,13 +162,14 @@
             color: rgba(255, 255, 255, 0.9);
             font-size: 1.1rem;
             font-weight: 400;
+            transition: color 0.3s ease;
         }
 
         .scanner-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--card-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid var(--card-border);
             border-radius: 20px;
             padding: 2.5rem;
             box-shadow: 
@@ -97,6 +179,13 @@
             overflow: hidden;
             animation: slideUp 0.8s ease-out 0.2s both;
             margin-bottom: 2rem;
+            transition: all 0.5s ease;
+        }
+
+        [data-theme="dark"] .scanner-card {
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.4),
+                0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         @keyframes slideUp {
@@ -117,8 +206,16 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4ecdc4);
             border-radius: 20px 20px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .scanner-card::before {
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4ecdc4);
+        }
+
+        [data-theme="dark"] .scanner-card::before {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #10b981);
         }
 
         /* Flash Messages */
@@ -132,6 +229,7 @@
             margin-bottom: 1rem;
             font-weight: 500;
             animation: slideIn 0.5s ease;
+            transition: all 0.3s ease;
         }
 
         @keyframes slideIn {
@@ -151,6 +249,12 @@
             color: #2f855a;
         }
 
+        [data-theme="dark"] .alert-success {
+            background: linear-gradient(45deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.15));
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #22c55e;
+        }
+
         .alert-success::before {
             content: '✅';
             margin-right: 8px;
@@ -160,6 +264,12 @@
             background: linear-gradient(45deg, rgba(229, 62, 62, 0.1), rgba(252, 129, 129, 0.1));
             border: 1px solid rgba(229, 62, 62, 0.3);
             color: #c53030;
+        }
+
+        [data-theme="dark"] .alert-danger {
+            background: linear-gradient(45deg, rgba(248, 113, 113, 0.15), rgba(239, 68, 68, 0.15));
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            color: #f87171;
         }
 
         .alert-danger::before {
@@ -173,14 +283,20 @@
             color: #3182ce;
         }
 
+        [data-theme="dark"] .alert-info {
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #60a5fa;
+        }
+
         .alert-info::before {
             content: 'ℹ️';
             margin-right: 8px;
         }
 
         .scanner-area {
-            background: #f8fafc;
-            border: 3px dashed #cbd5e0;
+            background: var(--scanner-bg);
+            border: 3px dashed var(--scanner-border);
             border-radius: 16px;
             padding: 3rem 2rem;
             text-align: center;
@@ -191,39 +307,41 @@
         }
 
         .scanner-area:hover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.02);
+            border-color: var(--scanner-icon-hover);
+            background: var(--scanner-hover-bg);
             transform: translateY(-2px);
         }
 
         .scanner-icon {
             font-size: 4rem;
-            color: #a0aec0;
+            color: var(--scanner-icon-color);
             margin-bottom: 1rem;
             display: block;
             transition: all 0.3s ease;
         }
 
         .scanner-area:hover .scanner-icon {
-            color: #667eea;
+            color: var(--scanner-icon-hover);
             transform: scale(1.1);
         }
 
         .scanner-text {
-            color: #4a5568;
+            color: var(--text-primary);
             font-size: 1.2rem;
             font-weight: 500;
             margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
         }
 
         .scanner-subtext {
-            color: #718096;
+            color: var(--text-secondary);
             font-size: 1rem;
             line-height: 1.5;
+            transition: color 0.3s ease;
         }
 
         .scan-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: var(--button-gradient);
             color: #ffffff;
             border: none;
             padding: 1rem 2rem;
@@ -235,8 +353,15 @@
             position: relative;
             overflow: hidden;
             margin: 1.5rem 0;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
             font-family: 'Poppins', sans-serif;
+        }
+
+        [data-theme="light"] .scan-button {
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        [data-theme="dark"] .scan-button {
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
         }
 
         .scan-button::before {
@@ -256,8 +381,15 @@
 
         .scan-button:hover {
             transform: translateY(-3px);
+            background: var(--button-hover-gradient);
+        }
+
+        [data-theme="light"] .scan-button:hover {
             box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
-            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
+        }
+
+        [data-theme="dark"] .scan-button:hover {
+            box-shadow: 0 12px 35px rgba(59, 130, 246, 0.5);
         }
 
         .scan-button:disabled {
@@ -268,15 +400,16 @@
 
         /* Manual Input Section */
         .manual-input-section {
-            background: linear-gradient(135deg, rgba(78, 205, 196, 0.05), rgba(168, 230, 207, 0.05));
-            border: 1px solid rgba(78, 205, 196, 0.1);
+            background: var(--manual-section-bg);
+            border: 1px solid var(--manual-section-border);
             border-radius: 16px;
             padding: 2rem;
             margin-bottom: 2rem;
+            transition: all 0.3s ease;
         }
 
         .manual-input-section h3 {
-            color: #2d3748;
+            color: var(--text-primary);
             font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 1rem;
@@ -287,6 +420,21 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .manual-input-section h3 {
+            background: linear-gradient(45deg, #10b981, #14b8a6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .manual-input-section p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
         }
 
         .input-group {
@@ -298,10 +446,10 @@
         .input-group input {
             flex: 1;
             padding: 1rem 1.2rem;
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--input-border);
             border-radius: 12px;
-            background: #f8fafc;
-            color: #2d3748;
+            background: var(--input-bg);
+            color: var(--input-text);
             font-size: 1rem;
             font-weight: 400;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -310,21 +458,31 @@
 
         .input-group input:focus {
             outline: none;
-            border-color: #4ecdc4;
-            background: #ffffff;
-            box-shadow: 
-                0 0 0 3px rgba(78, 205, 196, 0.1),
-                0 4px 20px rgba(78, 205, 196, 0.15);
+            background: var(--input-focus-bg);
             transform: translateY(-2px);
         }
 
+        [data-theme="light"] .input-group input:focus {
+            border-color: #4ecdc4;
+            box-shadow: 
+                0 0 0 3px rgba(78, 205, 196, 0.1),
+                0 4px 20px rgba(78, 205, 196, 0.15);
+        }
+
+        [data-theme="dark"] .input-group input:focus {
+            border-color: #10b981;
+            box-shadow: 
+                0 0 0 3px rgba(16, 185, 129, 0.2),
+                0 4px 20px rgba(16, 185, 129, 0.25);
+        }
+
         .input-group input::placeholder {
-            color: #a0aec0;
+            color: var(--input-placeholder);
             font-weight: 300;
         }
 
         .search-btn {
-            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 50%, #2a9d8f 100%);
+            background: var(--search-button-gradient);
             color: #ffffff;
             border: none;
             padding: 1rem 1.5rem;
@@ -333,14 +491,28 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.3);
             font-family: 'Poppins', sans-serif;
+        }
+
+        [data-theme="light"] .search-btn {
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.3);
+        }
+
+        [data-theme="dark"] .search-btn {
+            box-shadow: 0 8px 25px rgba(8, 145, 178, 0.4);
         }
 
         .search-btn:hover {
             transform: translateY(-2px);
+            background: var(--search-button-hover);
+        }
+
+        [data-theme="light"] .search-btn:hover {
             box-shadow: 0 12px 35px rgba(78, 205, 196, 0.4);
-            background: linear-gradient(135deg, #44a08d 0%, #2a9d8f 50%, #1a7169 100%);
+        }
+
+        [data-theme="dark"] .search-btn:hover {
+            box-shadow: 0 12px 35px rgba(8, 145, 178, 0.5);
         }
 
         .search-btn:disabled {
@@ -350,21 +522,23 @@
         }
 
         .instructions {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(240, 147, 251, 0.05));
-            border: 1px solid rgba(102, 126, 234, 0.1);
+            background: var(--instructions-bg);
+            border: 1px solid var(--instructions-border);
             border-radius: 16px;
             padding: 1.5rem;
             margin-bottom: 2rem;
+            transition: all 0.3s ease;
         }
 
         .instructions h3 {
-            color: #2d3748;
+            color: var(--text-primary);
             font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 1rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            transition: color 0.3s ease;
         }
 
         .instructions ul {
@@ -373,17 +547,18 @@
         }
 
         .instructions li {
-            color: #4a5568;
+            color: var(--text-secondary);
             font-size: 1rem;
             line-height: 1.6;
             margin-bottom: 0.8rem;
             padding-left: 2rem;
             position: relative;
+            transition: color 0.3s ease;
         }
 
         .instructions li::before {
             content: '•';
-            color: #667eea;
+            color: var(--scanner-icon-hover);
             font-size: 1.5rem;
             position: absolute;
             left: 0.5rem;
@@ -397,6 +572,7 @@
             font-weight: 500;
             display: none;
             animation: fadeIn 0.5s ease;
+            transition: all 0.3s ease;
         }
 
         @keyframes fadeIn {
@@ -410,10 +586,22 @@
             color: #2f855a;
         }
 
+        [data-theme="dark"] .status-success {
+            background: linear-gradient(45deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.15));
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #22c55e;
+        }
+
         .status-error {
             background: linear-gradient(45deg, rgba(229, 62, 62, 0.1), rgba(252, 129, 129, 0.1));
             border: 1px solid rgba(229, 62, 62, 0.3);
             color: #c53030;
+        }
+
+        [data-theme="dark"] .status-error {
+            background: linear-gradient(45deg, rgba(248, 113, 113, 0.15), rgba(239, 68, 68, 0.15));
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            color: #f87171;
         }
 
         .status-info {
@@ -422,12 +610,18 @@
             color: #5a67d8;
         }
 
+        [data-theme="dark"] .status-info {
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #60a5fa;
+        }
+
         .back-button {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             background: rgba(255, 255, 255, 0.8);
-            color: #2d3748;
+            color: var(--text-primary);
             text-decoration: none;
             padding: 1rem 2rem;
             border-radius: 12px;
@@ -438,6 +632,11 @@
             position: relative;
             overflow: hidden;
             font-family: 'Poppins', sans-serif;
+        }
+
+        [data-theme="dark"] .back-button {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(59, 130, 246, 0.3);
         }
 
         .back-button::before {
@@ -456,10 +655,19 @@
         }
 
         .back-button:hover {
-            background: rgba(102, 126, 234, 0.1);
             border-color: rgba(102, 126, 234, 0.3);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
             transform: translateY(-2px);
+        }
+
+        [data-theme="light"] .back-button:hover {
+            background: rgba(102, 126, 234, 0.1);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        [data-theme="dark"] .back-button:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
         }
 
         .back-button::after {
@@ -475,8 +683,8 @@
         }
 
         .feature-card {
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(102, 126, 234, 0.1);
+            background: var(--feature-bg);
+            border: 1px solid var(--feature-border);
             border-radius: 16px;
             padding: 1.5rem;
             text-align: center;
@@ -485,8 +693,15 @@
 
         .feature-card:hover {
             transform: translateY(-5px);
+            border-color: var(--scanner-icon-hover);
+        }
+
+        [data-theme="light"] .feature-card:hover {
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
-            border-color: rgba(102, 126, 234, 0.2);
+        }
+
+        [data-theme="dark"] .feature-card:hover {
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.25);
         }
 
         .feature-icon {
@@ -496,16 +711,18 @@
         }
 
         .feature-title {
-            color: #2d3748;
+            color: var(--text-primary);
             font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
         }
 
         .feature-desc {
-            color: #718096;
+            color: var(--text-secondary);
             font-size: 0.9rem;
             line-height: 1.4;
+            transition: color 0.3s ease;
         }
 
         /* Video preview for camera */
@@ -587,11 +804,12 @@
             display: none;
             width: 40px;
             height: 40px;
-            border: 4px solid #e2e8f0;
+            border: 4px solid var(--input-border);
             border-radius: 50%;
-            border-top-color: #667eea;
+            border-top-color: var(--scanner-icon-hover);
             animation: spin 1s ease-in-out infinite;
             margin: 1rem auto;
+            transition: all 0.3s ease;
         }
 
         @keyframes spin {
@@ -602,8 +820,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📱 QR Code Scanner</h1>
-            <p>Scan herb batch QR codes for instant traceability</p>
+            <h1>📱⛓️ Blockchain QR Scanner</h1>
+            <p>Scan herb batch QR codes for immutable blockchain traceability</p>
         </div>
 
         <div class="scanner-card">
@@ -629,77 +847,159 @@
             </div>
 
             <div class="status-message status-info" id="statusMessage">
-                Camera access required for QR code scanning
+                Camera access required for blockchain QR code scanning
             </div>
 
             <div style="text-align: center;">
                 <button class="scan-button" id="scanButton">
-                    📷 Start Camera
+                    📷⛓️ Start Blockchain Scanner
                 </button>
             </div>
         </div>
 
         <!-- Manual Input Section for MongoDB -->
         <div class="manual-input-section">
-            <h3>🔍 Search by Batch ID</h3>
-            <p style="color: #718096; margin-bottom: 1rem; font-size: 0.9rem;">
-                Enter MongoDB batch ID or scan QR code to view herb details
+            <h3>🔍⛓️ Search Blockchain by Batch ID</h3>
+            <p>
+                Enter MongoDB blockchain batch ID or scan QR code to view immutable herb details
             </p>
             <form method="POST" action="{{ url_for('scan') }}" id="searchForm">
                 <div class="input-group">
                     <input type="text" 
                            name="batch_id" 
                            id="batchIdInput" 
-                           placeholder="Enter Batch ID (e.g., 507f1f77bcf86cd799439011)" 
+                           placeholder="Enter Blockchain Batch ID (e.g., 507f1f77bcf86cd799439011)" 
                            pattern="[a-fA-F0-9]{24}"
                            title="Enter valid MongoDB ObjectId (24 hex characters)">
                     <button type="submit" class="search-btn" id="searchBtn">
-                        🔍 Search
+                        🔍⛓️ Search Blockchain
                     </button>
                 </div>
             </form>
         </div>
 
         <div class="instructions">
-            <h3>📋 How to Use</h3>
+            <h3>📋⛓️ Blockchain Scanner Guide</h3>
             <ul>
-                <li><strong>QR Scanning:</strong> Click "Start Camera" to activate your device's camera</li>
-                <li><strong>Manual Search:</strong> Enter a 24-character MongoDB batch ID directly</li>
-                <li><strong>Allow Permissions:</strong> Grant camera access when prompted</li>
-                <li><strong>Position Code:</strong> Hold device steady and point at QR code</li>
-                <li><strong>Auto Detection:</strong> App automatically detects and processes codes</li>
-                <li><strong>View Details:</strong> Get instant herb traceability information</li>
+                <li><strong>QR Scanning:</strong> Click "Start Blockchain Scanner" to activate camera</li>
+                <li><strong>Manual Search:</strong> Enter 24-character MongoDB blockchain batch ID</li>
+                <li><strong>Allow Permissions:</strong> Grant camera access for QR detection</li>
+                <li><strong>Position Code:</strong> Hold device steady and point at blockchain QR code</li>
+                <li><strong>Auto Detection:</strong> App automatically detects and validates blockchain data</li>
+                <li><strong>View Provenance:</strong> Get instant immutable herb traceability from blockchain</li>
             </ul>
         </div>
 
         <div class="feature-grid">
             <div class="feature-card">
-                <span class="feature-icon">🔍</span>
-                <div class="feature-title">Instant Recognition</div>
-                <div class="feature-desc">Advanced QR detection with MongoDB integration</div>
+                <span class="feature-icon">🔍⛓️</span>
+                <div class="feature-title">Blockchain Recognition</div>
+                <div class="feature-desc">Advanced QR detection with blockchain validation</div>
             </div>
             
             <div class="feature-card">
-                <span class="feature-icon">🌿</span>
-                <div class="feature-title">Full Traceability</div>
-                <div class="feature-desc">Complete herb journey from MongoDB records</div>
+                <span class="feature-icon">🌿⛓️</span>
+                <div class="feature-title">Immutable Traceability</div>
+                <div class="feature-desc">Complete herb journey stored on blockchain</div>
             </div>
             
             <div class="feature-card">
-                <span class="feature-icon">🔒</span>
-                <div class="feature-title">Secure Database</div>
-                <div class="feature-desc">MongoDB-powered data integrity</div>
+                <span class="feature-icon">🔒⛓️</span>
+                <div class="feature-title">Cryptographic Security</div>
+                <div class="feature-desc">Blockchain-powered data integrity and authenticity</div>
             </div>
         </div>
 
         <div style="text-align: center;">
             <a href="{{ url_for('dashboard') }}" class="back-button">
-                Back to Dashboard
+                Back to Blockchain Dashboard
             </a>
         </div>
     </div>
 
     <script>
+        // 🌟 THEME SYNCHRONIZATION SYSTEM (Dashboard-Controlled) 🌟
+        
+        // Initialize theme immediately (before DOMContentLoaded) for seamless loading
+        (function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            console.log('🎨 Scanner: Initializing with saved theme:', savedTheme);
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+
+        // Listen for theme changes from dashboard or other pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme' && e.newValue) {
+                console.log('🔄 Scanner: Received theme change from dashboard:', e.newValue);
+                document.documentElement.setAttribute('data-theme', e.newValue);
+            }
+        });
+
+        // Listen for custom theme change events (for same-page components)
+        window.addEventListener('themeChanged', function(e) {
+            console.log('🔄 Scanner: Received theme change event:', e.detail.theme);
+            document.documentElement.setAttribute('data-theme', e.detail.theme);
+        });
+
+        // Enhanced DOMContentLoaded with theme synchronization
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Scanner: DOM loaded, setting up theme synchronization...');
+            
+            // Ensure theme is properly loaded
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            
+            console.log('📊 Scanner: Current theme:', currentTheme, '| Saved theme:', savedTheme);
+            
+            // Sync if there's a mismatch
+            if (currentTheme !== savedTheme) {
+                console.log('🔧 Scanner: Syncing theme mismatch...');
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+
+            // Auto-hide flash messages
+            const flashMessages = document.querySelectorAll('.alert');
+            flashMessages.forEach(msg => {
+                setTimeout(() => {
+                    if (msg.parentNode) {
+                        msg.style.opacity = '0';
+                        msg.style.transform = 'translateY(-10px)';
+                        setTimeout(() => msg.remove(), 300);
+                    }
+                }, 8000);
+            });
+
+            // Add smooth animations on page load
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 800 + (index * 200));
+            });
+
+            console.log('✅ Scanner: Theme synchronization setup complete!');
+        });
+
+        // Sync theme when page becomes visible (handles browser tab switching)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                
+                if (currentTheme !== savedTheme) {
+                    console.log('👁️ Scanner: Page visible - syncing theme:', savedTheme);
+                    document.documentElement.setAttribute('data-theme', savedTheme);
+                }
+            }
+        });
+
+        // 🔧 EXISTING SCANNER FUNCTIONALITY (unchanged)
+
         const scanButton = document.getElementById('scanButton');
         const scannerArea = document.getElementById('scannerArea');
         const statusMessage = document.getElementById('statusMessage');
@@ -722,12 +1022,12 @@
         async function startScanning() {
             try {
                 isScanning = true;
-                scanButton.textContent = '⏹️ Stop Camera';
+                scanButton.textContent = '⏹️ Stop Scanner';
                 scanButton.style.background = 'linear-gradient(45deg, #e53e3e, #fc8181)';
                 
                 // Show loading
                 loadingSpinner.style.display = 'block';
-                showStatus('Requesting camera access...', 'info');
+                showStatus('Requesting camera access for blockchain scanning...', 'info');
 
                 // Get camera stream
                 stream = await navigator.mediaDevices.getUserMedia({ 
@@ -749,11 +1049,11 @@
                 const scannerText = scannerArea.querySelector('.scanner-text');
                 const scannerSubtext = scannerArea.querySelector('.scanner-subtext');
                 
-                scannerIcon.textContent = '📸';
-                scannerText.textContent = 'Camera Active';
-                scannerSubtext.textContent = 'Point camera at QR code to scan';
+                scannerIcon.textContent = '📸⛓️';
+                scannerText.textContent = 'Blockchain Scanner Active';
+                scannerSubtext.textContent = 'Point camera at blockchain QR code to scan';
                 
-                showStatus('Camera started successfully! Point at a QR code containing batch ID.', 'success');
+                showStatus('Blockchain scanner started! Point at QR code containing batch ID.', 'success');
                 
                 // Note: In a real implementation, you would integrate a QR code library
                 // like jsQR or ZXing to decode QR codes from the video stream
@@ -767,15 +1067,15 @@
                 
             } catch (error) {
                 console.error('Camera error:', error);
-                showStatus('Camera access denied or not available. Please use manual search.', 'error');
+                showStatus('Camera access denied or not available. Please use manual blockchain search.', 'error');
                 stopScanning();
             }
         }
 
         function stopScanning() {
             isScanning = false;
-            scanButton.textContent = '📷 Start Camera';
-            scanButton.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)';
+            scanButton.textContent = '📷⛓️ Start Blockchain Scanner';
+            scanButton.style.background = 'var(--button-gradient)';
             
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
@@ -783,8 +1083,8 @@
             }
             
             videoPreview.style.display = 'none';
-            scannerArea.style.background = '#f8fafc';
-            scannerArea.style.borderColor = '#cbd5e0';
+            scannerArea.style.background = 'var(--scanner-bg)';
+            scannerArea.style.borderColor = 'var(--scanner-border)';
             
             const scannerIcon = scannerArea.querySelector('.scanner-icon');
             const scannerText = scannerArea.querySelector('.scanner-text');
@@ -794,28 +1094,28 @@
             scannerText.textContent = 'Ready to Scan';
             scannerSubtext.textContent = 'Position the QR code within the camera frame';
             
-            showStatus('Camera stopped', 'info');
+            showStatus('Blockchain scanner stopped', 'info');
         }
 
         function simulateQRDetection() {
             scannerArea.style.background = 'linear-gradient(45deg, rgba(102, 126, 234, 0.2), rgba(240, 147, 251, 0.2))';
-            scannerArea.style.borderColor = '#667eea';
+            scannerArea.style.borderColor = 'var(--scanner-icon-hover)';
             
             const scannerIcon = scannerArea.querySelector('.scanner-icon');
             const scannerText = scannerArea.querySelector('.scanner-text');
             const scannerSubtext = scannerArea.querySelector('.scanner-subtext');
             
-            scannerIcon.textContent = '✅';
-            scannerText.textContent = 'QR Code Detected!';
-            scannerSubtext.textContent = 'Processing MongoDB batch information...';
+            scannerIcon.textContent = '✅⛓️';
+            scannerText.textContent = 'Blockchain QR Detected!';
+            scannerSubtext.textContent = 'Processing immutable blockchain batch information...';
             
-            showStatus('QR code detected! Fetching herb details from database...', 'success');
+            showStatus('Blockchain QR code detected! Fetching immutable herb details...', 'success');
             
             // Simulate batch ID found in QR code
             const simulatedBatchId = '507f1f77bcf86cd799439011';
             
             setTimeout(() => {
-                showStatus('Redirecting to herb provenance...', 'info');
+                showStatus('Redirecting to blockchain provenance...', 'info');
                 // Redirect to provenance page with MongoDB ObjectId
                 window.location.href = `{{ url_for('provenance', batch_id='BATCH_ID') }}`.replace('BATCH_ID', simulatedBatchId);
             }, 2000);
@@ -831,13 +1131,13 @@
             
             if (!batchId) {
                 e.preventDefault();
-                showStatus('Please enter a batch ID', 'error');
+                showStatus('Please enter a blockchain batch ID', 'error');
                 return;
             }
             
             if (!objectIdRegex.test(batchId)) {
                 e.preventDefault();
-                showStatus('Invalid batch ID format. Please enter a valid 24-character MongoDB ObjectId.', 'error');
+                showStatus('Invalid blockchain batch ID format. Please enter a valid 24-character MongoDB ObjectId.', 'error');
                 batchIdInput.style.borderColor = '#e53e3e';
                 batchIdInput.style.background = '#fed7d7';
                 return;
@@ -845,10 +1145,10 @@
             
             // Show loading state
             searchBtn.disabled = true;
-            searchBtn.textContent = '🔍 Searching...';
+            searchBtn.textContent = '🔍⛓️ Searching Blockchain...';
             searchBtn.style.opacity = '0.7';
             
-            showStatus('Searching MongoDB for batch information...', 'info');
+            showStatus('Searching blockchain for immutable batch information...', 'info');
         });
 
         // Real-time validation for batch ID input
@@ -857,8 +1157,8 @@
             const objectIdRegex = /^[a-fA-F0-9]{24}$/;
             
             if (value.length === 0) {
-                this.style.borderColor = '#e2e8f0';
-                this.style.background = '#f8fafc';
+                this.style.borderColor = 'var(--input-border)';
+                this.style.background = 'var(--input-bg)';
             } else if (objectIdRegex.test(value)) {
                 this.style.borderColor = '#38a169';
                 this.style.background = '#f0fff4';
@@ -885,33 +1185,6 @@
         setTimeout(() => {
             statusMessage.style.display = 'block';
         }, 1000);
-
-        // Auto-hide flash messages
-        document.addEventListener('DOMContentLoaded', function() {
-            const flashMessages = document.querySelectorAll('.alert');
-            flashMessages.forEach(msg => {
-                setTimeout(() => {
-                    if (msg.parentNode) {
-                        msg.style.opacity = '0';
-                        msg.style.transform = 'translateY(-10px)';
-                        setTimeout(() => msg.remove(), 300);
-                    }
-                }, 8000);
-            });
-
-            // Add smooth animations on page load
-            const cards = document.querySelectorAll('.feature-card');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                
-                setTimeout(() => {
-                    card.style.transition = 'all 0.6s ease';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, 800 + (index * 200));
-            });
-        });
 
         // Cleanup on page unload
         window.addEventListener('beforeunload', function() {

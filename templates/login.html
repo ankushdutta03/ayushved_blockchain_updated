@@ -1,11 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <title>Login | AyushVed</title>
+    <title>Login | AyushVed Blockchain</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        /* Theme Variables */
+        :root {
+            /* Light Theme Variables */
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #a8e6cf 75%, #4ecdc4 100%);
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(255, 255, 255, 0.8);
+            --input-bg: #f8fafc;
+            --input-border: #e2e8f0;
+            --input-focus-bg: #ffffff;
+            --input-text: #2d3748;
+            --input-placeholder: #a0aec0;
+            --grain-pattern: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="80" cy="80" r="1" fill="%23ffffff" opacity="0.08"/><circle cx="40" cy="60" r="1" fill="%23ffffff" opacity="0.09"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            --brand-gradient: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            --button-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --button-hover-gradient: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
+            --welcome-bg: linear-gradient(45deg, rgba(78, 205, 196, 0.1), rgba(68, 160, 141, 0.1));
+            --welcome-border: rgba(78, 205, 196, 0.3);
+            --welcome-text: #2d6a4f;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme Variables */
+            --bg-gradient: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 25%, #2d2d2d 50%, #1e1e1e 75%, #0a0a0a 100%);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --card-bg: rgba(20, 24, 32, 0.95);
+            --card-border: rgba(148, 163, 184, 0.3);
+            --input-bg: #1e293b;
+            --input-border: #475569;
+            --input-focus-bg: #0f172a;
+            --input-text: #f8fafc;
+            --input-placeholder: #64748b;
+            --grain-pattern: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="%23ffffff" opacity="0.02"/><circle cx="80" cy="80" r="1" fill="%23ffffff" opacity="0.015"/><circle cx="40" cy="60" r="1" fill="%23ffffff" opacity="0.025"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            --brand-gradient: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+            --button-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+            --button-hover-gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%);
+            --welcome-bg: linear-gradient(45deg, rgba(16, 185, 129, 0.15), rgba(20, 184, 166, 0.15));
+            --welcome-border: rgba(16, 185, 129, 0.4);
+            --welcome-text: #10b981;
+        }
         
         * {
             margin: 0;
@@ -15,13 +58,14 @@
         
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 25%, #fecfef 50%, #a8e6cf 75%, #81c784 100%);
+            background: var(--bg-gradient);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
             overflow: hidden;
+            transition: all 0.5s ease;
         }
         
         body::before {
@@ -29,7 +73,7 @@
             position: absolute;
             width: 200%;
             height: 200%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="80" cy="80" r="1" fill="%23ffffff" opacity="0.08"/><circle cx="40" cy="60" r="1" fill="%23ffffff" opacity="0.09"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            background: var(--grain-pattern);
             animation: float 20s ease-in-out infinite;
         }
         
@@ -37,9 +81,62 @@
             0%, 100% { transform: translate(-50px, -50px) rotate(0deg); }
             50% { transform: translate(50px, 50px) rotate(180deg); }
         }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.4rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        [data-theme="dark"] .theme-toggle {
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.5);
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .theme-toggle:hover::before {
+            left: 100%;
+        }
+
+        .theme-toggle:hover {
+            background: linear-gradient(45deg, #8b5cf6, #a855f7);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        [data-theme="dark"] .theme-toggle:hover {
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
         
         .container {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--card-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             padding: 40px;
@@ -48,11 +145,19 @@
                 0 15px 35px rgba(0, 0, 0, 0.1),
                 0 5px 15px rgba(0, 0, 0, 0.05),
                 inset 0 1px 0 rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--card-border);
             width: 400px;
             position: relative;
             z-index: 1;
             animation: slideUp 0.8s ease-out;
+            transition: all 0.5s ease;
+        }
+
+        [data-theme="dark"] .container {
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.4),
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(148, 163, 184, 0.2);
         }
         
         @keyframes slideUp {
@@ -72,15 +177,16 @@
         }
         
         .logo h2 {
-            color: #2d3748;
+            color: var(--text-primary);
             font-size: 28px;
             font-weight: 700;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             position: relative;
-            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            background: var(--brand-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            transition: all 0.3s ease;
         }
         
         .logo h2::after {
@@ -107,6 +213,7 @@
             font-weight: 500;
             position: relative;
             animation: slideIn 0.5s ease;
+            transition: all 0.3s ease;
         }
 
         @keyframes slideIn {
@@ -126,6 +233,12 @@
             color: #2f855a;
         }
 
+        [data-theme="dark"] .alert-success {
+            background: linear-gradient(45deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.15));
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #22c55e;
+        }
+
         .alert-success::before {
             content: '✅';
             margin-right: 8px;
@@ -137,6 +250,12 @@
             color: #c53030;
         }
 
+        [data-theme="dark"] .alert-danger {
+            background: linear-gradient(45deg, rgba(248, 113, 113, 0.15), rgba(239, 68, 68, 0.15));
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            color: #f87171;
+        }
+
         .alert-danger::before {
             content: '❌';
             margin-right: 8px;
@@ -146,6 +265,12 @@
             background: linear-gradient(45deg, rgba(66, 153, 225, 0.1), rgba(159, 122, 234, 0.1));
             border: 1px solid rgba(66, 153, 225, 0.3);
             color: #3182ce;
+        }
+
+        [data-theme="dark"] .alert-info {
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #60a5fa;
         }
 
         .alert-info::before {
@@ -161,10 +286,10 @@
         .form-group input {
             width: 100%;
             padding: 15px 20px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--input-border);
             border-radius: 12px;
-            background: #f8fafc;
-            color: #2d3748;
+            background: var(--input-bg);
+            color: var(--input-text);
             font-size: 16px;
             font-weight: 400;
             outline: none;
@@ -173,28 +298,54 @@
         }
         
         .form-group input::placeholder {
-            color: #a0aec0;
+            color: var(--input-placeholder);
             font-weight: 300;
         }
         
         .form-group input:focus {
-            background: #ffffff;
+            background: var(--input-focus-bg);
+            transform: translateY(-2px);
+        }
+
+        [data-theme="light"] .form-group input:focus {
             border-color: #667eea;
             box-shadow: 
                 0 0 0 3px rgba(102, 126, 234, 0.1),
                 0 4px 20px rgba(102, 126, 234, 0.15);
-            transform: translateY(-2px);
+        }
+
+        [data-theme="dark"] .form-group input:focus {
+            border-color: #3b82f6;
+            box-shadow: 
+                0 0 0 3px rgba(59, 130, 246, 0.2),
+                0 4px 20px rgba(59, 130, 246, 0.25);
         }
 
         /* Input validation styles */
         .form-group.error input {
             border-color: #e53e3e;
+        }
+
+        [data-theme="light"] .form-group.error input {
             background: #fed7d7;
+        }
+
+        [data-theme="dark"] .form-group.error input {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
         }
 
         .form-group.success input {
             border-color: #38a169;
+        }
+
+        [data-theme="light"] .form-group.success input {
             background: #f0fff4;
+        }
+
+        [data-theme="dark"] .form-group.success input {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: #22c55e;
         }
 
         .error-message {
@@ -202,12 +353,17 @@
             font-size: 12px;
             margin-top: 5px;
             display: none;
+            transition: color 0.3s ease;
+        }
+
+        [data-theme="dark"] .error-message {
+            color: #f87171;
         }
         
         .login-btn {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: var(--button-gradient);
             border: none;
             border-radius: 12px;
             color: #ffffff;
@@ -238,8 +394,15 @@
         
         .login-btn:hover {
             transform: translateY(-3px);
+            background: var(--button-hover-gradient);
+        }
+
+        [data-theme="light"] .login-btn:hover {
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
+        }
+
+        [data-theme="dark"] .login-btn:hover {
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5);
         }
 
         .login-btn:disabled {
@@ -265,6 +428,10 @@
             position: relative;
             font-size: 14px;
         }
+
+        [data-theme="dark"] .links a {
+            color: #60a5fa;
+        }
         
         .links a::after {
             content: '';
@@ -280,32 +447,38 @@
         .links a:hover {
             color: #5a67d8;
         }
+
+        [data-theme="dark"] .links a:hover {
+            color: #3b82f6;
+        }
         
         .links a:hover::after {
             width: 100%;
         }
         
         .links p {
-            color: #718096;
+            color: var(--text-secondary);
             margin: 15px 0 8px;
             font-size: 14px;
+            transition: color 0.3s ease;
         }
 
         /* Welcome message for existing users */
         .welcome-box {
-            background: linear-gradient(45deg, rgba(78, 205, 196, 0.1), rgba(68, 160, 141, 0.1));
-            border: 1px solid rgba(78, 205, 196, 0.3);
+            background: var(--welcome-bg);
+            border: 1px solid var(--welcome-border);
             border-radius: 12px;
             padding: 15px;
             margin-bottom: 20px;
-            color: #2d6a4f;
+            color: var(--welcome-text);
             font-size: 14px;
             line-height: 1.5;
             text-align: center;
+            transition: all 0.3s ease;
         }
 
         .welcome-box::before {
-            content: '🌿';
+            content: '🌿⛓️';
             display: block;
             font-size: 24px;
             margin-bottom: 8px;
@@ -328,6 +501,11 @@
             height: 20px;
             opacity: 0.8;
             animation: float-leaf 12s infinite linear;
+            transition: opacity 0.5s ease;
+        }
+
+        [data-theme="dark"] .leaf {
+            opacity: 0.4;
         }
         
         .leaf::before {
@@ -340,6 +518,10 @@
             transform: rotate(45deg);
             box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
+
+        [data-theme="dark"] .leaf::before {
+            background: #22c55e;
+        }
         
         .leaf::after {
             content: '';
@@ -350,6 +532,10 @@
             height: 1px;
             background: #38a169;
             transform: translateY(-50%) rotate(45deg);
+        }
+
+        [data-theme="dark"] .leaf::after {
+            background: #16a34a;
         }
         
         .leaf:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 15s; }
@@ -369,11 +555,24 @@
             90% { opacity: 0.8; }
             100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
         }
+
+        [data-theme="dark"] @keyframes float-leaf {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
         
         .leaf:nth-child(2n)::before { background: #68d391; border-radius: 50% 0 50% 0; }
         .leaf:nth-child(3n)::before { background: #38a169; border-radius: 0 50% 0 50%; }
         .leaf:nth-child(4n)::before { background: #2f855a; }
         .leaf:nth-child(5n)::before { background: #9ae6b4; }
+
+        [data-theme="dark"] .leaf:nth-child(2n)::before { background: #34d399; }
+        [data-theme="dark"] .leaf:nth-child(3n)::before { background: #16a34a; }
+        [data-theme="dark"] .leaf:nth-child(4n)::before { background: #15803d; }
+        [data-theme="dark"] .leaf:nth-child(5n)::before { background: #6ee7b7; }
+
         .leaf:nth-child(4n) { width: 15px; height: 15px; }
         .leaf:nth-child(5n) { width: 25px; height: 25px; }
         
@@ -383,6 +582,11 @@
             border-radius: 50%;
             opacity: 0.1;
             animation: float-orb 20s infinite ease-in-out;
+            transition: opacity 0.5s ease;
+        }
+
+        [data-theme="dark"] .color-orb {
+            opacity: 0.05;
         }
         
         .orb1 {
@@ -402,6 +606,18 @@
             background: linear-gradient(45deg, #667eea, #764ba2);
             bottom: 30%; left: 20%; animation-delay: 10s;
         }
+
+        [data-theme="dark"] .orb1 {
+            background: linear-gradient(45deg, #dc2626, #ea580c);
+        }
+
+        [data-theme="dark"] .orb2 {
+            background: linear-gradient(45deg, #0891b2, #0e7490);
+        }
+
+        [data-theme="dark"] .orb3 {
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+        }
         
         @keyframes float-orb {
             0%, 100% { transform: translateY(0px) translateX(0px) scale(1); }
@@ -412,6 +628,13 @@
         
         /* Responsive design */
         @media (max-width: 480px) {
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+
             .container {
                 width: 90%;
                 padding: 30px 20px;
@@ -443,6 +666,12 @@
     </style>
 </head>
 <body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="themeIcon">🌙</span>
+        <span id="themeText">Dark Mode</span>
+    </button>
+
     <div class="color-orb orb1"></div>
     <div class="color-orb orb2"></div>
     <div class="color-orb orb3"></div>
@@ -462,7 +691,7 @@
     
     <form method="POST" class="container" id="loginForm">
         <div class="logo">
-            <h2>🌿 AyushVed</h2>
+            <h2>🌿⛓️ AyushVed</h2>
         </div>
 
         <!-- Flask Flash Messages for MongoDB -->
@@ -481,8 +710,8 @@
         <!-- Welcome message for new users -->
         {% if not get_flashed_messages() %}
         <div class="welcome-box">
-            Welcome to AyuTrace<br>
-            <small>Botanical Traceability System for Ayurvedic Herbs</small>
+            Welcome to AyushVed Blockchain<br>
+            <small>Immutable Botanical Traceability System for Ayurvedic Herbs</small>
         </div>
         {% endif %}
         
@@ -508,17 +737,92 @@
         </div>
         
         <button type="submit" class="login-btn" id="loginBtn">
-            <span class="btn-text">🔐 Login</span>
+            <span class="btn-text">🔐⛓️ Secure Login</span>
             <div class="loading" id="loadingSpinner"></div>
         </button>
         
         <div class="links">
-            <p><a href="{{ url_for('forgot_password') }}">Forgot Password?</a></p>
-            <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up here</a></p>
+            <p><a href="{{ url_for('forgot_password') }}">Forgot Blockchain Password?</a></p>
+            <p>Need blockchain access? <a href="{{ url_for('signup') }}">Create Account</a></p>
         </div>
     </form>
 
     <script>
+        // Theme Toggle Functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            console.log('Toggling theme from', currentTheme, 'to', newTheme);
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update button text and icon
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (newTheme === 'dark') {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light Mode';
+                console.log('Switched to dark mode');
+            } else {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark Mode';
+                console.log('Switched to light mode');
+            }
+        }
+
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            console.log('Loading saved theme:', savedTheme);
+            
+            html.setAttribute('data-theme', savedTheme);
+            
+            if (savedTheme === 'dark') {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light Mode';
+                console.log('Loaded dark mode');
+            } else {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark Mode';
+                console.log('Loaded light mode');
+            }
+
+            // Auto-hide flash messages after 8 seconds
+            const flashMessages = document.querySelectorAll('.alert');
+            flashMessages.forEach(msg => {
+                setTimeout(() => {
+                    if (msg.parentNode) {
+                        msg.style.opacity = '0';
+                        msg.style.transform = 'translateY(-10px)';
+                        setTimeout(() => {
+                            if (msg.parentNode) {
+                                msg.remove();
+                            }
+                        }, 300);
+                    }
+                }, 8000);
+            });
+
+            // Demo credentials helper (remove in production)
+            if (window.location.hostname === 'localhost') {
+                const demoInfo = document.createElement('div');
+                demoInfo.innerHTML = `
+                    <small style="color: var(--text-secondary); font-size: 12px; text-align: center; display: block; margin-top: 10px; transition: color 0.3s ease;">
+                        Demo: admin / Vigilant@Voices
+                    </small>
+                `;
+                document.querySelector('.links').appendChild(demoInfo);
+            }
+        });
+
         // Enhanced form validation for MongoDB
         function validateForm() {
             const username = document.getElementById('username').value.trim();
@@ -623,42 +927,10 @@
             });
         });
 
-        // Auto-hide flash messages after 8 seconds
-        document.addEventListener('DOMContentLoaded', function() {
-            const flashMessages = document.querySelectorAll('.alert');
-            flashMessages.forEach(msg => {
-                setTimeout(() => {
-                    if (msg.parentNode) {
-                        msg.style.opacity = '0';
-                        msg.style.transform = 'translateY(-10px)';
-                        setTimeout(() => {
-                            if (msg.parentNode) {
-                                msg.remove();
-                            }
-                        }, 300);
-                    }
-                }, 8000);
-            });
-        });
-
         // Keyboard accessibility
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && (e.target.type === 'text' || e.target.type === 'password')) {
                 e.target.closest('form').requestSubmit();
-            }
-        });
-
-        // Demo credentials helper (remove in production)
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add demo info for testing
-            if (window.location.hostname === 'localhost') {
-                const demoInfo = document.createElement('div');
-                demoInfo.innerHTML = `
-                    <small style="color: #666; font-size: 12px; text-align: center; display: block; margin-top: 10px;">
-                        Demo: admin / Vigilant@Voices
-                    </small>
-                `;
-                document.querySelector('.links').appendChild(demoInfo);
             }
         });
     </script>

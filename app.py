@@ -5,8 +5,9 @@ from werkzeug.utils import secure_filename
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 from datetime import datetime, timedelta
-import qrcode, random, tempfile, re
+import qrcode, random, tempfile, re, hashlib, json
 from dotenv import load_dotenv
+from functools import wraps
 
 # Load .env variables
 load_dotenv()
@@ -37,6 +38,7 @@ except Exception as e:
 users = mongo.db.users
 herb_batches = mongo.db.herb_batches
 otp_verifications = mongo.db.otp_verifications
+blockchain_records = mongo.db.blockchain_records
 
 # Upload directory configuration
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
@@ -49,6 +51,171 @@ otp_store = {}
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# ---------------- Blockchain Implementation ----------------
+class AyurvedBlockchain:
+    def __init__(self):
+        self.chain = []
+        self.current_transactions = []
+        self.nodes = set()
+        
+        # Create genesis block
+        self.new_block(previous_hash='1', proof=100)
+
+    def new_block(self, proof, previous_hash=None):
+        """
+        Create a new Block in the Blockchain
+        """
+        block = {
+            'index': len(self.chain) + 1,
+            'timestamp': datetime.utcnow().isoformat(),
+            'transactions': self.current_transactions,
+            'proof': proof,
+            'previous_hash': previous_hash or self.hash(self.chain[-1]),
+        }
+
+        # Reset the current list of transactions
+        self.current_transactions = []
+        self.chain.append(block)
+        
+        # Store in MongoDB for persistence
+        try:
+            blockchain_records.insert_one({
+                'type': 'block',
+                'data': block,
+                'created_at': datetime.utcnow()
+            })
+        except Exception as e:
+            print(f"⚠️ Could not store block in database: {e}")
+        
+        return block
+
+    def new_transaction(self, batch_id, herb_name, collector, farm_location, user_id, action_type="CREATE"):
+        """
+        Creates a new transaction to go into the next mined Block
+        """
+        transaction = {
+            'batch_id': batch_id,
+            'herb_name': herb_name,
+            'collector': collector,
+            'farm_location': farm_location,
+            'user_id': user_id,
+            'action_type': action_type,  # CREATE, UPDATE, VERIFY, SCAN
+            'timestamp': datetime.utcnow().isoformat(),
+            'transaction_hash': self.hash_transaction({
+                'batch_id': batch_id,
+                'herb_name': herb_name,
+                'timestamp': datetime.utcnow().isoformat()
+            })
+        }
+
+        self.current_transactions.append(transaction)
+        
+        # Store transaction in MongoDB
+        try:
+            blockchain_records.insert_one({
+                'type': 'transaction',
+                'data': transaction,
+                'created_at': datetime.utcnow()
+            })
+        except Exception as e:
+            print(f"⚠️ Could not store transaction in database: {e}")
+        
+        return self.last_block['index'] + 1
+
+    @staticmethod
+    def hash(block):
+        """
+        Creates a SHA-256 hash of a Block
+        """
+        block_string = json.dumps(block, sort_keys=True).encode()
+        return hashlib.sha256(block_string).hexdigest()
+
+    @staticmethod
+    def hash_transaction(transaction):
+        """
+        Creates a SHA-256 hash of a transaction
+        """
+        transaction_string = json.dumps(transaction, sort_keys=True).encode()
+        return hashlib.sha256(transaction_string).hexdigest()
+
+    @property
+    def last_block(self):
+        return self.chain[-1]
+
+    def proof_of_work(self, last_proof):
+        """
+        Simple Proof of Work Algorithm:
+        - Find a number p' such that hash(pp') contains leading 4 zeroes
+        - p is the previous proof, and p' is the new proof
+        """
+        proof = 0
+        while self.valid_proof(last_proof, proof) is False:
+            proof += 1
+        return proof
+
+    @staticmethod
+    def valid_proof(last_proof, proof):
+        """
+        Validates the Proof: Does hash(last_proof, proof) contain 4 leading zeroes?
+        """
+        guess = f'{last_proof}{proof}'.encode()
+        guess_hash = hashlib.sha256(guess).hexdigest()
+        return guess_hash[:4] == "0000"
+
+    def valid_chain(self, chain):
+        """
+        Determine if a given blockchain is valid
+        """
+        if not chain:
+            return False
+            
+        last_block = chain[0]
+        current_index = 1
+
+        while current_index < len(chain):
+            block = chain[current_index]
+            
+            # Check that the hash of the block is correct
+            if block['previous_hash'] != self.hash(last_block):
+                return False
+
+            # Check that the Proof of Work is correct
+            if not self.valid_proof(last_block['proof'], block['proof']):
+                return False
+
+            last_block = block
+            current_index += 1
+
+        return True
+
+    def get_batch_provenance(self, batch_id):
+        """
+        Get all blockchain transactions for a specific batch
+        """
+        batch_transactions = []
+        for block in self.chain:
+            for transaction in block['transactions']:
+                if transaction['batch_id'] == batch_id:
+                    batch_transactions.append({
+                        'block_index': block['index'],
+                        'transaction': transaction,
+                        'block_hash': self.hash(block),
+                        'timestamp': transaction['timestamp']
+                    })
+        return sorted(batch_transactions, key=lambda x: x['timestamp'])
+
+# Initialize blockchain
+blockchain = AyurvedBlockchain()
+
+# Load existing blockchain from MongoDB if exists
+try:
+    existing_blocks = list(blockchain_records.find({'type': 'block'}).sort('created_at', 1))
+    if existing_blocks:
+        blockchain.chain = [block['data'] for block in existing_blocks]
+        print(f"✅ Loaded {len(existing_blocks)} blocks from database")
+except Exception as e:
+    print(f"⚠️ Could not load existing blockchain: {e}")
 
 # ---------------- Admin User ----------------
 def create_admin_user():
@@ -77,7 +244,6 @@ def create_admin_user():
 create_admin_user()
 
 # ---------------- Auth Guard ----------------
-from functools import wraps
 def login_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -310,13 +476,15 @@ def dashboard():
     
     # Statistics
     total_batches = herb_batches.count_documents({"user_id": session['user_id']})
+    total_blockchain_records = len(blockchain.chain)
     
     return render_template('dashboard.html', 
                          herb_batches=list(user_batches), 
                          user=user,
-                         total_batches=total_batches)
+                         total_batches=total_batches,
+                         blockchain_blocks=total_blockchain_records)
 
-# ----------- Add/Edit/Delete Batch -----------
+# ----------- Add/Edit/Delete Batch with Blockchain -----------
 @app.route('/add_batch', methods=['POST'])
 @login_required
 def add_batch():
@@ -352,7 +520,26 @@ def add_batch():
     }
     
     result = herb_batches.insert_one(new_batch)
-    flash(f"New herb batch '{herb_name}' added successfully! 🌱", "success")
+    batch_id = str(result.inserted_id)
+    
+    # Add to blockchain
+    blockchain.new_transaction(
+        batch_id=batch_id,
+        herb_name=herb_name,
+        collector=collector,
+        farm_location=farm_location,
+        user_id=session['user_id'],
+        action_type="CREATE"
+    )
+    
+    # Mine new block
+    last_block = blockchain.last_block
+    last_proof = last_block['proof']
+    proof = blockchain.proof_of_work(last_proof)
+    previous_hash = blockchain.hash(last_block)
+    blockchain.new_block(proof, previous_hash)
+    
+    flash(f"New herb batch '{herb_name}' added successfully and recorded on blockchain! 🌱⛓️", "success")
     return redirect(url_for('dashboard'))
 
 @app.route('/edit_batch/<batch_id>', methods=['GET', 'POST'])
@@ -386,7 +573,18 @@ def edit_batch(batch_id):
         }
         
         herb_batches.update_one({"_id": ObjectId(batch_id)}, {"$set": update_data})
-        flash("Batch updated successfully! ✏️", "success")
+        
+        # Add update transaction to blockchain
+        blockchain.new_transaction(
+            batch_id=batch_id,
+            herb_name=update_data['herb_name'],
+            collector=update_data['collector'],
+            farm_location=update_data['farm_location'],
+            user_id=session['user_id'],
+            action_type="UPDATE"
+        )
+        
+        flash("Batch updated successfully and recorded on blockchain! ✏️⛓️", "success")
         return redirect(url_for('dashboard'))
 
     return render_template('edit_batch.html', batch=batch)
@@ -408,9 +606,9 @@ def delete_batch(batch_id):
     flash(f"Batch '{batch['herb_name']}' deleted successfully 🗑️", "info")
     return redirect(url_for('dashboard'))
 
-# ----------- Provenance & QR -----------
-@app.route('/provenance/<batch_id>')
-def provenance(batch_id):
+# ----------- Blockchain Verification Routes -----------
+@app.route('/immutable_proven/<batch_id>')
+def immutable_proven(batch_id):
     try:
         batch = herb_batches.find_one({"_id": ObjectId(batch_id)})
     except:
@@ -420,41 +618,60 @@ def provenance(batch_id):
     if not batch:
         flash("Batch not found", "danger")
         return redirect(url_for('login'))
-    return render_template('provenance.html', batch=batch)
+    
+    # Get blockchain provenance
+    provenance_data = blockchain.get_batch_provenance(batch_id)
+    
+    # Verify blockchain integrity
+    is_valid_chain = blockchain.valid_chain(blockchain.chain)
+    
+    return render_template('immutable_proven.html', 
+                         batch=batch, 
+                         provenance=provenance_data,
+                         chain_valid=is_valid_chain,
+                         total_blocks=len(blockchain.chain))
 
-@app.route('/generate_qr/<batch_id>')
+@app.route('/correct_batch/<batch_id>')
 @login_required
-def generate_qr(batch_id):
+def correct_batch(batch_id):
     try:
         batch = herb_batches.find_one({"_id": ObjectId(batch_id)})
     except:
         flash("Invalid batch ID", "danger")
         return redirect(url_for('dashboard'))
         
-    if not batch or batch['user_id'] != session['user_id']:
-        flash("Batch not found or access denied", "danger")
+    if not batch:
+        flash("Batch not found", "danger")
         return redirect(url_for('dashboard'))
-
-    url = url_for('provenance', batch_id=batch_id, _external=True)
     
-    # Enhanced QR code with better settings
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_M,
-        box_size=10,
-        border=4,
+    # Add verification transaction to blockchain
+    blockchain.new_transaction(
+        batch_id=batch_id,
+        herb_name=batch['herb_name'],
+        collector=batch['collector'],
+        farm_location=batch['farm_location'],
+        user_id=session['user_id'],
+        action_type="VERIFY"
     )
-    qr.add_data(url)
-    qr.make(fit=True)
     
-    img = qr.make_image(fill_color="black", back_color="white")
-    qr_filename = f'qr_batch_{batch_id}_{int(datetime.utcnow().timestamp())}.png'
-    qr_path = os.path.join(tempfile.gettempdir(), qr_filename)
-    img.save(qr_path)
+    # Mine new block for verification
+    last_block = blockchain.last_block
+    last_proof = last_block['proof']
+    proof = blockchain.proof_of_work(last_proof)
+    previous_hash = blockchain.hash(last_block)
+    blockchain.new_block(proof, previous_hash)
     
-    return send_from_directory(tempfile.gettempdir(), qr_filename, as_attachment=True)
+    # Get blockchain verification data
+    verification_data = blockchain.get_batch_provenance(batch_id)
+    blockchain_hash = blockchain.hash(blockchain.last_block)
+    
+    return render_template('correct_batch.html', 
+                         batch=batch,
+                         verification_data=verification_data,
+                         blockchain_hash=blockchain_hash,
+                         verified_by=session['username'])
 
-# ----------- Scan QR -----------
+# ----------- Scan QR with Blockchain Verification -----------
 @app.route('/scan', methods=['GET', 'POST'])
 @login_required
 def scan():
@@ -468,7 +685,17 @@ def scan():
         try:
             batch = herb_batches.find_one({"_id": ObjectId(batch_id)})
             if batch:
-                return redirect(url_for('provenance', batch_id=str(batch['_id'])))
+                # Add scan transaction to blockchain
+                blockchain.new_transaction(
+                    batch_id=batch_id,
+                    herb_name=batch['herb_name'],
+                    collector=batch['collector'],
+                    farm_location=batch['farm_location'],
+                    user_id=session['user_id'],
+                    action_type="SCAN"
+                )
+                
+                return redirect(url_for('immutable_proven', batch_id=batch_id))
             else:
                 flash("Batch not found in database", "danger")
         except:
@@ -575,7 +802,7 @@ def profile():
 
     return render_template('profile.html', user=user)
 
-# ----------- Admin Panel -----------
+# ----------- Admin Panel with Blockchain Stats -----------
 @app.route('/admin')
 @login_required
 def admin_panel():
@@ -587,15 +814,123 @@ def admin_panel():
     all_users = list(users.find().sort("created_at", -1))
     all_batches = list(herb_batches.find().sort("created_at", -1))
     
-    # Statistics
+    # Blockchain statistics
     total_users = len(all_users)
     total_batches = len(all_batches)
+    total_blockchain_blocks = len(blockchain.chain)
+    total_transactions = sum(len(block['transactions']) for block in blockchain.chain)
+    chain_validity = blockchain.valid_chain(blockchain.chain)
     
     return render_template('admin.html', 
                          users=all_users, 
                          batches=all_batches,
                          total_users=total_users,
-                         total_batches=total_batches)
+                         total_batches=total_batches,
+                         blockchain_blocks=total_blockchain_blocks,
+                         blockchain_transactions=total_transactions,
+                         chain_valid=chain_validity)
+
+# ----------- Enhanced Provenance Route -----------
+@app.route('/provenance/<batch_id>')
+def provenance(batch_id):
+    try:
+        batch = herb_batches.find_one({"_id": ObjectId(batch_id)})
+    except:
+        flash("Invalid batch ID", "danger")
+        return redirect(url_for('login'))
+        
+    if not batch:
+        flash("Batch not found", "danger")
+        return redirect(url_for('login'))
+    
+    # Get complete blockchain provenance
+    provenance_data = blockchain.get_batch_provenance(batch_id)
+    
+    return render_template('provenance.html', 
+                         batch=batch, 
+                         provenance=provenance_data,
+                         blockchain_verified=len(provenance_data) > 0)
+
+# ----------- Generate QR with Blockchain Hash -----------
+@app.route('/generate_qr/<batch_id>')
+@login_required
+def generate_qr(batch_id):
+    try:
+        batch = herb_batches.find_one({"_id": ObjectId(batch_id)})
+    except:
+        flash("Invalid batch ID", "danger")
+        return redirect(url_for('dashboard'))
+        
+    if not batch or batch['user_id'] != session['user_id']:
+        flash("Batch not found or access denied", "danger")
+        return redirect(url_for('dashboard'))
+
+    # Create blockchain-verified URL
+    url = url_for('immutable_proven', batch_id=batch_id, _external=True)
+    
+    # Enhanced QR code with blockchain verification
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_M,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(url)
+    qr.make(fit=True)
+    
+    img = qr.make_image(fill_color="black", back_color="white")
+    qr_filename = f'qr_blockchain_{batch_id}_{int(datetime.utcnow().timestamp())}.png'
+    qr_path = os.path.join(tempfile.gettempdir(), qr_filename)
+    img.save(qr_path)
+    
+    return send_from_directory(tempfile.gettempdir(), qr_filename, as_attachment=True)
+
+# ----------- Blockchain API Routes -----------
+@app.route('/api/mine_block', methods=['GET'])
+@login_required
+def api_mine_block():
+    """Manual mining endpoint for testing"""
+    last_block = blockchain.last_block
+    last_proof = last_block['proof']
+    proof = blockchain.proof_of_work(last_proof)
+    previous_hash = blockchain.hash(last_block)
+    
+    block = blockchain.new_block(proof, previous_hash)
+    
+    response = {
+        'message': 'New Block Mined Successfully!',
+        'index': block['index'],
+        'timestamp': block['timestamp'],
+        'proof': block['proof'],
+        'previous_hash': block['previous_hash'],
+        'transactions': block['transactions']
+    }
+    
+    return jsonify(response), 200
+
+@app.route('/api/blockchain', methods=['GET'])
+@login_required
+def api_get_blockchain():
+    """Get full blockchain"""
+    response = {
+        'chain': blockchain.chain,
+        'length': len(blockchain.chain),
+        'valid': blockchain.valid_chain(blockchain.chain)
+    }
+    return jsonify(response), 200
+
+@app.route('/api/validate_chain', methods=['GET'])
+@login_required
+def api_validate_chain():
+    """Validate blockchain integrity"""
+    is_valid = blockchain.valid_chain(blockchain.chain)
+    
+    if is_valid:
+        response = {'message': 'The Blockchain is valid.', 'valid': True}
+    else:
+        response = {'message': 'The Blockchain is not valid.', 'valid': False}
+    
+    return jsonify(response), 200
 
 # ----------- API Routes (for AJAX) -----------
 @app.route('/api/resend_otp', methods=['POST'])
@@ -652,13 +987,22 @@ def inject_user():
         return dict(current_user=user)
     return dict(current_user=None)
 
+@app.context_processor
+def inject_blockchain_stats():
+    return dict(
+        blockchain_blocks=len(blockchain.chain),
+        blockchain_valid=blockchain.valid_chain(blockchain.chain)
+    )
+
 # ---------------- Run App ----------------
 if __name__ == '__main__':
-    print("🚀 Starting AyushVed Flask Application...")
+    print("🚀 Starting AyushVed Flask Application with Blockchain Integration...")
     print("🌿 Ayurvedic Herbs Traceability System")
+    print("⛓️  Blockchain Technology Enabled")
     print("📊 MongoDB Integration Active")
     print("🔐 Environment Variables Loaded")
-    print("=" * 50)
+    print(f"🔗 Blockchain initialized with {len(blockchain.chain)} blocks")
+    print("=" * 60)
     
     # Get configuration from environment
     debug_mode = os.getenv('FLASK_DEBUG', 'True').lower() == 'true'
@@ -666,3 +1010,48 @@ if __name__ == '__main__':
     port = int(os.getenv('FLASK_PORT', 5000))
     
     app.run(debug=debug_mode, host=host, port=port)
+
+
+@app.route('/admin/reverify_batch/<batch_id>')
+@login_required
+@admin_required
+def reverify_batch(batch_id):
+    try:
+        from bson.objectid import ObjectId
+        
+        # Get the batch from MongoDB
+        batch = db.batches.find_one({'_id': ObjectId(batch_id)})
+        if not batch:
+            flash('Batch not found', 'danger')
+            return redirect(url_for('admin_panel'))
+        
+        # Recreate blockchain entry
+        blockchain_data = {
+            'batch_id': str(batch['_id']),
+            'herb_name': batch['herb_name'],
+            'collector': batch['collector'],
+            'farm_location': batch['farm_location'],
+            'created_at': batch.get('created_at'),
+            'created_by': batch.get('created_by')
+        }
+        
+        # Add to blockchain
+        result = add_to_blockchain(blockchain_data)
+        
+        if result['success']:
+            # Update batch status
+            db.batches.update_one(
+                {'_id': ObjectId(batch_id)},
+                {'$set': {'blockchain_verified': True, 'verification_date': datetime.utcnow()}}
+            )
+            flash('Batch successfully re-verified and added to blockchain', 'success')
+        else:
+            flash(f'Re-verification failed: {result["error"]}', 'danger')
+            
+    except Exception as e:
+        flash(f'Re-verification error: {str(e)}', 'danger')
+    
+    return redirect(url_for('provenance', batch_id=batch_id))
+
+
+

@@ -11,3 +11,4 @@ pymongo
 dnspython
 python-dotenv
 waitress
+cryptography

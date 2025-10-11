@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <title>Correct Herb Batch - AyushVed Blockchain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    /* Use the same CSS as your dashboard.html but simplified for this form */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #a8e6cf 75%, #4ecdc4 100%);
+      --text-primary: #2d3748;
+      --text-secondary: #718096;
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --card-border: rgba(255, 255, 255, 0.3);
+      --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+      --input-bg: #f8fafc;
+      --input-border: #e2e8f0;
+      --input-text: #2d3748;
+      --nav-bg: rgba(255, 255, 255, 0.15);
+      --nav-text: #fff;
+      --h2-underline: linear-gradient(45deg, #667eea, #764ba2);
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 25%, #2d2d2d 50%, #1e1e1e 75%, #0a0a0a 100%);
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --card-bg: rgba(20, 24, 32, 0.95);
+      --card-border: rgba(148, 163, 184, 0.15);
+      --input-bg: #1e293b;
+      --input-border: #475569;
+      --input-text: #f8fafc;
+      --nav-bg: rgba(15, 23, 42, 0.9);
+      --nav-text: #f8fafc;
+      --h2-underline: linear-gradient(45deg, #3b82f6, #8b5cf6);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.5s ease;
+    }
+
+    nav {
+      background: var(--nav-bg);
+      backdrop-filter: blur(20px);
+      color: var(--nav-text);
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 1rem 1rem 0 1rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    nav .brand {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, #ffffff, #f0f0f0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    nav .back-btn {
+      color: #fff;
+      text-decoration: none;
+      background: linear-gradient(45deg, #4ecdc4, #44a08d);
+      padding: 0.6rem 1.2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    nav .back-btn:hover {
+      background: linear-gradient(45deg, #44a08d, #2a9d8f);
+      transform: translateY(-2px);
+    }
+
+    .container {
+      flex: 1;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4ecdc4);
+      border-radius: 20px 20px 0 0;
+    }
+
+    h2 {
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+      font-size: 1.5rem;
+      position: relative;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: var(--h2-underline);
+      border-radius: 2px;
+    }
+
+    .info-section {
+      background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.1));
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .info-section h3 {
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .info-item {
+      background: rgba(255, 255, 255, 0.5);
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    [data-theme="dark"] .info-item {
+      background: rgba(30, 41, 59, 0.5);
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.3rem;
+    }
+
+    .info-value {
+      color: var(--text-primary);
+      font-weight: 500;
+      word-break: break-all;
+    }
+
+    .blockchain-data {
+      background: linear-gradient(45deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin: 1rem 0;
+      border: 2px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .blockchain-data h4 {
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .verification-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .verification-item {
+      background: rgba(255, 255, 255, 0.6);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    [data-theme="dark"] .verification-item {
+      background: rgba(30, 41, 59, 0.6);
+    }
+
+    .hash-display {
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      background: rgba(0, 0, 0, 0.1);
+      padding: 0.5rem;
+      border-radius: 4px;
+      word-break: break-all;
+    }
+
+    [data-theme="dark"] .hash-display {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: linear-gradient(45deg, #38a169, #2f855a);
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn-back {
+      background: linear-gradient(45deg, #6c757d, #495057);
+      color: white;
+    }
+
+    .btn-back:hover {
+      background: linear-gradient(45deg, #495057, #343a40);
+      transform: translateY(-2px);
+      color: white;
+    }
+
+    .btn-view {
+      background: linear-gradient(45deg, #17a2b8, #138496);
+      color: white;
+    }
+
+    .btn-view:hover {
+      background: linear-gradient(45deg, #138496, #117a8b);
+      transform: translateY(-2px);
+      color: white;
+    }
+
+    .btn-verify {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      color: white;
+    }
+
+    .btn-verify:hover {
+      background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        gap: 1rem;
+        margin: 0.5rem;
+        padding: 1rem;
+      }
+
+      .container {
+        margin: 1rem auto;
+        padding: 0 0.5rem;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
+
+      .info-grid, .verification-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="brand">✅⛓️ Batch Verified</div>
+    <a href="{{ url_for('dashboard') }}" class="back-btn">
+      ← Back to Dashboard
+    </a>
+  </nav>
+
+  <div class="container">
+    <!-- Batch Information Card -->
+    <div class="card">
+      <h2>📋 Batch Information</h2>
+      <div class="info-section">
+        <h3>🌿 Herb Batch Details</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Batch ID</div>
+            <div class="info-value">{{ batch._id|string }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Herb Name</div>
+            <div class="info-value">{{ batch.herb_name }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Collector</div>
+            <div class="info-value">{{ batch.collector }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Farm Location</div>
+            <div class="info-value">{{ batch.farm_location }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Created By</div>
+            <div class="info-value">{{ batch.created_by or 'N/A' }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Created Date</div>
+            <div class="info-value">{{ batch.created_at.strftime('%Y-%m-%d %H:%M') if batch.created_at else 'N/A' }}</div>
+          </div>
+          {% if batch.latitude and batch.longitude %}
+          <div class="info-item">
+            <div class="info-label">GPS Coordinates</div>
+            <div class="info-value">{{ "%.6f"|format(batch.latitude) }}, {{ "%.6f"|format(batch.longitude) }}</div>
+          </div>
+          {% endif %}
+          {% if batch.notes %}
+          <div class="info-item" style="grid-column: 1 / -1;">
+            <div class="info-label">Notes</div>
+            <div class="info-value">{{ batch.notes }}</div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Blockchain Verification Card -->
+    <div class="card">
+      <h2>⛓️ Blockchain Verification</h2>
+      
+      <!-- Verification Status -->
+      <div class="blockchain-data">
+        <h4>🔐 Verification Status</h4>
+        <div class="status-badge">
+          ✅ Batch Successfully Verified on Blockchain
+        </div>
+        <p style="margin-top: 1rem; color: var(--text-secondary);">
+          This batch has been verified and recorded on the immutable blockchain. 
+          Verification completed by: <strong>{{ verified_by }}</strong>
+        </p>
+      </div>
+
+      <!-- Blockchain Data -->
+      {% if verification_data %}
+      <div class="blockchain-data">
+        <h4>⛓️ Blockchain Transaction History</h4>
+        <div class="verification-grid">
+          {% for entry in verification_data %}
+          <div class="verification-item">
+            <div class="info-label">Block Index</div>
+            <div class="info-value">#{{ entry.block_index }}</div>
+            
+            <div class="info-label" style="margin-top: 0.5rem;">Action Type</div>
+            <div class="info-value">{{ entry.transaction.action_type }}</div>
+            
+            <div class="info-label" style="margin-top: 0.5rem;">Timestamp</div>
+            <div class="info-value">{{ entry.timestamp[:19] }}</div>
+            
+            {% if entry.transaction_hash %}
+            <div class="info-label" style="margin-top: 0.5rem;">Transaction Hash</div>
+            <div class="hash-display">{{ entry.transaction.transaction_hash[:32] }}...</div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Latest Block Hash -->
+      {% if blockchain_hash %}
+      <div class="blockchain-data">
+        <h4>🔗 Latest Block Hash</h4>
+        <div class="hash-display">{{ blockchain_hash }}</div>
+        <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+          This hash represents the current state of the blockchain and serves as cryptographic proof of data integrity.
+        </p>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Actions Card -->
+    <div class="card">
+      <h2>🔧 Available Actions</h2>
+      <div class="action-buttons">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-back">
+          ← Back to Dashboard
+        </a>
+        
+        <a href="{{ url_for('immutable_proven', batch_id=batch._id|string) }}" class="btn btn-view">
+          🔍 View Immutable Proof
+        </a>
+        
+        <a href="{{ url_for('provenance', batch_id=batch._id|string) }}" class="btn btn-verify">
+          📋 View Full Provenance
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Theme synchronization
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      
+      console.log('✅ Batch verification page loaded with theme:', savedTheme);
+      
+      // Add smooth animation on load
+      const cards = document.querySelectorAll('.card');
+      cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          card.style.transition = 'all 0.6s ease';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, index * 200);
+      });
+    });
+
+    // Listen for theme changes
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'theme' && e.newValue) {
+        document.documentElement.setAttribute('data-theme', e.newValue);
+      }
+    });
+
+    window.addEventListener('themeChanged', function(e) {
+      document.documentElement.setAttribute('data-theme', e.detail.theme);
+    });
+  </script>
+
+</body>
+</html>
