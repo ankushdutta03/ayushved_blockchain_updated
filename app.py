@@ -1097,7 +1097,6 @@ if __name__ == '__main__':
 
 @app.route('/admin/reverify_batch/<batch_id>')
 @login_required
-@admin_required
 def reverify_batch(batch_id):
     try:
         from bson.objectid import ObjectId
