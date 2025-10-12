@@ -212,6 +212,116 @@
       font-size: 1.1rem;
     }
 
+    /* ===== NEW: Correction History Section ===== */
+    .correction-history {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      border: 2px solid rgba(251, 191, 36, 0.3);
+    }
+
+    [data-theme="dark"] .correction-history {
+      border-color: rgba(251, 191, 36, 0.4);
+    }
+
+    .correction-history h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .correction-entry {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1));
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    [data-theme="dark"] .correction-entry {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.15));
+      border-color: rgba(251, 191, 36, 0.4);
+    }
+
+    .correction-entry::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, #fbbf24, #f59e0b);
+      border-radius: 12px 0 0 12px;
+    }
+
+    .correction-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .correction-badge {
+      background: linear-gradient(45deg, #fbbf24, #f59e0b);
+      color: white;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .correction-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .correction-item {
+      background: rgba(255, 255, 255, 0.5);
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    [data-theme="dark"] .correction-item {
+      background: rgba(30, 41, 59, 0.5);
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    .correction-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.3rem;
+    }
+
+    .correction-value {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .no-corrections {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
     /* Journey Tracker */
     .journey-tracker {
       background: var(--card-bg);
@@ -336,7 +446,7 @@
 
     .step-header {
       display: flex;
-      justify-content: between;
+      justify-content: space-between;
       align-items: flex-start;
       margin-bottom: 1rem;
       flex-wrap: wrap;
@@ -550,6 +660,10 @@
       .step-details {
         grid-template-columns: 1fr;
       }
+
+      .correction-details {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 480px) {
@@ -557,7 +671,7 @@
         padding: 0 0.5rem;
       }
 
-      .herb-summary, .journey-tracker, .quality-metrics {
+      .herb-summary, .journey-tracker, .quality-metrics, .correction-history {
         margin: 0 0.5rem 1rem 0.5rem;
         padding: 1.5rem;
       }
@@ -627,6 +741,63 @@
       </div>
     </div>
 
+    <!-- ===== NEW: Correction History Section ===== -->
+    <div class="correction-history">
+      <h2>🔧⛓️ Correction History</h2>
+      
+      {% if provenance %}
+        {% set corrections = provenance | selectattr('action_type', 'equalto', 'CORRECTION') | list %}
+        
+        {% if corrections %}
+          {% for correction in corrections %}
+          <div class="correction-entry">
+            <div class="correction-header">
+              <div>
+                <div class="correction-badge">
+                  🔧 Correction #{{ loop.index }}
+                </div>
+              </div>
+              <span style="color: var(--text-secondary); font-size: 0.9rem;">
+                {{ correction.timestamp[:19] if correction.timestamp else 'N/A' }}
+              </span>
+            </div>
+            
+            <div class="correction-details">
+              <div class="correction-item">
+                <div class="correction-label">Herb Name</div>
+                <div class="correction-value">{{ correction.herb_name }}</div>
+              </div>
+              <div class="correction-item">
+                <div class="correction-label">Collector</div>
+                <div class="correction-value">{{ correction.collector }}</div>
+              </div>
+              <div class="correction-item">
+                <div class="correction-label">Location</div>
+                <div class="correction-value">{{ correction.farm_location }}</div>
+              </div>
+              <div class="correction-item">
+                <div class="correction-label">Block Index</div>
+                <div class="correction-value">#{{ correction.block_index }}</div>
+              </div>
+            </div>
+            
+            <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
+              <strong>Corrected by:</strong> User ID {{ correction.user_id[:8] if correction.user_id else 'N/A' }}...
+            </p>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="no-corrections">
+            No corrections have been made to this batch. All data remains as originally recorded.
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="no-corrections">
+          No blockchain history available for this batch.
+        </div>
+      {% endif %}
+    </div>
+
     <!-- Location Map Placeholder -->
     {% if batch.latitude and batch.longitude %}
     <div class="location-map">
@@ -692,7 +863,7 @@
             <div class="step-details">
               <div class="detail-item">
                 <div class="detail-label">Transaction Type</div>
-                <div class="detail-value">{{ provenance[0].transaction.action_type }}</div>
+                <div class="detail-value">{{ provenance[0].action_type }}</div>
               </div>
               <div class="detail-item">
                 <div class="detail-label">Block Index</div>
@@ -700,11 +871,11 @@
               </div>
               <div class="detail-item">
                 <div class="detail-label">Verification</div>
-                <div class="detail-value">{% if provenance[0].verified %}✅ Verified{% else %}⏳ Pending{% endif %}</div>
+                <div class="detail-value">✅ Verified</div>
               </div>
               <div class="detail-item">
-                <div class="detail-label">Digital Signature</div>
-                <div class="detail-value">{{ provenance[0].transaction.digital_signature[:12] + '...' if provenance[0].transaction.digital_signature else 'N/A' }}</div>
+                <div class="detail-label">User ID</div>
+                <div class="detail-value">{{ provenance[0].user_id[:12] + '...' if provenance[0].user_id else 'N/A' }}</div>
               </div>
             </div>
             <div class="step-description">
@@ -926,6 +1097,18 @@
           card.style.opacity = '1';
           card.style.transform = 'translateY(0)';
         }, 1000 + (index * 100));
+      });
+
+      // Animate correction entries
+      document.querySelectorAll('.correction-entry').forEach((entry, index) => {
+        entry.style.opacity = '0';
+        entry.style.transform = 'translateX(-30px)';
+        entry.style.transition = `all 0.5s ease ${index * 0.2}s`;
+        
+        setTimeout(() => {
+          entry.style.opacity = '1';
+          entry.style.transform = 'translateX(0)';
+        }, 500 + (index * 200));
       });
     });
   </script>

@@ -1103,10 +1103,10 @@
             </td>
             <td>
               <!-- CRITICAL FIX: All url_for calls now use batch_id parameter -->
-              <a href="{{ url_for('correct_batch', batch_id=batch._id|string) }}" class="action-btn edit" title="Verify batch on blockchain">🔧 Verify</a>
-              <a href="{{ url_for('immutable_proven', batch_id=batch._id|string) }}" class="action-btn trace-btn" title="View blockchain proof">🔗 Proof</a>
-              <a href="{{ url_for('generate_qr', batch_id=batch._id|string) }}" target="_blank" class="action-btn qr-btn" title="Generate QR code">📱 QR Code</a>
-              <a href="{{ url_for('provenance', batch_id=batch._id|string) }}" class="action-btn trace-btn" title="View complete blockchain history">🔍 Full History</a>
+              <a href="{{ url_for('correct_batch', batch_id=batch._id|string) }}" class="action-btn edit" title="Verify batch on blockchain">🔧Correction</a>
+              <a href="{{ url_for('immutable_proven', batch_id=batch._id|string) }}" class="action-btn trace-btn" title="View blockchain proof">🔗Proof</a>
+              <a href="{{ url_for('generate_qr', batch_id=batch._id|string) }}" target="_blank" class="action-btn qr-btn" title="Generate QR code">📱QR Code</a>
+              <a href="{{ url_for('provenance', batch_id=batch._id|string) }}" class="action-btn trace-btn" title="View complete blockchain history">🔍Full History</a>
             </td>
           </tr>
           {% else %}

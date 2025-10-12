@@ -7,7 +7,6 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
     
-    /* Use the same CSS as your dashboard.html but simplified for this form */
     * {
       margin: 0;
       padding: 0;
@@ -24,9 +23,9 @@
       --input-bg: #f8fafc;
       --input-border: #e2e8f0;
       --input-text: #2d3748;
-      --nav-bg: rgba(255, 255, 255, 0.15);
-      --nav-text: #fff;
-      --h2-underline: linear-gradient(45deg, #667eea, #764ba2);
+      --button-primary: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      --button-success: linear-gradient(45deg, #38a169, #2f855a);
+      --button-danger: linear-gradient(45deg, #e53e3e, #c53030);
     }
 
     [data-theme="dark"] {
@@ -38,9 +37,6 @@
       --input-bg: #1e293b;
       --input-border: #475569;
       --input-text: #f8fafc;
-      --nav-bg: rgba(15, 23, 42, 0.9);
-      --nav-text: #f8fafc;
-      --h2-underline: linear-gradient(45deg, #3b82f6, #8b5cf6);
     }
 
     body {
@@ -50,13 +46,12 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      transition: all 0.5s ease;
     }
 
     nav {
-      background: var(--nav-bg);
+      background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(20px);
-      color: var(--nav-text);
+      color: #fff;
       padding: 1.2rem 2rem;
       display: flex;
       justify-content: space-between;
@@ -91,11 +86,9 @@
 
     .container {
       flex: 1;
-      max-width: 800px;
+      max-width: 900px;
       margin: 2rem auto;
       padding: 0 1rem;
-      position: relative;
-      z-index: 1;
     }
 
     .card {
@@ -105,9 +98,9 @@
       border-radius: 20px;
       padding: 2.5rem;
       box-shadow: var(--card-shadow);
+      margin-bottom: 2rem;
       position: relative;
       overflow: hidden;
-      margin-bottom: 2rem;
     }
 
     .card::before {
@@ -125,130 +118,117 @@
       color: var(--text-primary);
       margin-bottom: 1.5rem;
       font-weight: 600;
-      font-size: 1.5rem;
-      position: relative;
+      font-size: 1.6rem;
     }
 
-    h2::after {
-      content: '';
-      position: absolute;
-      bottom: -8px;
-      left: 0;
-      width: 60px;
-      height: 3px;
-      background: var(--h2-underline);
-      border-radius: 2px;
-    }
-
-    .info-section {
-      background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.1));
-      padding: 1.5rem;
+    .warning-box {
+      background: linear-gradient(45deg, rgba(255, 193, 7, 0.1), rgba(255, 235, 59, 0.1));
+      border: 2px solid #ffc107;
       border-radius: 12px;
+      padding: 1.5rem;
       margin-bottom: 2rem;
-      border: 1px solid rgba(102, 126, 234, 0.2);
     }
 
-    .info-section h3 {
-      color: var(--text-primary);
+    .warning-box h3 {
+      color: #ff8f00;
       margin-bottom: 1rem;
       font-size: 1.2rem;
     }
 
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-
-    .info-item {
-      background: rgba(255, 255, 255, 0.5);
-      padding: 0.8rem;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-
-    [data-theme="dark"] .info-item {
-      background: rgba(30, 41, 59, 0.5);
-    }
-
-    .info-label {
-      font-weight: 600;
+    .warning-box p {
       color: var(--text-secondary);
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 0.3rem;
+      line-height: 1.6;
     }
 
-    .info-value {
+    .form-section {
+      margin-bottom: 2rem;
+    }
+
+    .form-section h3 {
       color: var(--text-primary);
-      font-weight: 500;
-      word-break: break-all;
-    }
-
-    .blockchain-data {
-      background: linear-gradient(45deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin: 1rem 0;
-      border: 2px solid rgba(102, 126, 234, 0.3);
-    }
-
-    .blockchain-data h4 {
-      color: var(--text-primary);
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
 
-    .verification-grid {
+    .form-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
     }
 
-    .verification-item {
-      background: rgba(255, 255, 255, 0.6);
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      background: var(--input-bg);
+      border: 2px solid var(--input-border);
+      border-radius: 12px;
       padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.4);
+      font-size: 1rem;
+      color: var(--input-text);
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
     }
 
-    [data-theme="dark"] .verification-item {
-      background: rgba(30, 41, 59, 0.6);
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      transform: scale(1.02);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .blockchain-info {
+      background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+      border: 2px solid rgba(102, 126, 234, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .blockchain-info h4 {
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
     }
 
     .hash-display {
       font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
       background: rgba(0, 0, 0, 0.1);
-      padding: 0.5rem;
-      border-radius: 4px;
+      padding: 0.8rem;
+      border-radius: 8px;
       word-break: break-all;
+      font-size: 0.9rem;
+      border: 1px solid rgba(0, 0, 0, 0.1);
     }
 
     [data-theme="dark"] .hash-display {
       background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      background: linear-gradient(45deg, #38a169, #2f855a);
-      color: white;
-      padding: 0.4rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-
-    .action-buttons {
+    .button-group {
       display: flex;
       gap: 1rem;
-      margin-top: 1.5rem;
+      margin-top: 2rem;
       flex-wrap: wrap;
     }
 
@@ -265,39 +245,50 @@
       gap: 0.5rem;
       transition: all 0.3s ease;
       font-family: 'Poppins', sans-serif;
+      min-width: 200px;
+      justify-content: center;
     }
 
-    .btn-back {
+    .btn-primary {
+      background: var(--button-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
       background: linear-gradient(45deg, #6c757d, #495057);
       color: white;
     }
 
-    .btn-back:hover {
+    .btn-secondary:hover {
       background: linear-gradient(45deg, #495057, #343a40);
       transform: translateY(-2px);
-      color: white;
     }
 
-    .btn-view {
-      background: linear-gradient(45deg, #17a2b8, #138496);
-      color: white;
+    .alert {
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .btn-view:hover {
-      background: linear-gradient(45deg, #138496, #117a8b);
-      transform: translateY(-2px);
-      color: white;
+    .alert-success {
+      background: linear-gradient(45deg, rgba(56, 161, 105, 0.1), rgba(47, 133, 90, 0.1));
+      border: 2px solid #38a169;
+      color: #2f855a;
     }
 
-    .btn-verify {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      color: white;
-    }
-
-    .btn-verify:hover {
-      background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    .alert-danger {
+      background: linear-gradient(45deg, rgba(229, 62, 62, 0.1), rgba(197, 48, 48, 0.1));
+      border: 2px solid #e53e3e;
+      color: #c53030;
     }
 
     @media (max-width: 768px) {
@@ -317,18 +308,32 @@
         padding: 1.5rem;
       }
 
-      .info-grid, .verification-grid {
+      .form-grid {
         grid-template-columns: 1fr;
       }
 
-      .action-buttons {
+      .button-group {
         flex-direction: column;
       }
 
       .btn {
         width: 100%;
-        justify-content: center;
       }
+    }
+
+    .loading {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid transparent;
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -336,130 +341,145 @@
 
   <!-- Navigation -->
   <nav>
-    <div class="brand">✅⛓️ Batch Verified</div>
+    <div class="brand">🔧⛓️ Correct Batch</div>
     <a href="{{ url_for('dashboard') }}" class="back-btn">
       ← Back to Dashboard
     </a>
   </nav>
 
   <div class="container">
-    <!-- Batch Information Card -->
-    <div class="card">
-      <h2>📋 Batch Information</h2>
-      <div class="info-section">
-        <h3>🌿 Herb Batch Details</h3>
-        <div class="info-grid">
-          <div class="info-item">
-            <div class="info-label">Batch ID</div>
-            <div class="info-value">{{ batch._id|string }}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Herb Name</div>
-            <div class="info-value">{{ batch.herb_name }}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Collector</div>
-            <div class="info-value">{{ batch.collector }}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Farm Location</div>
-            <div class="info-value">{{ batch.farm_location }}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Created By</div>
-            <div class="info-value">{{ batch.created_by or 'N/A' }}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Created Date</div>
-            <div class="info-value">{{ batch.created_at.strftime('%Y-%m-%d %H:%M') if batch.created_at else 'N/A' }}</div>
-          </div>
-          {% if batch.latitude and batch.longitude %}
-          <div class="info-item">
-            <div class="info-label">GPS Coordinates</div>
-            <div class="info-value">{{ "%.6f"|format(batch.latitude) }}, {{ "%.6f"|format(batch.longitude) }}</div>
-          </div>
-          {% endif %}
-          {% if batch.notes %}
-          <div class="info-item" style="grid-column: 1 / -1;">
-            <div class="info-label">Notes</div>
-            <div class="info-value">{{ batch.notes }}</div>
-          </div>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-
-    <!-- Blockchain Verification Card -->
-    <div class="card">
-      <h2>⛓️ Blockchain Verification</h2>
-      
-      <!-- Verification Status -->
-      <div class="blockchain-data">
-        <h4>🔐 Verification Status</h4>
-        <div class="status-badge">
-          ✅ Batch Successfully Verified on Blockchain
-        </div>
-        <p style="margin-top: 1rem; color: var(--text-secondary);">
-          This batch has been verified and recorded on the immutable blockchain. 
-          Verification completed by: <strong>{{ verified_by }}</strong>
-        </p>
-      </div>
-
-      <!-- Blockchain Data -->
-      {% if verification_data %}
-      <div class="blockchain-data">
-        <h4>⛓️ Blockchain Transaction History</h4>
-        <div class="verification-grid">
-          {% for entry in verification_data %}
-          <div class="verification-item">
-            <div class="info-label">Block Index</div>
-            <div class="info-value">#{{ entry.block_index }}</div>
-            
-            <div class="info-label" style="margin-top: 0.5rem;">Action Type</div>
-            <div class="info-value">{{ entry.transaction.action_type }}</div>
-            
-            <div class="info-label" style="margin-top: 0.5rem;">Timestamp</div>
-            <div class="info-value">{{ entry.timestamp[:19] }}</div>
-            
-            {% if entry.transaction_hash %}
-            <div class="info-label" style="margin-top: 0.5rem;">Transaction Hash</div>
-            <div class="hash-display">{{ entry.transaction.transaction_hash[:32] }}...</div>
-            {% endif %}
-          </div>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else ('info' if category == 'info' else 'danger') }}">
+              {% if category == 'success' %}✅{% elif category == 'info' %}ℹ️{% else %}⚠️{% endif %}
+              {{ message }}
+            </div>
           {% endfor %}
         </div>
-      </div>
       {% endif %}
+    {% endwith %}
 
-      <!-- Latest Block Hash -->
-      {% if blockchain_hash %}
-      <div class="blockchain-data">
-        <h4>🔗 Latest Block Hash</h4>
+    <!-- Warning Box -->
+    <div class="warning-box">
+      <h3>⚠️ Important Notice</h3>
+      <p>
+        Corrections to this batch will be recorded on the blockchain as a new transaction. 
+        The original data remains immutable, and all changes are tracked for complete transparency.
+      </p>
+    </div>
+
+    <!-- Correction Form -->
+    <div class="card">
+      <h2>🔧 Correct Batch Information</h2>
+      
+      <form method="POST" id="correctionForm">
+        <div class="form-section">
+          <h3>🌿 Basic Information</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="herb_name">Herb Name *</label>
+              <input type="text" 
+                     id="herb_name" 
+                     name="herb_name" 
+                     value="{{ batch.herb_name }}" 
+                     required 
+                     placeholder="Enter herb name">
+            </div>
+            
+            <div class="form-group">
+              <label for="collector_name">Collector Name *</label>
+              <input type="text" 
+                     id="collector_name" 
+                     name="collector_name" 
+                     value="{{ batch.collector }}" 
+                     required 
+                     placeholder="Enter collector name">
+            </div>
+            
+            <div class="form-group">
+              <label for="farm_location">Farm Location *</label>
+              <input type="text" 
+                     id="farm_location" 
+                     name="farm_location" 
+                     value="{{ batch.farm_location }}" 
+                     required 
+                     placeholder="Enter farm location">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>📍 Location Details</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="latitude">Latitude</label>
+              <input type="number" 
+                     id="latitude" 
+                     name="latitude" 
+                     value="{{ batch.latitude or '' }}" 
+                     step="any" 
+                     placeholder="Enter latitude (optional)">
+            </div>
+            
+            <div class="form-group">
+              <label for="longitude">Longitude</label>
+              <input type="number" 
+                     id="longitude" 
+                     name="longitude" 
+                     value="{{ batch.longitude or '' }}" 
+                     step="any" 
+                     placeholder="Enter longitude (optional)">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>📝 Additional Information</h3>
+          <div class="form-group">
+            <label for="notes">Notes</label>
+            <textarea id="notes" 
+                      name="notes" 
+                      placeholder="Enter any additional notes about this batch">{{ batch.notes or '' }}</textarea>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button type="submit" class="btn btn-primary" id="submitBtn">
+            <span>💾 Save Corrections to Blockchain</span>
+            <div class="loading" id="loadingSpinner"></div>
+          </button>
+          
+          <a href="{{ url_for('provenance', batch_id=batch._id|string) }}" class="btn btn-secondary">
+            📋 View Current Provenance
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Current Blockchain Status -->
+    {% if blockchain_verified %}
+    <div class="card">
+      <h2>⛓️ Current Blockchain Status</h2>
+      
+      <div class="blockchain-info">
+        <h4>🔗 Blockchain Hash</h4>
         <div class="hash-display">{{ blockchain_hash }}</div>
         <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
-          This hash represents the current state of the blockchain and serves as cryptographic proof of data integrity.
+          Current blockchain state verified by: <strong>{{ verified_by }}</strong>
         </p>
+      </div>
+
+      {% if verification_data %}
+      <div class="blockchain-info">
+        <h4>📊 Transaction History</h4>
+        <p>Total blockchain transactions for this batch: <strong>{{ verification_data|length }}</strong></p>
       </div>
       {% endif %}
     </div>
-
-    <!-- Actions Card -->
-    <div class="card">
-      <h2>🔧 Available Actions</h2>
-      <div class="action-buttons">
-        <a href="{{ url_for('dashboard') }}" class="btn btn-back">
-          ← Back to Dashboard
-        </a>
-        
-        <a href="{{ url_for('immutable_proven', batch_id=batch._id|string) }}" class="btn btn-view">
-          🔍 View Immutable Proof
-        </a>
-        
-        <a href="{{ url_for('provenance', batch_id=batch._id|string) }}" class="btn btn-verify">
-          📋 View Full Provenance
-        </a>
-      </div>
-    </div>
+    {% endif %}
   </div>
 
   <script>
@@ -468,19 +488,38 @@
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
       
-      console.log('✅ Batch verification page loaded with theme:', savedTheme);
+      // Form validation
+      const form = document.getElementById('correctionForm');
+      const submitBtn = document.getElementById('submitBtn');
+      const loadingSpinner = document.getElementById('loadingSpinner');
       
-      // Add smooth animation on load
-      const cards = document.querySelectorAll('.card');
-      cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
+      form.addEventListener('submit', function(e) {
+        const herbName = document.getElementById('herb_name').value.trim();
+        const collectorName = document.getElementById('collector_name').value.trim();
+        const farmLocation = document.getElementById('farm_location').value.trim();
         
+        if (!herbName || !collectorName || !farmLocation) {
+          e.preventDefault();
+          alert('Please fill in all required fields (marked with *)');
+          return;
+        }
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.querySelector('span').style.display = 'none';
+        loadingSpinner.style.display = 'inline-block';
+      });
+
+      // Auto-hide flash messages
+      const flashMessages = document.querySelectorAll('.alert');
+      flashMessages.forEach(msg => {
         setTimeout(() => {
-          card.style.transition = 'all 0.6s ease';
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0)';
-        }, index * 200);
+          if (msg.parentNode) {
+            msg.style.opacity = '0';
+            msg.style.transform = 'translateY(-10px)';
+            setTimeout(() => msg.remove(), 300);
+          }
+        }, 5000);
       });
     });
 

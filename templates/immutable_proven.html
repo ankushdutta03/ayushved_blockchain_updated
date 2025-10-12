@@ -357,6 +357,103 @@
       font-size: 0.9rem;
     }
 
+    /* ===== NEW: Correction History Section ===== */
+    .correction-history {
+      background: linear-gradient(45deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1));
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .correction-history {
+      background: linear-gradient(45deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.15));
+      border: 1px solid rgba(251, 191, 36, 0.4);
+    }
+
+    .correction-history h3 {
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.3rem;
+    }
+
+    .correction-entry {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .correction-entry {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+    }
+
+    .correction-entry::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, #fbbf24, #f59e0b);
+      border-radius: 12px 0 0 12px;
+    }
+
+    .correction-entry:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(251, 191, 36, 0.2);
+    }
+
+    .correction-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .correction-badge {
+      background: linear-gradient(45deg, #fbbf24, #f59e0b);
+      color: white;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .correction-timestamp {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .no-corrections {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-secondary);
+      font-style: italic;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 12px;
+      border: 1px dashed rgba(251, 191, 36, 0.3);
+    }
+
+    [data-theme="dark"] .no-corrections {
+      background: rgba(30, 41, 59, 0.5);
+      border-color: rgba(251, 191, 36, 0.4);
+    }
+
     .info-section {
       background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.1));
       padding: 1.5rem;
@@ -624,6 +721,12 @@
         align-items: flex-start;
         gap: 0.5rem;
       }
+
+      .correction-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
     }
 
     @media (max-width: 480px) {
@@ -767,6 +870,65 @@
       </div>
     </div>
 
+    <!-- ===== NEW: Correction History Section ===== -->
+    <div class="card">
+      <h2>🔧 Correction History</h2>
+      
+      <div class="correction-history">
+        <h3>⛓️ Blockchain-Recorded Corrections</h3>
+        
+        {% if provenance %}
+          {% set corrections = provenance | selectattr('action_type', 'equalto', 'CORRECTION') | list %}
+          
+          {% if corrections %}
+            {% for correction in corrections %}
+            <div class="correction-entry">
+              <div class="correction-header">
+                <div class="correction-badge">
+                  🔧 Correction #{{ loop.index }}
+                </div>
+                <div class="correction-timestamp">
+                  {{ correction.timestamp[:19] if correction.timestamp else 'N/A' }}
+                </div>
+              </div>
+              
+              <div class="info-grid">
+                <div class="info-item">
+                  <div class="info-label">Herb Name</div>
+                  <div class="info-value">{{ correction.herb_name }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Collector</div>
+                  <div class="info-value">{{ correction.collector }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Farm Location</div>
+                  <div class="info-value">{{ correction.farm_location }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Block Index</div>
+                  <div class="info-value">#{{ correction.block_index }}</div>
+                </div>
+              </div>
+              
+              <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
+                <strong>Corrected by User ID:</strong> {{ correction.user_id[:12] if correction.user_id else 'N/A' }}...
+              </p>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="no-corrections">
+              🌿 No corrections have been made to this batch. All data remains as originally recorded on the blockchain.
+            </div>
+          {% endif %}
+        {% else %}
+          <div class="no-corrections">
+            ℹ️ No blockchain history available for this batch.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
     <!-- Complete Blockchain History -->
     <div class="card">
       <h2>📜 Complete Blockchain History</h2>
@@ -808,22 +970,24 @@
         <!-- Blockchain Provenance History -->
         {% if provenance %}
           {% for entry in provenance %}
-          <div class="timeline-item {% if entry.transaction.action_type != 'CREATE' %}correction{% endif %}">
+          <div class="timeline-item {% if entry.action_type == 'CORRECTION' %}correction{% endif %}">
             <div class="timeline-header">
               <div class="timeline-title">
-                {% if entry.transaction.action_type == 'CREATE' %}
+                {% if entry.action_type == 'CREATE' %}
                   🌱 Blockchain Creation
-                {% elif entry.transaction.action_type == 'VERIFY' %}
+                {% elif entry.action_type == 'VERIFY' %}
                   ✅ Blockchain Verification
-                {% elif entry.transaction.action_type == 'UPDATE' %}
+                {% elif entry.action_type == 'UPDATE' %}
                   🔧 Blockchain Update
-                {% elif entry.transaction.action_type == 'SCAN' %}
+                {% elif entry.action_type == 'CORRECTION' %}
+                  🔧 Blockchain Correction
+                {% elif entry.action_type == 'SCAN' %}
                   📱 QR Code Scan
                 {% else %}
                   ⛓️ Blockchain Transaction
                 {% endif %}
-                <span class="badge {% if entry.transaction.action_type == 'CREATE' %}badge-original{% else %}badge-correction{% endif %}">
-                  {{ entry.transaction.action_type }}
+                <span class="badge {% if entry.action_type == 'CREATE' %}badge-original{% elif entry.action_type == 'CORRECTION' %}badge-correction{% else %}badge-original{% endif %}">
+                  {{ entry.action_type }}
                 </span>
               </div>
               <div class="timeline-date">
@@ -837,38 +1001,24 @@
                 <div class="info-value">#{{ entry.block_index }}</div>
               </div>
               <div class="info-item">
-                <div class="info-label">Block Hash</div>
-                <div class="info-value">
-                  <span class="badge badge-hash" title="{{ entry.block_hash }}">{{ entry.block_hash[:16] }}...</span>
-                </div>
-              </div>
-              <div class="info-item">
-                <div class="info-label">Transaction Hash</div>
-                <div class="info-value">
-                  <span class="badge badge-hash" title="{{ entry.transaction.transaction_hash }}">{{ entry.transaction.transaction_hash[:16] }}...</span>
-                </div>
-              </div>
-              <div class="info-item">
                 <div class="info-label">Action Type</div>
-                <div class="info-value">{{ entry.transaction.action_type }}</div>
+                <div class="info-value">{{ entry.action_type }}</div>
               </div>
-              {% if entry.transaction.digital_signature %}
               <div class="info-item">
-                <div class="info-label">Digital Signature</div>
-                <div class="info-value">
-                  <span class="badge badge-hash" title="{{ entry.transaction.digital_signature }}">{{ entry.transaction.digital_signature[:16] }}...</span>
-                </div>
+                <div class="info-label">User ID</div>
+                <div class="info-value">{{ entry.user_id[:12] if entry.user_id else 'N/A' }}...</div>
               </div>
-              {% endif %}
               <div class="info-item">
-                <div class="info-label">Verification Status</div>
-                <div class="info-value">
-                  {% if entry.verified %}
-                    <span class="badge badge-original">✅ Verified</span>
-                  {% else %}
-                    <span class="badge" style="background: #dc2626; color: white;">❌ Failed</span>
-                  {% endif %}
-                </div>
+                <div class="info-label">Herb Name</div>
+                <div class="info-value">{{ entry.herb_name or 'N/A' }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Collector</div>
+                <div class="info-value">{{ entry.collector or 'N/A' }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Farm Location</div>
+                <div class="info-value">{{ entry.farm_location or 'N/A' }}</div>
               </div>
             </div>
           </div>
@@ -911,6 +1061,20 @@
           <div class="info-item">
             <div class="info-label">Audit Trail</div>
             <div class="info-value">{% if provenance %}✅ Complete{% else %}❌ Missing{% endif %}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Total Blocks</div>
+            <div class="info-value">{{ total_blocks if total_blocks else 0 }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Corrections Made</div>
+            <div class="info-value">
+              {% if provenance %}
+                {{ provenance | selectattr('action_type', 'equalto', 'CORRECTION') | list | length }}
+              {% else %}
+                0
+              {% endif %}
+            </div>
           </div>
         </div>
       </div>
@@ -984,6 +1148,18 @@
           card.style.transform = 'translateY(0)';
         }, index * 200);
       });
+
+      // Animate correction entries
+      document.querySelectorAll('.correction-entry').forEach((entry, index) => {
+        entry.style.opacity = '0';
+        entry.style.transform = 'translateX(-30px)';
+        entry.style.transition = `all 0.5s ease ${index * 0.2}s`;
+        
+        setTimeout(() => {
+          entry.style.opacity = '1';
+          entry.style.transform = 'translateX(0)';
+        }, 1000 + (index * 200));
+      });
     });
 
     // Listen for theme changes from other pages
@@ -1014,7 +1190,7 @@
         item.style.transition = 'all 0.5s ease';
         item.style.opacity = '1';
         item.style.transform = 'translateY(0)';
-      }, 1000 + (index * 200)); // Start after cards load
+      }, 1500 + (index * 200)); // Start after cards and corrections load
     });
 
     // Copy hash to clipboard functionality
