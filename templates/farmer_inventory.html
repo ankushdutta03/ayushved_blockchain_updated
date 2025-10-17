@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <title>Farmer Inventory - AyushVed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light Theme Variables */
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #a8e6cf 75%, #4ecdc4 100%);
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(255, 255, 255, 0.3);
+            --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+            --stat-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(45deg, #38a169, #2f855a);
+            --info-gradient: linear-gradient(45deg, #3182ce, #2c5282);
+            --warning-gradient: linear-gradient(45deg, #d69e2e, #b7791f);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --nav-bg: rgba(255, 255, 255, 0.15);
+            --nav-border: rgba(255, 255, 255, 0.2);
+            --nav-text: #fff;
+            --table-bg: #ffffff;
+            --table-header-bg: linear-gradient(135deg, #667eea, #764ba2);
+            --table-row-hover: rgba(102, 126, 234, 0.05);
+            --table-border: rgba(0,0,0,0.08);
+            --debug-bg: linear-gradient(45deg, rgba(255, 193, 7, 0.1), rgba(255, 235, 59, 0.1));
+            --debug-border: #ffc107;
+            --debug-text: #ff8f00;
+            --btn-text: white;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme Variables */
+            --bg-gradient: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 25%, #2d2d2d 50%, #1e1e1e 75%, #0a0a0a 100%);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --card-bg: rgba(20, 24, 32, 0.95);
+            --card-border: rgba(148, 163, 184, 0.15);
+            --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 5px 15px rgba(0, 0, 0, 0.3);
+            --stat-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --success-gradient: linear-gradient(45deg, #10b981, #059669);
+            --info-gradient: linear-gradient(45deg, #3b82f6, #1e40af);
+            --warning-gradient: linear-gradient(45deg, #f59e0b, #d97706);
+            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+            --nav-bg: rgba(15, 23, 42, 0.9);
+            --nav-border: rgba(148, 163, 184, 0.2);
+            --nav-text: #f8fafc;
+            --table-bg: #1e293b;
+            --table-header-bg: linear-gradient(135deg, #1e40af, #7c3aed);
+            --table-row-hover: rgba(148, 163, 184, 0.12);
+            --table-border: rgba(148, 163, 184, 0.2);
+            --debug-bg: linear-gradient(45deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.1));
+            --debug-border: #f59e0b;
+            --debug-text: #fbbf24;
+            --btn-text: white;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all 0.5s ease;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--nav-border);
+            color: var(--nav-text);
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 1rem 0 1rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] nav {
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+
+        nav .brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] nav .brand {
+            background: linear-gradient(45deg, #ffffff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        [data-theme="dark"] nav .brand {
+            background: linear-gradient(45deg, #f8fafc, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-btn {
+            color: var(--btn-text);
+            text-decoration: none;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        [data-theme="dark"] .back-btn {
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(45deg, #44a08d, #2a9d8f);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(68, 160, 141, 0.4);
+        }
+
+        [data-theme="dark"] .back-btn:hover {
+            box-shadow: 0 8px 25px rgba(68, 160, 141, 0.6);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] h1 {
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        [data-theme="dark"] h1 {
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Enhanced Inventory Statistics */
+        .inventory-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--stat-gradient);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .stat-card:nth-child(1)::before { background: var(--success-gradient); }
+        .stat-card:nth-child(2)::before { background: var(--info-gradient); }
+        .stat-card:nth-child(3)::before { background: var(--warning-gradient); }
+        .stat-card:nth-child(4)::before { background: var(--primary-gradient); }
+
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        [data-theme="dark"] .stat-card:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--stat-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card:nth-child(1) .stat-number { 
+            background: var(--success-gradient); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        .stat-card:nth-child(2) .stat-number { 
+            background: var(--info-gradient); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        .stat-card:nth-child(3) .stat-number { 
+            background: var(--warning-gradient); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        .stat-card:nth-child(4) .stat-number { 
+            background: var(--primary-gradient); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        /* Debug Information */
+        .debug-info {
+            background: var(--debug-bg);
+            border: 2px solid var(--debug-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .debug-info strong {
+            color: var(--debug-text);
+            font-size: 1.1rem;
+        }
+
+        /* Enhanced Table */
+        .table-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--table-bg);
+        }
+
+        .inventory-table th {
+            background: var(--table-header-bg);
+            padding: 1.5rem 1rem;
+            text-align: left;
+            font-weight: 700;
+            color: white !important;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .inventory-table td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid var(--table-border);
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+
+        .inventory-table tbody tr:hover {
+            background: var(--table-row-hover);
+            transform: scale(1.01);
+        }
+
+        .inventory-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* No Inventory State */
+        .no-inventory {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .no-inventory h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .no-inventory h3 {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        [data-theme="dark"] .no-inventory h3 {
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .no-inventory p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            transition: color 0.3s ease;
+        }
+
+        .add-batch-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--success-gradient);
+            color: var(--btn-text);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(56, 161, 105, 0.3);
+        }
+
+        [data-theme="dark"] .add-batch-btn {
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .add-batch-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(56, 161, 105, 0.4);
+        }
+
+        [data-theme="dark"] .add-batch-btn:hover {
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+        }
+
+        /* Quality Badges */
+        .quality-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .quality-premium { 
+            background: linear-gradient(45deg, #ffd700, #ffed4a); 
+            color: #b45309; 
+        }
+        .quality-standard { 
+            background: linear-gradient(45deg, #38a169, #2f855a); 
+            color: white; 
+        }
+        .quality-commercial { 
+            background: linear-gradient(45deg, #3182ce, #2c5282); 
+            color: white; 
+        }
+        .quality-organic { 
+            background: linear-gradient(45deg, #22c55e, #16a34a); 
+            color: white; 
+        }
+
+        /* Weight and Value Styling */
+        .weight-display {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        [data-theme="light"] .weight-display {
+            color: #28a745;
+        }
+
+        [data-theme="dark"] .weight-display {
+            color: #10b981;
+        }
+
+        .value-display {
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        [data-theme="light"] .value-display {
+            color: #dc3545;
+        }
+
+        [data-theme="dark"] .value-display {
+            color: #ef4444;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+                margin: 0.5rem;
+                padding: 1rem;
+            }
+
+            .container {
+                margin: 1rem auto;
+                padding: 0 0.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .inventory-stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1.5rem;
+            }
+
+            .inventory-table th,
+            .inventory-table td {
+                padding: 0.8rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .no-inventory {
+                padding: 2rem 1rem;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Smooth Theme Transitions */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="brand">📦🌿 Farmer Inventory</div>
+        <a href="{{ url_for('dashboard') }}" class="back-btn">
+            ← Back to Dashboard
+        </a>
+    </nav>
+    
+    <div class="container">
+        <h1>📦 Your Herb Inventory</h1>
+        
+        <!-- Enhanced Inventory Statistics -->
+        <div class="inventory-stats">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_batches or 0 }}</div>
+                <div class="stat-label">🌿 Total Batches</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ "%.1f"|format(total_weight or 0) }}</div>
+                <div class="stat-label">⚖️ Total Weight (kg)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">₹{{ "%.0f"|format(total_value or 0) }}</div>
+                <div class="stat-label">💰 Total Value</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ unique_herbs|length if unique_herbs else 0 }}</div>
+                <div class="stat-label">🏷️ Unique Herbs</div>
+            </div>
+        </div>
+        
+        <!-- Debug Information -->
+        <div class="debug-info">
+            <strong>🐛 Debug Info:</strong><br>
+            User ID: {{ session.user_id }}<br>
+            Batches Found: {{ batches|length if batches else 0 }}<br>
+            {% if batches %}
+                First Batch: {{ batches[0].herb_name if batches[0] else 'N/A' }}
+            {% endif %}
+        </div>
+        
+        <!-- Enhanced Batches Table -->
+        {% if batches and batches|length > 0 %}
+        <div class="table-container">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>🌿 Herb Name</th>
+                        <th>⚖️ Weight</th>
+                        <th>💰 Value</th>
+                        <th>🏷️ Quality</th>
+                        <th>📅 Created</th>
+                        <th>📍 Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for batch in batches %}
+                    <tr>
+                        <td><strong>{{ batch.herb_name }}</strong></td>
+                        <td>
+                            {% if batch.weight_kg %}
+                                <span class="weight-display">{{ "%.2f"|format(batch.weight_kg) }}kg</span>
+                                {% if batch.original_weight and batch.original_weight_unit %}
+                                    <br><small style="color: var(--text-secondary);">({{ batch.original_weight }}{{ batch.original_weight_unit }})</small>
+                                {% endif %}
+                            {% else %}
+                                <span style="color: var(--text-secondary);">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if batch.total_value_inr %}
+                                <span class="value-display">₹{{ "%.2f"|format(batch.total_value_inr) }}</span>
+                            {% else %}
+                                <span style="color: var(--text-secondary);">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if batch.quality_grade %}
+                                <span class="quality-badge quality-{{ batch.quality_grade.lower() }}">
+                                    {{ batch.quality_grade }}
+                                </span>
+                            {% else %}
+                                <span style="color: var(--text-secondary);">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ batch.created_at.strftime('%Y-%m-%d') if batch.created_at else 'N/A' }}</td>
+                        <td>{{ batch.farm_location or 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="no-inventory">
+            <h3>🌿 No Inventory Found</h3>
+            <p>You haven't added any herb batches yet. Start building your blockchain-verified herb inventory!</p>
+            <a href="{{ url_for('dashboard') }}" class="add-batch-btn">
+                ➕ Add Your First Batch
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Enhanced theme synchronization
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            console.log(`🎨 Applied ${theme} theme to farmer inventory`);
+        }
+
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+        });
+
+        // Listen for theme changes from other pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme' && e.newValue) {
+                applyTheme(e.newValue);
+            }
+        });
+
+        // Listen for custom theme events from other pages
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail && e.detail.theme) {
+                applyTheme(e.detail.theme);
+            }
+        });
+    </script>
+</body>
+</html>

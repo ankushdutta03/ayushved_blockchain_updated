@@ -326,82 +326,258 @@
       background: var(--h2-underline);
       border-radius: 2px;
     }
+/* NEW: Farmer Tools Navigation - Dark Mode Support */
+.farmer-tools-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--card-shadow);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
 
-    /* Blockchain Statistics Grid */
-    .blockchain-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
+/* EXPLICIT Dark Mode Override */
+[data-theme="dark"] .farmer-tools-card {
+  background: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+}
 
-    .stat-card {
-      background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 1.5rem;
-      text-align: center;
-      box-shadow: var(--card-shadow);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-    }
+.farmer-tools-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #28a745, #20c997, #17a2b8);
+  border-radius: 20px 20px 0 0;
+}
 
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4ecdc4);
-      border-radius: 16px 16px 0 0;
-    }
+.farmer-tools-title {
+  color: var(--text-primary);
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  background: linear-gradient(45deg, #28a745, #20c997);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: all 0.3s ease;
+}
 
-    .stat-card.blockchain-stat {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
+/* EXPLICIT Dark Mode Title Fix */
+[data-theme="dark"] .farmer-tools-title {
+  color: #f8fafc !important;
+  background: linear-gradient(45deg, #10b981, #14b8a6) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
 
-    .stat-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--card-hover-shadow);
-    }
+.farmer-tools-buttons {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: center;
+}
 
-    .stat-number {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
+.farmer-btn {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  margin: 0;
+  padding: 0.8rem 1.5rem;
+  text-decoration: none;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  gap: 0.5rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
 
-    .stat-card:not(.blockchain-stat) .stat-number {
-      color: var(--text-primary);
-      background: linear-gradient(45deg, #667eea, #764ba2);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+.farmer-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
 
-    .stat-card.blockchain-stat .stat-number {
-      color: white;
-    }
+.farmer-btn-primary {
+  background: linear-gradient(45deg, #28a745, #20c997);
+}
 
-    .stat-label {
-      font-weight: 500;
-      text-transform: uppercase;
-      font-size: 0.9rem;
-      letter-spacing: 0.5px;
-    }
+.farmer-btn-primary:hover {
+  background: linear-gradient(45deg, #20c997, #17a2b8);
+}
 
-    .stat-card:not(.blockchain-stat) .stat-label {
-      color: var(--text-secondary);
-    }
+.farmer-btn-secondary {
+  background: linear-gradient(45deg, #17a2b8, #138496);
+}
 
-    .stat-card.blockchain-stat .stat-label {
-      color: rgba(255, 255, 255, 0.9);
-    }
+.farmer-btn-secondary:hover {
+  background: linear-gradient(45deg, #138496, #0f6674);
+}
+
+.farmer-btn-accent {
+  background: linear-gradient(45deg, #ffc107, #e0a800);
+  color: #212529;
+}
+
+.farmer-btn-accent:hover {
+  background: linear-gradient(45deg, #e0a800, #d39e00);
+  color: #000;
+}
+
+  /* Dark Mode Adjustments for Farmer Tools */
+[data-theme="dark"] .farmer-btn {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .farmer-btn:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="dark"] .farmer-btn-accent {
+  color: #212529;
+}
+
+[data-theme="dark"] .farmer-btn-accent:hover {
+  color: #000;
+}
+   /* UPDATED: Blockchain Statistics Grid - All Cards Match */
+.blockchain-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Light Theme Stats */
+[data-theme="light"] .stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+/* Dark Theme Stats - ALL CARDS SAME BACKGROUND */
+[data-theme="dark"] .stat-card {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  color: white;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 16px 16px 0 0;
+}
+
+/* Top Border Colors */
+.stat-card:nth-child(1)::before { 
+  background: linear-gradient(90deg, #10b981, #059669); /* Green for Herb Batches */
+}
+.stat-card:nth-child(2)::before { 
+  background: linear-gradient(90deg, #8b5cf6, #7c3aed); /* Purple for Blocks */
+}
+.stat-card:nth-child(3)::before { 
+  background: linear-gradient(90deg, #3b82f6, #2563eb); /* Blue for Transactions */
+}
+.stat-card:nth-child(4)::before { 
+  background: linear-gradient(90deg, #10b981, #059669); /* Green for Chain Status */
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-hover-shadow);
+}
+
+[data-theme="dark"] .stat-card:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+/* ALL Dark Theme Numbers - White */
+[data-theme="dark"] .stat-number {
+  color: #ffffff;
+}
+
+/* Light Theme Numbers */
+[data-theme="light"] .stat-number {
+  color: var(--text-primary);
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Chain Status Checkmark Visibility Fix */
+.stat-card:nth-child(4) .stat-number {
+  font-size: 2.5rem !important;
+}
+
+[data-theme="light"] .stat-card:nth-child(4) .stat-number {
+  color: #28a745 !important;
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: #28a745 !important;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+}
+
+[data-theme="dark"] .stat-card:nth-child(4) .stat-number {
+  color: #10b981 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+}
+
+.stat-label {
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+/* ALL Dark Theme Labels - White */
+[data-theme="dark"] .stat-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Light Theme Labels */
+[data-theme="light"] .stat-label {
+  color: var(--text-secondary);
+}
+
+/* Remove any blockchain-stat specific styling */
+.stat-card.blockchain-stat {
+  /* Override removed - all cards use same styling now */
+}
 
     /* 🌿 Card */
     .card {
@@ -448,7 +624,7 @@
       gap: 1.5rem;
     }
 
-    input, textarea, button[type="button"] {
+    input, textarea, button[type="button"], select {
       width: 100%;
       padding: 1rem 1.2rem;
       border: 2px solid var(--input-border);
@@ -466,14 +642,15 @@
       font-weight: 300;
     }
 
-    input:focus, textarea:focus {
+    input:focus, textarea:focus, select:focus {
       outline: none;
       background: var(--input-focus-bg);
       transform: translateY(-2px);
     }
 
     [data-theme="light"] input:focus,
-    [data-theme="light"] textarea:focus {
+    [data-theme="light"] textarea:focus,
+    [data-theme="light"] select:focus {
       border-color: #667eea;
       box-shadow: 
         0 0 0 3px rgba(102, 126, 234, 0.1),
@@ -481,7 +658,8 @@
     }
 
     [data-theme="dark"] input:focus,
-    [data-theme="dark"] textarea:focus {
+    [data-theme="dark"] textarea:focus,
+    [data-theme="dark"] select:focus {
       border-color: #3b82f6;
       box-shadow: 
         0 0 0 3px rgba(59, 130, 246, 0.2),
@@ -865,7 +1043,47 @@
       white-space: nowrap;
     }
 
-    /* Responsive Design */
+    /* NEW: Pricing Section Styling */
+    .pricing-section {
+      background: rgba(240, 248, 255, 0.7);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(102, 126, 234, 0.2);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      grid-column: 1 / -1;
+    }
+
+    [data-theme="dark"] .pricing-section {
+      background: rgba(30, 41, 59, 0.7);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .pricing-section h4 {
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .calc-display {
+      background: rgba(248, 250, 252, 0.8);
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      border-radius: 8px;
+      padding: 0.8rem;
+      margin-top: 1rem;
+      font-weight: 600;
+      color: #059669;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .calc-display {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: rgba(71, 85, 105, 0.5);
+      color: #10b981;
+    }
+
+    /* Mobile Responsive */
     @media (max-width: 768px) {
       nav {
         flex-direction: column;
@@ -924,6 +1142,16 @@
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1rem;
       }
+
+      .farmer-tools-buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .farmer-btn {
+        width: 100%;
+        justify-content: center;
+      }
     }
 
     @media (max-width: 480px) {
@@ -971,7 +1199,7 @@
       animation: spin 1s ease-in-out infinite;
       margin: 0 auto;
     }
-
+    
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -979,7 +1207,8 @@
 </head>
 <body>
 
-  <!-- 🌿 Navbar -->
+
+ <!-- 🌿 Navbar -->
   <nav>
     <div class="brand">🌿⛓️ AyushVed</div>
     <div class="user-info">
@@ -1035,6 +1264,22 @@
       {% endif %}
     {% endwith %}
 
+<!-- NEW: Farmer Tools Navigation -->
+<div class="card farmer-tools-card">
+  <h4 class="farmer-tools-title">👨‍🌾 Farmer Tools</h4>
+  <div class="farmer-tools-buttons">
+    <a href="{{ url_for('farmer_inventory') }}" class="btn-submit farmer-btn farmer-btn-primary">
+      📦 View Inventory
+    </a>
+    
+    <!-- FIXED: Points to add batch form, not scanner -->
+    <a href="#add-batch" class="btn-submit farmer-btn farmer-btn-secondary" onclick="document.getElementById('add-batch').scrollIntoView({behavior: 'smooth'});">
+      ➕ Add New Batch
+    </a>
+  </div>
+</div>
+
+
     <!-- CORRECTED: Blockchain Statistics -->
     <div class="blockchain-stats">
       <div class="stat-card">
@@ -1055,8 +1300,8 @@
       </div>
     </div>
 
-    <!-- 🌱 Add Herb Batch -->
-    <div class="card">
+    <!-- 🌱 ENHANCED Add Herb Batch with Weight & Pricing -->
+    <div class="card" id="add-batch">
       <h2>⛓️ Add New Herb Batch to Immutable Blockchain</h2>
       <form method="POST" action="{{ url_for('add_batch') }}">
         <input type="text" name="herb_name" placeholder="Herb Name" required>
@@ -1064,8 +1309,95 @@
         <input type="text" name="farm_location" placeholder="Farm Location" required>
         <input type="text" name="latitude" id="latitude" placeholder="Latitude">
         <input type="text" name="longitude" id="longitude" placeholder="Longitude">
+
+        <!-- NEW: Enhanced Weight and Pricing Section -->
+        <div class="pricing-section">
+          <h4>💰 Weight & Pricing Information</h4>
+          
+          <!-- Weight -->
+          <input type="number" name="total_weight" step="0.001" min="0.001" 
+                 placeholder="Enter weight amount" required onchange="calculateTotalValue()">
+          
+          <select name="weight_unit" onchange="calculateTotalValue()">
+            <optgroup label="📊 Metric System">
+              <option value="kg" selected>Kilogram (kg)</option>
+              <option value="g">Gram (g)</option>
+              <option value="ton">Metric Ton</option>
+              <option value="quintal">Quintal (100kg)</option>
+            </optgroup>
+            <optgroup label="🇮🇳 Indian Traditional">
+              <option value="maund">Maund (40kg)</option>
+              <option value="seer">Seer (0.933kg)</option>
+            </optgroup>
+            <optgroup label="🇺🇸 Imperial">
+              <option value="lb">Pound (lb)</option>
+              <option value="oz">Ounce (oz)</option>
+            </optgroup>
+            <optgroup label="📦 Commercial">
+              <option value="bag">Bag (50kg)</option>
+              <option value="sack">Sack (25kg)</option>
+            </optgroup>
+          </select>
+          
+          <!-- Currency -->
+          <select name="currency" onchange="calculateTotalValue()">
+            <optgroup label="🌍 Major Currencies">
+              <option value="INR" selected>🇮🇳 Indian Rupee (₹)</option>
+              <option value="USD">🇺🇸 US Dollar ($)</option>
+              <option value="EUR">🇪🇺 Euro (€)</option>
+              <option value="GBP">🇬🇧 British Pound (£)</option>
+            </optgroup>
+            <optgroup label="🏛️ Asian Markets">
+              <option value="CNY">🇨🇳 Chinese Yuan (¥)</option>
+              <option value="JPY">🇯🇵 Japanese Yen (¥)</option>
+              <option value="BDT">🇧🇩 Bangladeshi Taka</option>
+              <option value="LKR">🇱🇰 Sri Lankan Rupee</option>
+            </optgroup>
+            <optgroup label="₿ Crypto">
+              <option value="BTC">₿ Bitcoin</option>
+              <option value="ETH">Ξ Ethereum</option>
+              <option value="USDT">₮ Tether</option>
+            </optgroup>
+          </select>
+          
+          <!-- Price -->
+          <input type="number" name="price_per_unit" step="0.01" min="0.01" 
+                 placeholder="Enter price amount" required onchange="calculateTotalValue()">
+          
+          <select name="price_unit" onchange="calculateTotalValue()">
+            <option value="per_kg" selected>per Kg</option>
+            <option value="per_g">per Gram</option>
+            <option value="per_lb">per Pound</option>
+            <option value="per_quintal">per Quintal</option>
+            <option value="per_bag">per Bag</option>
+            <option value="total_batch">Total Batch Price</option>
+          </select>
+          
+          <!-- Quality and Packaging -->
+          <input type="date" name="harvest_date" placeholder="Harvest Date">
+          
+          <select name="quality_grade">
+            <option value="Premium">🥇 Premium (A+)</option>
+            <option value="Standard" selected>⭐ Standard (A)</option>
+            <option value="Commercial">📦 Commercial (B)</option>
+            <option value="Organic">🌱 Organic Certified</option>
+          </select>
+          
+          <select name="packaging">
+            <option value="bulk" selected>📦 Bulk</option>
+            <option value="jute_bags">🛍️ Jute Bags</option>
+            <option value="vacuum_sealed">🔒 Vacuum Sealed</option>
+            <option value="dried_leaves">🍃 Dried Leaves</option>
+          </select>
+          
+          <!-- Calculated Values Display -->
+          <div class="calc-display" id="weight_in_kg" style="display: none;"></div>
+          <div class="calc-display" id="price_in_inr_kg" style="display: none;"></div>
+          <div class="calc-display" id="total_value" style="display: none;"></div>
+        </div>
+
         <button type="button" onclick="getLocation()">📍 Get My Location</button>
-        <textarea name="notes" rows="3" placeholder="Additional notes about this herb batch..."></textarea>
+        <textarea name="notes" rows="3" placeholder="Additional notes about this herb batch (storage conditions, processing method, certifications, etc.)..."></textarea>
         <button type="submit" class="btn-submit">
           <span>⛓️ Add to Immutable Blockchain</span>
           <div class="loading"></div>
@@ -1073,7 +1405,7 @@
       </form>
     </div>
 
-    <!-- 🌿 Display Table - CRITICAL FIXES APPLIED -->
+    <!-- 🌿 ENHANCED Display Table with Weight & Pricing -->
     <div class="card">
       <h2>🌿⛓️ Your Immutable Blockchain Herb Batches</h2>
       <table>
@@ -1081,9 +1413,10 @@
           <tr>
             <th>Batch ID</th>
             <th>Herb Name</th>
-            <th>Collector</th>
-            <th>Farm Location</th>
-            <th>Created Date</th>
+            <th>Weight</th>
+            <th>Price/kg</th>
+            <th>Total Value</th>
+            <th>Quality</th>
             <th>✅ Status</th>
             <th>⛓️ Blockchain Actions</th>
           </tr>
@@ -1092,27 +1425,63 @@
           {% for batch in herb_batches %}
           <tr>
             <td>
-              <span class="id-badge" title="{{ batch._id }}">{{ batch._id|string|truncate(12, True, '...') }}</span>
+              <span class="id-badge" title="{{ batch.batch_number or batch._id }}">
+                {{ batch.batch_number[:12] if batch.batch_number else batch._id|string|truncate(12, True, '...') }}
+              </span>
             </td>
             <td><strong>{{ batch.herb_name }}</strong></td>
-            <td>{{ batch.collector }}</td>
-            <td>{{ batch.farm_location }}</td>
-            <td>{{ batch.created_at.strftime('%Y-%m-%d') if batch.created_at else 'N/A' }}</td>
+            <td>
+              {% if batch.weight_kg %}
+                <span style="color: #28a745; font-weight: bold;">{{ "%.2f"|format(batch.weight_kg) }}kg</span>
+                {% if batch.original_weight and batch.original_weight_unit %}
+                  <br><small style="color: #6c757d;">({{ batch.original_weight }}{{ batch.original_weight_unit }})</small>
+                {% endif %}
+              {% else %}
+                <span style="color: #6c757d;">N/A</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if batch.price_per_kg_inr %}
+                <span style="color: #17a2b8; font-weight: bold;">₹{{ "%.2f"|format(batch.price_per_kg_inr) }}</span>
+                {% if batch.original_currency != 'INR' %}
+                  <br><small style="color: #6c757d;">({{ batch.original_currency }})</small>
+                {% endif %}
+              {% else %}
+                <span style="color: #6c757d;">N/A</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if batch.total_value_inr %}
+                <span style="color: #28a745; font-weight: bold; font-size: 16px;">₹{{ "%.2f"|format(batch.total_value_inr) }}</span>
+              {% else %}
+                <span style="color: #6c757d;">N/A</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if batch.quality_grade %}
+                <span style="background: #e8f5e8; color: #28a745; padding: 2px 6px; border-radius: 3px; font-size: 11px;">
+                  {{ batch.quality_grade }}
+                </span>
+              {% else %}
+                <span style="color: #6c757d;">N/A</span>
+              {% endif %}
+            </td>
             <td>
               <span class="verification-badge">✅ Immutable</span>
             </td>
             <td>
-              <!-- CRITICAL FIX: All url_for calls now use batch_id parameter -->
               <a href="{{ url_for('correct_batch', batch_id=batch._id|string) }}" class="action-btn edit" title="Verify batch on blockchain">🔧Correction</a>
               <a href="{{ url_for('immutable_proven', batch_id=batch._id|string) }}" class="action-btn trace-btn" title="View blockchain proof">🔗Proof</a>
               <a href="{{ url_for('generate_qr', batch_id=batch._id|string) }}" target="_blank" class="action-btn qr-btn" title="Generate QR code">📱QR Code</a>
               <a href="{{ url_for('provenance', batch_id=batch._id|string) }}" class="action-btn trace-btn" title="View complete blockchain history">🔍Full History</a>
+              <!-- NEW: Batch Details Button -->
+              <a href="{{ url_for('batch_details', batch_id=batch._id|string) }}" class="action-btn" style="background: linear-gradient(45deg, #28a745, #20c997);" title="View detailed batch information">👁️Details</a>
             </td>
           </tr>
           {% else %}
           <tr>
-            <td colspan="7" style="text-align:center; font-style: italic; padding: 2rem;" class="empty-row-text">
-              No herb batches added to immutable blockchain yet. Start by adding your first batch above! 🌱⛓️
+            <td colspan="8" style="text-align:center; font-style: italic; padding: 2rem;" class="empty-row-text">
+              No herb batches added to immutable blockchain yet. Start by adding your first batch above! 🌱⛓️💰
             </td>
           </tr>
           {% endfor %}
@@ -1136,6 +1505,65 @@
   </footer>
 
   <script>
+    // Weight and Currency Conversion Constants
+    const WEIGHT_CONVERSIONS = {
+      'kg': 1, 'g': 0.001, 'ton': 1000, 'quintal': 100,
+      'lb': 0.453592, 'oz': 0.0283495, 'maund': 40, 'seer': 0.933,
+      'bag': 50, 'sack': 25
+    };
+
+    const CURRENCY_CONVERSIONS = {
+      'INR': 1, 'USD': 83.25, 'EUR': 90.15, 'GBP': 104.50,
+      'CNY': 11.45, 'JPY': 0.56, 'BDT': 0.76, 'LKR': 0.27,
+      'BTC': 2750000, 'ETH': 200000, 'USDT': 83.25
+    };
+
+    function calculateTotalValue() {
+      const weight = parseFloat(document.querySelector('input[name="total_weight"]').value) || 0;
+      const weightUnit = document.querySelector('select[name="weight_unit"]').value;
+      const price = parseFloat(document.querySelector('input[name="price_per_unit"]').value) || 0;
+      const currency = document.querySelector('select[name="currency"]').value;
+      const priceUnit = document.querySelector('select[name="price_unit"]').value;
+      
+      const weightDisplay = document.getElementById('weight_in_kg');
+      const priceDisplay = document.getElementById('price_in_inr_kg');
+      const totalDisplay = document.getElementById('total_value');
+      
+      if (weight <= 0 || price <= 0) {
+        weightDisplay.style.display = 'none';
+        priceDisplay.style.display = 'none';
+        totalDisplay.style.display = 'none';
+        return;
+      }
+      
+      // Convert weight to kg
+      const weightInKg = weight * (WEIGHT_CONVERSIONS[weightUnit] || 1);
+      
+      // Convert price to INR
+      let priceInINR = price * (CURRENCY_CONVERSIONS[currency] || 1);
+      
+      // Adjust price based on price unit
+      if (priceUnit === 'total_batch') {
+        priceInINR = priceInINR / weightInKg;
+      } else if (priceUnit !== 'per_kg') {
+        const priceUnitWeight = priceUnit.replace('per_', '');
+        const priceUnitConversion = WEIGHT_CONVERSIONS[priceUnitWeight] || 1;
+        priceInINR = priceInINR / priceUnitConversion;
+      }
+      
+      const totalValue = weightInKg * priceInINR;
+      
+      // Update display
+      weightDisplay.textContent = `⚖️ Weight: ${weightInKg.toFixed(3)} kg`;
+      weightDisplay.style.display = 'block';
+      
+      priceDisplay.textContent = `💰 Price: ₹${priceInINR.toFixed(2)}/kg`;
+      priceDisplay.style.display = 'block';
+      
+      totalDisplay.textContent = `💵 Total Value: ₹${totalValue.toFixed(2)}`;
+      totalDisplay.style.display = 'block';
+    }
+
     // Theme Toggle Functionality
     function toggleTheme() {
       const html = document.documentElement;
@@ -1185,6 +1613,20 @@
         themeText.textContent = 'Dark Mode';
         console.log('Loaded light mode');
       }
+
+      // Add event listeners for calculation
+      const inputs = ['total_weight', 'price_per_unit'];
+      const selects = ['weight_unit', 'currency', 'price_unit'];
+      
+      inputs.forEach(name => {
+        const element = document.querySelector(`input[name="${name}"]`);
+        if (element) element.addEventListener('input', calculateTotalValue);
+      });
+      
+      selects.forEach(name => {
+        const element = document.querySelector(`select[name="${name}"]`);
+        if (element) element.addEventListener('change', calculateTotalValue);
+      });
     });
 
     function getLocation() {

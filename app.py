@@ -1,4 +1,5 @@
 import os
+import uuid
 from flask import Flask, render_template, send_from_directory, redirect, url_for, request, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -13,6 +14,34 @@ from functools import wraps
 load_dotenv()
 
 app = Flask(__name__)
+
+
+
+
+WEIGHT_CONVERSIONS = {
+    'kg': 1, 'g': 0.001, 'mg': 0.000001, 'ton': 1000, 'quintal': 100,
+    'lb': 0.453592, 'oz': 0.0283495, 'stone': 6.35029,
+    'maund': 40, 'seer': 0.933, 'tola': 0.01166, 'chittak': 0.0583,
+    'jin': 0.5, 'liang': 0.05, 'bag': 50, 'sack': 25, 'bale': 20
+}
+
+CURRENCY_CONVERSIONS = {
+    'INR': 1, 'USD': 83.25, 'EUR': 90.15, 'GBP': 104.50, 'JPY': 0.56,
+    'CNY': 11.45, 'BDT': 0.76, 'LKR': 0.27, 'NPR': 0.62, 'PKR': 0.30,
+    'THB': 2.28, 'MYR': 17.85, 'SGD': 61.20, 'KRW': 0.062,
+    'CHF': 91.80, 'CAD': 60.95, 'AUD': 54.25,
+    'BTC': 2750000, 'ETH': 200000, 'USDT': 83.25
+}
+
+
+
+
+
+
+
+
+
+
 
 # ---------------- MongoDB Config ----------------
 MONGO_URI = os.getenv("MONGO_URI")
@@ -71,7 +100,7 @@ class AyurvedBlockchain:
         self.chain.append(block)
         return block
     
-    def new_transaction(self, batch_id, herb_name, collector, farm_location, user_id, action_type):
+    def new_transaction(self, batch_id, herb_name, collector, farm_location, user_id, action_type, weight_kg=None, original_weight=None, original_weight_unit=None, price_per_kg_inr=None, total_value_inr=None, quality_grade=None, packaging=None, notes=None, harvest_date=None, latitude=None, longitude=None, **kwargs):
         self.current_transactions.append({
             'batch_id': batch_id,
             'herb_name': herb_name,
@@ -79,11 +108,20 @@ class AyurvedBlockchain:
             'farm_location': farm_location,
             'user_id': user_id,
             'action_type': action_type,
+            'weight_kg': weight_kg,
+            'original_weight': original_weight,
+            'original_weight_unit': original_weight_unit,
+            'price_per_kg_inr': price_per_kg_inr,
+            'total_value_inr': total_value_inr,
+            'quality_grade': quality_grade,
+            'packaging': packaging,
+            'notes': notes,
+            'harvest_date': harvest_date,
+            'latitude': latitude,
+            'longitude': longitude,
             'timestamp': datetime.utcnow().isoformat(),
         })
         return self.last_block['index'] + 1 if self.last_block else 1
-    
-
     
     @staticmethod
     def hash(block):
@@ -118,7 +156,18 @@ class AyurvedBlockchain:
                         'herb_name': transaction.get('herb_name'),
                         'collector': transaction.get('collector'),
                         'farm_location': transaction.get('farm_location'),
-                        'user_id': transaction.get('user_id')
+                        'user_id': transaction.get('user_id'),
+                        'weight_kg': transaction.get('weight_kg'),
+                        'original_weight': transaction.get('original_weight'),
+                        'original_weight_unit': transaction.get('original_weight_unit'),
+                        'price_per_kg_inr': transaction.get('price_per_kg_inr'),
+                        'total_value_inr': transaction.get('total_value_inr'),
+                        'quality_grade': transaction.get('quality_grade'),
+                        'packaging': transaction.get('packaging'),
+                        'notes': transaction.get('notes'),
+                        'harvest_date': transaction.get('harvest_date'),
+                        'latitude': transaction.get('latitude'),
+                        'longitude': transaction.get('longitude')
                     })
         return provenance
     
@@ -128,7 +177,6 @@ class AyurvedBlockchain:
             return False
         
         # Check if chain has at least genesis block
-        
         
         print(f"✅ Blockchain validation passed for {len(chain)} blocks")
         return True
@@ -202,6 +250,7 @@ def index():
     if 'user_id' in session:
         return redirect(url_for('dashboard'))
     return redirect(url_for('login'))
+
 
 # ----------- Signup -----------
 @app.route('/signup', methods=['GET', 'POST'])
@@ -413,9 +462,11 @@ def dashboard():
                          blockchain_blocks=total_blockchain_records)
 
 # ----------- Add/Edit/Delete Batch with Blockchain -----------
+
 @app.route('/add_batch', methods=['POST'])
 @login_required
 def add_batch():
+    # Your existing basic field validation
     herb_name = request.form.get('herb_name', '').strip()
     collector = request.form.get('collector_name', '').strip()
     farm_location = request.form.get('farm_location', '').strip()
@@ -431,10 +482,56 @@ def add_batch():
         flash("Herb name, collector, and farm location are required", "danger")
         return redirect(url_for('dashboard'))
 
-    # Get user info for created_by
+    # NEW: Enhanced weight and pricing fields
+    try:
+        # Weight fields
+        total_weight = float(request.form.get('total_weight', 0))
+        weight_unit = request.form.get('weight_unit', 'kg')
+        
+        # Pricing fields
+        price_per_unit = float(request.form.get('price_per_unit', 0))
+        currency = request.form.get('currency', 'INR')
+        price_unit = request.form.get('price_unit', 'per_kg')
+        
+        # Additional fields
+        harvest_date = request.form.get('harvest_date', '')
+        quality_grade = request.form.get('quality_grade', 'Standard')
+        packaging = request.form.get('packaging', 'bulk')
+        
+        # Convert weight to kg (standard unit)
+        weight_in_kg = total_weight * WEIGHT_CONVERSIONS.get(weight_unit, 1)
+        
+        # Convert price to INR per kg
+        price_in_inr = price_per_unit * CURRENCY_CONVERSIONS.get(currency, 1)
+        
+        # Adjust price based on price unit
+        if price_unit == 'total_batch':
+            price_per_kg_inr = price_in_inr / weight_in_kg if weight_in_kg > 0 else 0
+        elif price_unit != 'per_kg':
+            unit = price_unit.replace('per_', '')
+            unit_conversion = WEIGHT_CONVERSIONS.get(unit, 1)
+            price_per_kg_inr = price_in_inr / unit_conversion
+        else:
+            price_per_kg_inr = price_in_inr
+        
+        total_value_inr = weight_in_kg * price_per_kg_inr
+        
+        # Generate batch number
+        batch_number = f"AY-{datetime.utcnow().strftime('%Y%m%d')}-{herb_name[:3].upper()}-{random.randint(1000, 9999)}"
+        
+    except ValueError:
+        flash("Please enter valid numbers for weight and price", "danger")
+        return redirect(url_for('dashboard'))
+    except Exception as e:
+        flash(f"Error processing weight/price data: {str(e)}", "danger")
+        return redirect(url_for('dashboard'))
+
+    # Get user info for created_by (your existing logic)
     user = users.find_one({"_id": ObjectId(session['user_id'])})
     
+    # Enhanced batch document (keeping all your existing fields + new ones)
     new_batch = {
+        # Your existing fields
         'herb_name': herb_name,
         'collector': collector,
         'farm_location': farm_location,
@@ -444,13 +541,34 @@ def add_batch():
         'user_id': session['user_id'],
         'created_by': user['full_name'],
         'created_at': datetime.utcnow(),
-        'updated_at': datetime.utcnow()
+        'updated_at': datetime.utcnow(),
+        
+        # NEW: Enhanced fields
+        'original_weight': total_weight,
+        'original_weight_unit': weight_unit,
+        'original_price': price_per_unit,
+        'original_currency': currency,
+        'original_price_unit': price_unit,
+        
+        # Standardized values
+        'weight_kg': weight_in_kg,
+        'available_weight_kg': weight_in_kg,
+        'price_per_kg_inr': price_per_kg_inr,
+        'total_value_inr': total_value_inr,
+        
+        # Additional info
+        'harvest_date': datetime.strptime(harvest_date, '%Y-%m-%d') if harvest_date else datetime.utcnow(),
+        'quality_grade': quality_grade,
+        'packaging': packaging,
+        'status': 'available',
+        'batch_number': batch_number
     }
     
+    # Your existing database and blockchain logic
     result = herb_batches.insert_one(new_batch)
     batch_id = str(result.inserted_id)
     
-    # Add to blockchain
+    # Add to blockchain (your existing logic)
     blockchain.new_transaction(
         batch_id=batch_id,
         herb_name=herb_name,
@@ -460,19 +578,26 @@ def add_batch():
         action_type="CREATE"
     )
     
-    # Mine new block
+    # Mine new block (your existing logic)
     last_block = blockchain.last_block
     last_proof = last_block['proof']
     proof = blockchain.proof_of_work(last_proof)
     previous_hash = blockchain.hash(last_block)
     blockchain.new_block(proof, previous_hash)
     
-    flash(f"New herb batch '{herb_name}' added successfully and recorded on blockchain! 🌱⛓️", "success")
+    # Enhanced success message
+    success_msg = f"New herb batch '{herb_name}' added successfully! "
+    success_msg += f"Batch: {batch_number} | {weight_in_kg:.2f}kg | ₹{total_value_inr:,.2f} value "
+    success_msg += f"🌱⛓️"
+    
+    flash(success_msg, "success")
     return redirect(url_for('dashboard'))
+
 
 @app.route('/edit_batch/<batch_id>', methods=['GET', 'POST'])
 @login_required
 def edit_batch(batch_id):
+    # Your existing batch validation logic
     try:
         batch = herb_batches.find_one({"_id": ObjectId(batch_id)})
     except:
@@ -484,25 +609,88 @@ def edit_batch(batch_id):
         return redirect(url_for('dashboard'))
 
     if request.method == 'POST':
+        # Your existing basic fields
         try:
             latitude = float(request.form.get('latitude', 0.0))
             longitude = float(request.form.get('longitude', 0.0))
         except ValueError:
             latitude = longitude = 0.0
+        
+        # NEW: Handle enhanced weight and pricing updates
+        try:
+            # Weight fields
+            total_weight = float(request.form.get('total_weight', batch.get('original_weight', 0)))
+            weight_unit = request.form.get('weight_unit', batch.get('original_weight_unit', 'kg'))
             
+            # Pricing fields
+            price_per_unit = float(request.form.get('price_per_unit', batch.get('original_price', 0)))
+            currency = request.form.get('currency', batch.get('original_currency', 'INR'))
+            price_unit = request.form.get('price_unit', batch.get('original_price_unit', 'per_kg'))
+            
+            # Additional fields
+            harvest_date = request.form.get('harvest_date', '')
+            quality_grade = request.form.get('quality_grade', batch.get('quality_grade', 'Standard'))
+            packaging = request.form.get('packaging', batch.get('packaging', 'bulk'))
+            
+            # Convert weight to kg
+            weight_in_kg = total_weight * WEIGHT_CONVERSIONS.get(weight_unit, 1)
+            
+            # Convert price to INR per kg
+            price_in_inr = price_per_unit * CURRENCY_CONVERSIONS.get(currency, 1)
+            
+            # Adjust price based on price unit
+            if price_unit == 'total_batch':
+                price_per_kg_inr = price_in_inr / weight_in_kg if weight_in_kg > 0 else 0
+            elif price_unit != 'per_kg':
+                unit = price_unit.replace('per_', '')
+                unit_conversion = WEIGHT_CONVERSIONS.get(unit, 1)
+                price_per_kg_inr = price_in_inr / unit_conversion
+            else:
+                price_per_kg_inr = price_in_inr
+            
+            total_value_inr = weight_in_kg * price_per_kg_inr
+            
+        except ValueError:
+            flash("Please enter valid numbers for weight and price", "danger")
+            return redirect(url_for('edit_batch', batch_id=batch_id))
+        
+        # Enhanced update data (keeping your existing fields + new ones)
         update_data = {
+            # Your existing fields
             'herb_name': request.form.get('herb_name', '').strip(),
             'collector': request.form.get('collector', '').strip(),
             'farm_location': request.form.get('farm_location', '').strip(),
             'notes': request.form.get('notes', '').strip(),
             'latitude': latitude,
             'longitude': longitude,
-            'updated_at': datetime.utcnow()
+            'updated_at': datetime.utcnow(),
+            
+            # NEW: Enhanced fields
+            'original_weight': total_weight,
+            'original_weight_unit': weight_unit,
+            'original_price': price_per_unit,
+            'original_currency': currency,
+            'original_price_unit': price_unit,
+            
+            # Standardized values
+            'weight_kg': weight_in_kg,
+            'available_weight_kg': weight_in_kg,  # You might want to preserve existing available weight
+            'price_per_kg_inr': price_per_kg_inr,
+            'total_value_inr': total_value_inr,
+            
+            # Additional info
+            'quality_grade': quality_grade,
+            'packaging': packaging
         }
         
+        # Add harvest date if provided
+        if harvest_date:
+            update_data['harvest_date'] = datetime.strptime(harvest_date, '%Y-%m-%d')
+        
+        # Your existing update logic
         herb_batches.update_one({"_id": ObjectId(batch_id)}, {"$set": update_data})
         
-        # Add update transaction to blockchain
+        # Add update transaction to blockchain (your existing logic)
         blockchain.new_transaction(
             batch_id=batch_id,
             herb_name=update_data['herb_name'],
@@ -512,10 +700,146 @@ def edit_batch(batch_id):
             action_type="UPDATE"
         )
         
-        flash("Batch updated successfully and recorded on blockchain! ✏️⛓️", "success")
+        flash("Batch updated successfully with pricing info and recorded on blockchain! ✏️⛓️", "success")
         return redirect(url_for('dashboard'))
 
+    # For GET request, return the edit form with current batch data
     return render_template('edit_batch.html', batch=batch)
+
+# NEW: Add inventory route for farmers
+@app.route('/herb-inventory')
+@login_required
+def herb_inventory():
+    """View farmer's herb inventory"""
+    try:
+        # Get aggregated inventory for current user
+        pipeline = [
+            {"$match": {"user_id": session['user_id']}},
+            {"$group": {
+                "_id": "$herb_name",
+                "total_batches": {"$sum": 1},
+                "total_weight_kg": {"$sum": "$weight_kg"},
+                "available_weight_kg": {"$sum": "$available_weight_kg"},
+                "total_value_inr": {"$sum": "$total_value_inr"},
+                "avg_price_per_kg": {"$avg": "$price_per_kg_inr"},
+                "latest_harvest": {"$max": "$harvest_date"},
+                "quality_grades": {"$addToSet": "$quality_grade"}
+            }},
+            {"$sort": {"total_value_inr": -1}}
+        ]
+        
+        inventory = list(herb_batches.aggregate(pipeline))
+        
+        return render_template('farmer_inventory.html', 
+                             inventory=inventory,
+                             total_herb_types=len(inventory))
+    except Exception as e:
+        flash(f'Error loading inventory: {str(e)}', 'error')
+        return redirect(url_for('dashboard'))
+
+# NEW: Batch details route
+@app.route('/batch_details/<batch_id>')
+@login_required
+def batch_details(batch_id):
+    """View detailed batch information"""
+    try:
+        print(f"🐛 DEBUG - batch_details route called with batch_id: {batch_id}")
+        
+        if not ObjectId.is_valid(batch_id):
+            flash("Invalid batch ID format", "danger")
+            return redirect(url_for('dashboard'))
+        
+        batch = herb_batches.find_one({"_id": ObjectId(batch_id)})
+        if not batch:
+            flash("Batch not found", "danger")
+            return redirect(url_for('dashboard'))
+        
+        print(f"🐛 DEBUG - Batch found: {batch.get('herb_name', 'Unknown')}")
+        
+        # Check permissions
+        try:
+            user = users.find_one({"_id": ObjectId(session['user_id'])})
+            can_view = (batch.get('user_id') == session.get('user_id')) or (user and user.get('is_admin', False))
+            
+            if not can_view:
+                flash("Permission denied", "danger")
+                return redirect(url_for('dashboard'))
+        except Exception as perm_error:
+            print(f"🐛 DEBUG - Permission check error: {perm_error}")
+            # Continue anyway for debugging
+            pass
+        
+        # Get blockchain provenance with error handling
+        try:
+            provenance = blockchain.get_batch_provenance(batch_id)
+            blockchain_verified = blockchain.is_chain_valid()
+            print(f"🐛 DEBUG - Blockchain data retrieved successfully")
+        except Exception as blockchain_error:
+            print(f"🐛 DEBUG - Blockchain error: {blockchain_error}")
+            provenance = []
+            blockchain_verified = False
+        
+        print(f"🐛 DEBUG - About to render batch_details.html")
+        
+        return render_template('batch_details.html', 
+                             batch=batch,
+                             provenance=provenance,
+                             blockchain_verified=blockchain_verified)
+                             
+    except Exception as e:
+        print(f"🐛 ERROR in batch_details: {e}")
+        import traceback
+        print(f"🐛 TRACEBACK: {traceback.format_exc()}")
+        flash(f"Error retrieving batch details: {str(e)}", "danger")
+        return redirect(url_for('dashboard'))
+
+
+@app.route('/farmer_inventory')
+@login_required
+def farmer_inventory():
+    """View farmer's herb inventory"""
+    try:
+        print(f"🐛 DEBUG - farmer_inventory route called for user: {session.get('user_id')}")
+        
+        # Get user's batches
+        user_batches = list(herb_batches.find({"user_id": session['user_id']}))
+        print(f"🐛 DEBUG - Found {len(user_batches)} batches for user")
+        
+        # Calculate inventory statistics
+        total_batches = len(user_batches)
+        total_weight = sum(batch.get('weight_kg', 0) for batch in user_batches)
+        total_value = sum(batch.get('total_value_inr', 0) for batch in user_batches)
+        
+        # Get unique herbs
+        unique_herbs = list(set(batch['herb_name'] for batch in user_batches))
+        
+        # Group by quality
+        quality_stats = {}
+        for batch in user_batches:
+            quality = batch.get('quality_grade', 'Unknown')
+            if quality not in quality_stats:
+                quality_stats[quality] = {'count': 0, 'weight': 0, 'value': 0}
+            quality_stats[quality]['count'] += 1
+            quality_stats[quality]['weight'] += batch.get('weight_kg', 0)
+            quality_stats[quality]['value'] += batch.get('total_value_inr', 0)
+        
+        print(f"🐛 DEBUG - Stats calculated: {total_batches} batches, {total_weight}kg, ₹{total_value}")
+        print(f"🐛 DEBUG - About to render farmer_inventory.html")
+        
+        return render_template('farmer_inventory.html',
+                             batches=user_batches,
+                             total_batches=total_batches,
+                             total_weight=total_weight,
+                             total_value=total_value,
+                             unique_herbs=unique_herbs,
+                             quality_stats=quality_stats)
+                             
+    except Exception as e:
+        print(f"🐛 ERROR in farmer_inventory: {e}")
+        import traceback
+        print(f"🐛 TRACEBACK: {traceback.format_exc()}")
+        flash(f"Error loading inventory: {str(e)}", "danger")
+        return redirect(url_for('dashboard'))
 
 @app.route('/delete_batch/<batch_id>', methods=['POST'])
 @login_required
@@ -573,7 +897,7 @@ def immutable_proven(batch_id):
 @app.route('/correct_batch/<batch_id>', methods=['GET', 'POST'])
 @login_required
 def correct_batch(batch_id):
-    """Fixed route with detailed debugging"""
+    """Fixed route with detailed debugging + weight/pricing support"""
     try:
         print(f"🐛 DEBUG - Request method: {request.method}")
         print(f"🐛 DEBUG - Batch ID: {batch_id}")
@@ -603,16 +927,30 @@ def correct_batch(batch_id):
         if request.method == 'POST':
             print("🐛 DEBUG - Processing POST request")
             
-            # Get form data with debugging
+            # Get basic form data with debugging
             herb_name = request.form.get('herb_name', '').strip()
             collector = request.form.get('collector_name', '').strip()
             farm_location = request.form.get('farm_location', '').strip()
             notes = request.form.get('notes', '').strip()
             
+            # NEW: Get weight and pricing data
+            total_weight = request.form.get('total_weight', '').strip()
+            weight_unit = request.form.get('weight_unit', 'kg')
+            price_per_unit = request.form.get('price_per_unit', '').strip()
+            currency = request.form.get('currency', 'INR')
+            price_unit = request.form.get('price_unit', 'per_kg')
+            quality_grade = request.form.get('quality_grade', 'Standard')
+            
             print(f"🐛 DEBUG - Form data received:")
             print(f"   - herb_name: '{herb_name}'")
             print(f"   - collector: '{collector}'")
             print(f"   - farm_location: '{farm_location}'")
+            print(f"   - total_weight: '{total_weight}'")
+            print(f"   - weight_unit: '{weight_unit}'")
+            print(f"   - price_per_unit: '{price_per_unit}'")
+            print(f"   - currency: '{currency}'")
+            print(f"   - price_unit: '{price_unit}'")
+            print(f"   - quality_grade: '{quality_grade}'")
             
             # Validate required fields
             if not all([herb_name, collector, farm_location]):
@@ -624,7 +962,7 @@ def correct_batch(batch_id):
                 flash(f"Missing required fields: {', '.join(missing_fields)}", "danger")
                 return render_template('correct_batch.html', batch=batch)
             
-            # Prepare update data
+            # Prepare base update data
             corrected_data = {
                 'herb_name': herb_name,
                 'collector': collector,
@@ -632,8 +970,59 @@ def correct_batch(batch_id):
                 'notes': notes,
                 'updated_at': datetime.utcnow(),
                 'corrected_by': session.get('username'),
-                'correction_date': datetime.utcnow()
+                'correction_date': datetime.utcnow(),
+                
+                # NEW: Always update quality grade
+                'quality_grade': quality_grade
             }
+            
+            # NEW: Process weight and pricing if provided
+            if total_weight and price_per_unit:
+                try:
+                    weight_val = float(total_weight)
+                    price_val = float(price_per_unit)
+                    
+                    print(f"🐛 DEBUG - Converting: {weight_val} {weight_unit} at {price_val} {currency}")
+                    
+                    # Convert weight to kg
+                    weight_in_kg = weight_val * WEIGHT_CONVERSIONS.get(weight_unit, 1)
+                    
+                    # Convert price to INR per kg
+                    price_in_inr = price_val * CURRENCY_CONVERSIONS.get(currency, 1)
+                    
+                    # Adjust price based on price unit
+                    if price_unit == 'total_batch':
+                        price_per_kg_inr = price_in_inr / weight_in_kg if weight_in_kg > 0 else 0
+                    elif price_unit != 'per_kg':
+                        unit = price_unit.replace('per_', '')
+                        unit_conversion = WEIGHT_CONVERSIONS.get(unit, 1)
+                        price_per_kg_inr = price_in_inr / unit_conversion
+                    else:
+                        price_per_kg_inr = price_in_inr
+                    
+                    total_value_inr = weight_in_kg * price_per_kg_inr
+                    
+                    print(f"🐛 DEBUG - Calculated: {weight_in_kg:.3f}kg at ₹{price_per_kg_inr:.2f}/kg = ₹{total_value_inr:.2f}")
+                    
+                    # Add weight and pricing to update data
+                    corrected_data.update({
+                        # Original values (as entered)
+                        'original_weight': weight_val,
+                        'original_weight_unit': weight_unit,
+                        'original_price': price_val,
+                        'original_currency': currency,
+                        'original_price_unit': price_unit,
+                        
+                        # Standardized values
+                        'weight_kg': weight_in_kg,
+                        'available_weight_kg': weight_in_kg,
+                        'price_per_kg_inr': price_per_kg_inr,
+                        'total_value_inr': total_value_inr
+                    })
+                    
+                except ValueError as e:
+                    print(f"🐛 DEBUG - Weight/price conversion error: {e}")
+                    flash("Invalid weight or price values - keeping existing values", "warning")
             
             # Handle coordinates
             try:
@@ -681,10 +1070,20 @@ def correct_batch(batch_id):
                         previous_hash = blockchain.hash(last_block)
                         blockchain.new_block(proof, previous_hash)
                         
-                        flash(f"✅ Batch '{herb_name}' corrected successfully and recorded on blockchain!", "success")
+                        # Enhanced success message
+                        success_msg = f"✅ Batch '{herb_name}' corrected successfully"
+                        if 'weight_kg' in corrected_data and 'total_value_inr' in corrected_data:
+                            success_msg += f" | {corrected_data['weight_kg']:.2f}kg worth ₹{corrected_data['total_value_inr']:,.2f}"
+                        success_msg += " and recorded on blockchain! 🔧⛓️"
+                        
+                        flash(success_msg, "success")
                     except Exception as blockchain_error:
                         print(f"🐛 DEBUG - Blockchain error: {blockchain_error}")
-                        flash(f"✅ Batch updated successfully, but blockchain update failed: {str(blockchain_error)}", "success")
+                        success_msg = f"✅ Batch updated successfully"
+                        if 'weight_kg' in corrected_data and 'total_value_inr' in corrected_data:
+                            success_msg += f" | {corrected_data['weight_kg']:.2f}kg worth ₹{corrected_data['total_value_inr']:,.2f}"
+                        success_msg += f", but blockchain update failed: {str(blockchain_error)}"
+                        flash(success_msg, "success")
                     
                     return redirect(url_for('provenance', batch_id=batch_id))
                     
@@ -709,8 +1108,6 @@ def correct_batch(batch_id):
         return redirect(url_for('dashboard'))
     
     return render_template('correct_batch.html', batch=batch)
-
-
 
 
 # ----------- Scan QR with Blockchain Verification -----------

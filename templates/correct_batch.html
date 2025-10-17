@@ -13,6 +13,7 @@
       box-sizing: border-box;
     }
 
+
     :root {
       --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #a8e6cf 75%, #4ecdc4 100%);
       --text-primary: #2d3748;
@@ -28,6 +29,7 @@
       --button-danger: linear-gradient(45deg, #e53e3e, #c53030);
     }
 
+
     [data-theme="dark"] {
       --bg-gradient: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 25%, #2d2d2d 50%, #1e1e1e 75%, #0a0a0a 100%);
       --text-primary: #f8fafc;
@@ -39,6 +41,7 @@
       --input-text: #f8fafc;
     }
 
+
     body {
       font-family: 'Poppins', sans-serif;
       background: var(--bg-gradient);
@@ -47,6 +50,7 @@
       display: flex;
       flex-direction: column;
     }
+
 
     nav {
       background: rgba(255, 255, 255, 0.15);
@@ -61,6 +65,7 @@
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
 
+
     nav .brand {
       font-size: 1.8rem;
       font-weight: 700;
@@ -68,6 +73,7 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+
 
     nav .back-btn {
       color: #fff;
@@ -79,10 +85,12 @@
       transition: all 0.3s ease;
     }
 
+
     nav .back-btn:hover {
       background: linear-gradient(45deg, #44a08d, #2a9d8f);
       transform: translateY(-2px);
     }
+
 
     .container {
       flex: 1;
@@ -90,6 +98,7 @@
       margin: 2rem auto;
       padding: 0 1rem;
     }
+
 
     .card {
       background: var(--card-bg);
@@ -103,6 +112,7 @@
       overflow: hidden;
     }
 
+
     .card::before {
       content: '';
       position: absolute;
@@ -114,12 +124,14 @@
       border-radius: 20px 20px 0 0;
     }
 
+
     h2 {
       color: var(--text-primary);
       margin-bottom: 1.5rem;
       font-weight: 600;
       font-size: 1.6rem;
     }
+
 
     .warning-box {
       background: linear-gradient(45deg, rgba(255, 193, 7, 0.1), rgba(255, 235, 59, 0.1));
@@ -129,20 +141,24 @@
       margin-bottom: 2rem;
     }
 
+
     .warning-box h3 {
       color: #ff8f00;
       margin-bottom: 1rem;
       font-size: 1.2rem;
     }
 
+
     .warning-box p {
       color: var(--text-secondary);
       line-height: 1.6;
     }
 
+
     .form-section {
       margin-bottom: 2rem;
     }
+
 
     .form-section h3 {
       color: var(--text-primary);
@@ -153,16 +169,19 @@
       gap: 0.5rem;
     }
 
+
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
     }
 
+
     .form-group {
       display: flex;
       flex-direction: column;
     }
+
 
     .form-group label {
       font-weight: 600;
@@ -171,8 +190,10 @@
       font-size: 0.95rem;
     }
 
+
     .form-group input,
-    .form-group textarea {
+    .form-group textarea,
+    .form-group select {
       background: var(--input-bg);
       border: 2px solid var(--input-border);
       border-radius: 12px;
@@ -183,18 +204,61 @@
       font-family: 'Poppins', sans-serif;
     }
 
+
     .form-group input:focus,
-    .form-group textarea:focus {
+    .form-group textarea:focus,
+    .form-group select:focus {
       outline: none;
       border-color: #667eea;
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
       transform: scale(1.02);
     }
 
+
     .form-group textarea {
       resize: vertical;
       min-height: 100px;
     }
+
+    /* NEW: Pricing Section Styling */
+    .pricing-section {
+      background: rgba(240, 248, 255, 0.7);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(102, 126, 234, 0.2);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    [data-theme="dark"] .pricing-section {
+      background: rgba(30, 41, 59, 0.7);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .pricing-section h4 {
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .calc-display {
+      background: rgba(248, 250, 252, 0.8);
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      border-radius: 8px;
+      padding: 0.8rem;
+      margin-top: 1rem;
+      font-weight: 600;
+      color: #059669;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .calc-display {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: rgba(71, 85, 105, 0.5);
+      color: #10b981;
+    }
+
 
     .blockchain-info {
       background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
@@ -204,11 +268,13 @@
       margin-bottom: 2rem;
     }
 
+
     .blockchain-info h4 {
       color: var(--text-primary);
       margin-bottom: 1rem;
       font-size: 1.1rem;
     }
+
 
     .hash-display {
       font-family: 'Courier New', monospace;
@@ -220,10 +286,12 @@
       border: 1px solid rgba(0, 0, 0, 0.1);
     }
 
+
     [data-theme="dark"] .hash-display {
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
+
 
     .button-group {
       display: flex;
@@ -231,6 +299,7 @@
       margin-top: 2rem;
       flex-wrap: wrap;
     }
+
 
     .btn {
       padding: 1rem 2rem;
@@ -249,25 +318,30 @@
       justify-content: center;
     }
 
+
     .btn-primary {
       background: var(--button-primary);
       color: white;
     }
+
 
     .btn-primary:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
     }
 
+
     .btn-secondary {
       background: linear-gradient(45deg, #6c757d, #495057);
       color: white;
     }
 
+
     .btn-secondary:hover {
       background: linear-gradient(45deg, #495057, #343a40);
       transform: translateY(-2px);
     }
+
 
     .alert {
       padding: 1rem 1.5rem;
@@ -279,17 +353,20 @@
       gap: 0.5rem;
     }
 
+
     .alert-success {
       background: linear-gradient(45deg, rgba(56, 161, 105, 0.1), rgba(47, 133, 90, 0.1));
       border: 2px solid #38a169;
       color: #2f855a;
     }
 
+
     .alert-danger {
       background: linear-gradient(45deg, rgba(229, 62, 62, 0.1), rgba(197, 48, 48, 0.1));
       border: 2px solid #e53e3e;
       color: #c53030;
     }
+
 
     @media (max-width: 768px) {
       nav {
@@ -299,27 +376,33 @@
         padding: 1rem;
       }
 
+
       .container {
         margin: 1rem auto;
         padding: 0 0.5rem;
       }
 
+
       .card {
         padding: 1.5rem;
       }
+
 
       .form-grid {
         grid-template-columns: 1fr;
       }
 
+
       .button-group {
         flex-direction: column;
       }
+
 
       .btn {
         width: 100%;
       }
     }
+
 
     .loading {
       display: none;
@@ -330,6 +413,7 @@
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
+
 
     @keyframes spin {
       0% { transform: rotate(0deg); }
@@ -411,6 +495,110 @@
           </div>
         </div>
 
+        <!-- NEW: Enhanced Weight and Pricing Section -->
+        <div class="pricing-section">
+          <h4>💰 Weight & Pricing Information</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="total_weight">Weight Amount</label>
+              <input type="number" 
+                     id="total_weight" 
+                     name="total_weight" 
+                     value="{{ batch.original_weight or '' }}" 
+                     step="0.001" 
+                     min="0.001" 
+                     placeholder="Enter weight"
+                     onchange="calculateTotalValue()">
+            </div>
+            
+            <div class="form-group">
+              <label for="weight_unit">Weight Unit</label>
+              <select id="weight_unit" name="weight_unit" onchange="calculateTotalValue()">
+                <optgroup label="📊 Metric System">
+                  <option value="kg" {{ 'selected' if batch.original_weight_unit == 'kg' else '' }}>Kilogram (kg)</option>
+                  <option value="g" {{ 'selected' if batch.original_weight_unit == 'g' else '' }}>Gram (g)</option>
+                  <option value="ton" {{ 'selected' if batch.original_weight_unit == 'ton' else '' }}>Metric Ton</option>
+                  <option value="quintal" {{ 'selected' if batch.original_weight_unit == 'quintal' else '' }}>Quintal (100kg)</option>
+                </optgroup>
+                <optgroup label="🇮🇳 Indian Traditional">
+                  <option value="maund" {{ 'selected' if batch.original_weight_unit == 'maund' else '' }}>Maund (40kg)</option>
+                  <option value="seer" {{ 'selected' if batch.original_weight_unit == 'seer' else '' }}>Seer (0.933kg)</option>
+                </optgroup>
+                <optgroup label="🇺🇸 Imperial">
+                  <option value="lb" {{ 'selected' if batch.original_weight_unit == 'lb' else '' }}>Pound (lb)</option>
+                  <option value="oz" {{ 'selected' if batch.original_weight_unit == 'oz' else '' }}>Ounce (oz)</option>
+                </optgroup>
+                <optgroup label="📦 Commercial">
+                  <option value="bag" {{ 'selected' if batch.original_weight_unit == 'bag' else '' }}>Bag (50kg)</option>
+                  <option value="sack" {{ 'selected' if batch.original_weight_unit == 'sack' else '' }}>Sack (25kg)</option>
+                </optgroup>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="currency">Currency</label>
+              <select id="currency" name="currency" onchange="calculateTotalValue()">
+                <optgroup label="🌍 Major Currencies">
+                  <option value="INR" {{ 'selected' if batch.original_currency == 'INR' or not batch.original_currency else '' }}>🇮🇳 Indian Rupee (₹)</option>
+                  <option value="USD" {{ 'selected' if batch.original_currency == 'USD' else '' }}>🇺🇸 US Dollar ($)</option>
+                  <option value="EUR" {{ 'selected' if batch.original_currency == 'EUR' else '' }}>🇪🇺 Euro (€)</option>
+                  <option value="GBP" {{ 'selected' if batch.original_currency == 'GBP' else '' }}>🇬🇧 British Pound (£)</option>
+                </optgroup>
+                <optgroup label="🏛️ Asian Markets">
+                  <option value="CNY" {{ 'selected' if batch.original_currency == 'CNY' else '' }}>🇨🇳 Chinese Yuan (¥)</option>
+                  <option value="JPY" {{ 'selected' if batch.original_currency == 'JPY' else '' }}>🇯🇵 Japanese Yen (¥)</option>
+                  <option value="BDT" {{ 'selected' if batch.original_currency == 'BDT' else '' }}>🇧🇩 Bangladeshi Taka</option>
+                  <option value="LKR" {{ 'selected' if batch.original_currency == 'LKR' else '' }}>🇱🇰 Sri Lankan Rupee</option>
+                </optgroup>
+                <optgroup label="₿ Crypto">
+                  <option value="BTC" {{ 'selected' if batch.original_currency == 'BTC' else '' }}>₿ Bitcoin</option>
+                  <option value="ETH" {{ 'selected' if batch.original_currency == 'ETH' else '' }}>Ξ Ethereum</option>
+                  <option value="USDT" {{ 'selected' if batch.original_currency == 'USDT' else '' }}>₮ Tether</option>
+                </optgroup>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="price_per_unit">Price Amount</label>
+              <input type="number" 
+                     id="price_per_unit" 
+                     name="price_per_unit" 
+                     value="{{ batch.original_price or '' }}" 
+                     step="0.01" 
+                     min="0.01" 
+                     placeholder="Enter price"
+                     onchange="calculateTotalValue()">
+            </div>
+            
+            <div class="form-group">
+              <label for="price_unit">Price Unit</label>
+              <select id="price_unit" name="price_unit" onchange="calculateTotalValue()">
+                <option value="per_kg" {{ 'selected' if batch.original_price_unit == 'per_kg' or not batch.original_price_unit else '' }}>per Kg</option>
+                <option value="per_g" {{ 'selected' if batch.original_price_unit == 'per_g' else '' }}>per Gram</option>
+                <option value="per_lb" {{ 'selected' if batch.original_price_unit == 'per_lb' else '' }}>per Pound</option>
+                <option value="per_quintal" {{ 'selected' if batch.original_price_unit == 'per_quintal' else '' }}>per Quintal</option>
+                <option value="per_bag" {{ 'selected' if batch.original_price_unit == 'per_bag' else '' }}>per Bag</option>
+                <option value="total_batch" {{ 'selected' if batch.original_price_unit == 'total_batch' else '' }}>Total Batch Price</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="quality_grade">Quality Grade</label>
+              <select id="quality_grade" name="quality_grade">
+                <option value="Premium" {{ 'selected' if batch.quality_grade == 'Premium' else '' }}>🥇 Premium (A+)</option>
+                <option value="Standard" {{ 'selected' if batch.quality_grade == 'Standard' or not batch.quality_grade else '' }}>⭐ Standard (A)</option>
+                <option value="Commercial" {{ 'selected' if batch.quality_grade == 'Commercial' else '' }}>📦 Commercial (B)</option>
+                <option value="Organic" {{ 'selected' if batch.quality_grade == 'Organic' else '' }}>🌱 Organic Certified</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Calculated Values Display -->
+          <div class="calc-display" id="weight_in_kg" style="display: none;"></div>
+          <div class="calc-display" id="price_in_inr_kg" style="display: none;"></div>
+          <div class="calc-display" id="total_value" style="display: none;"></div>
+        </div>
+
         <div class="form-section">
           <h3>📍 Location Details</h3>
           <div class="form-grid">
@@ -483,10 +671,72 @@
   </div>
 
   <script>
+    // Weight and Currency Conversion Constants
+    const WEIGHT_CONVERSIONS = {
+      'kg': 1, 'g': 0.001, 'ton': 1000, 'quintal': 100,
+      'lb': 0.453592, 'oz': 0.0283495, 'maund': 40, 'seer': 0.933,
+      'bag': 50, 'sack': 25
+    };
+
+    const CURRENCY_CONVERSIONS = {
+      'INR': 1, 'USD': 83.25, 'EUR': 90.15, 'GBP': 104.50,
+      'CNY': 11.45, 'JPY': 0.56, 'BDT': 0.76, 'LKR': 0.27,
+      'BTC': 2750000, 'ETH': 200000, 'USDT': 83.25
+    };
+
+    function calculateTotalValue() {
+      const weight = parseFloat(document.getElementById('total_weight').value) || 0;
+      const weightUnit = document.getElementById('weight_unit').value;
+      const price = parseFloat(document.getElementById('price_per_unit').value) || 0;
+      const currency = document.getElementById('currency').value;
+      const priceUnit = document.getElementById('price_unit').value;
+      
+      const weightDisplay = document.getElementById('weight_in_kg');
+      const priceDisplay = document.getElementById('price_in_inr_kg');
+      const totalDisplay = document.getElementById('total_value');
+      
+      if (weight <= 0 || price <= 0) {
+        weightDisplay.style.display = 'none';
+        priceDisplay.style.display = 'none';
+        totalDisplay.style.display = 'none';
+        return;
+      }
+      
+      // Convert weight to kg
+      const weightInKg = weight * (WEIGHT_CONVERSIONS[weightUnit] || 1);
+      
+      // Convert price to INR
+      let priceInINR = price * (CURRENCY_CONVERSIONS[currency] || 1);
+      
+      // Adjust price based on price unit
+      if (priceUnit === 'total_batch') {
+        priceInINR = priceInINR / weightInKg;
+      } else if (priceUnit !== 'per_kg') {
+        const priceUnitWeight = priceUnit.replace('per_', '');
+        const priceUnitConversion = WEIGHT_CONVERSIONS[priceUnitWeight] || 1;
+        priceInINR = priceInINR / priceUnitConversion;
+      }
+      
+      const totalValue = weightInKg * priceInINR;
+      
+      // Update display
+      weightDisplay.textContent = `⚖️ Weight: ${weightInKg.toFixed(3)} kg`;
+      weightDisplay.style.display = 'block';
+      
+      priceDisplay.textContent = `💰 Price: ₹${priceInINR.toFixed(2)}/kg`;
+      priceDisplay.style.display = 'block';
+      
+      totalDisplay.textContent = `💵 Total Value: ₹${totalValue.toFixed(2)}`;
+      totalDisplay.style.display = 'block';
+    }
+
     // Theme synchronization
     document.addEventListener('DOMContentLoaded', function() {
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
+      
+      // Calculate initial values if data exists
+      calculateTotalValue();
       
       // Form validation
       const form = document.getElementById('correctionForm');

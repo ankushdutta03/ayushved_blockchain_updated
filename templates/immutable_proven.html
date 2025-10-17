@@ -772,7 +772,7 @@
 </head>
 <body>
 
-  <!-- Navigation -->
+<!-- Navigation -->
   <nav>
     <div class="brand">🔍⛓️ Blockchain Provenance</div>
     <div class="nav-actions">
@@ -820,7 +820,7 @@
         <div class="info-grid">
           <div class="info-item">
             <div class="info-label">Batch ID</div>
-            <div class="info-value">{{ batch._id|string }}</div>
+            <div class="info-value">{{ batch.batch_number or batch._id|string }}</div>
           </div>
           <div class="info-item">
             <div class="info-label">Herb Name</div>
@@ -834,6 +834,55 @@
             <div class="info-label">Farm Location</div>
             <div class="info-value">{{ batch.farm_location }}</div>
           </div>
+          
+          <!-- NEW: Weight Information -->
+          {% if batch.weight_kg %}
+          <div class="info-item">
+            <div class="info-label">Total Weight</div>
+            <div class="info-value">
+              <strong style="color: #28a745;">{{ "%.3f"|format(batch.weight_kg) }}kg</strong>
+              {% if batch.original_weight and batch.original_weight_unit %}
+                <br><small style="color: #6c757d;">({{ batch.original_weight }}{{ batch.original_weight_unit }})</small>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+          
+          <!-- NEW: Pricing Information -->
+          {% if batch.price_per_kg_inr %}
+          <div class="info-item">
+            <div class="info-label">Price per KG</div>
+            <div class="info-value">
+              <strong style="color: #17a2b8;">₹{{ "%.2f"|format(batch.price_per_kg_inr) }}/kg</strong>
+              {% if batch.original_currency and batch.original_currency != 'INR' %}
+                <br><small style="color: #6c757d;">(Original: {{ batch.original_currency }})</small>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+          
+          <!-- NEW: Total Value -->
+          {% if batch.total_value_inr %}
+          <div class="info-item">
+            <div class="info-label">Total Value</div>
+            <div class="info-value">
+              <strong style="color: #28a745; font-size: 1.2em;">₹{{ "%.2f"|format(batch.total_value_inr) }}</strong>
+            </div>
+          </div>
+          {% endif %}
+          
+          <!-- NEW: Quality Grade -->
+          {% if batch.quality_grade %}
+          <div class="info-item">
+            <div class="info-label">Quality Grade</div>
+            <div class="info-value">
+              <span class="badge" style="background: #e8f5e8; color: #28a745; padding: 4px 8px; border-radius: 4px;">
+                {{ batch.quality_grade }}
+              </span>
+            </div>
+          </div>
+          {% endif %}
+          
           {% if batch.latitude and batch.longitude %}
           <div class="info-item">
             <div class="info-label">GPS Coordinates</div>
@@ -870,7 +919,7 @@
       </div>
     </div>
 
-    <!-- ===== NEW: Correction History Section ===== -->
+    <!-- ===== ENHANCED: Correction History Section ===== -->
     <div class="card">
       <h2>🔧 Correction History</h2>
       
@@ -893,18 +942,122 @@
               </div>
               
               <div class="info-grid">
+                <!-- ALL POSSIBLE DATA FIELDS -->
+                {% if correction.get('herb_name') %}
                 <div class="info-item">
                   <div class="info-label">Herb Name</div>
                   <div class="info-value">{{ correction.herb_name }}</div>
                 </div>
+                {% endif %}
+
+                {% if correction.get('collector') %}
                 <div class="info-item">
                   <div class="info-label">Collector</div>
                   <div class="info-value">{{ correction.collector }}</div>
                 </div>
+                {% endif %}
+
+                {% if correction.get('farm_location') %}
                 <div class="info-item">
                   <div class="info-label">Farm Location</div>
                   <div class="info-value">{{ correction.farm_location }}</div>
                 </div>
+                {% endif %}
+
+                {% if correction.get('weight_kg') %}
+                <div class="info-item">
+                  <div class="info-label">Weight Corrected</div>
+                  <div class="info-value">
+                    <strong style="color: #28a745;">{{ "%.3f"|format(correction.weight_kg) }}kg</strong>
+                  </div>
+                </div>
+                {% endif %}
+
+                {% if correction.get('original_weight') %}
+                <div class="info-item">
+                  <div class="info-label">Original Weight</div>
+                  <div class="info-value">{{ correction.original_weight }} {{ correction.get('original_weight_unit', '') }}</div>
+                </div>
+                {% endif %}
+
+                {% if correction.get('price_per_kg_inr') %}
+                <div class="info-item">
+                  <div class="info-label">Price/kg Corrected</div>
+                  <div class="info-value">
+                    <strong style="color: #17a2b8;">₹{{ "%.2f"|format(correction.price_per_kg_inr) }}/kg</strong>
+                  </div>
+                </div>
+                {% endif %}
+
+                {% if correction.get('total_value_inr') %}
+                <div class="info-item">
+                  <div class="info-label">Value Corrected</div>
+                  <div class="info-value">
+                    <strong style="color: #28a745;">₹{{ "%.2f"|format(correction.total_value_inr) }}</strong>
+                  </div>
+                </div>
+                {% endif %}
+
+                {% if correction.get('quality_grade') %}
+                <div class="info-item">
+                  <div class="info-label">Quality Updated</div>
+                  <div class="info-value">
+                    <span class="badge" style="background: #e8f5e8; color: #28a745; padding: 2px 6px; border-radius: 3px;">
+                      {{ correction.quality_grade }}
+                    </span>
+                  </div>
+                </div>
+                {% endif %}
+
+                {% if correction.get('packaging') %}
+                <div class="info-item">
+                  <div class="info-label">Packaging</div>
+                  <div class="info-value">{{ correction.packaging|title }}</div>
+                </div>
+                {% endif %}
+
+                {% if correction.get('latitude') and correction.get('longitude') %}
+                <div class="info-item">
+                  <div class="info-label">GPS Coordinates</div>
+                  <div class="info-value">{{ "%.6f"|format(correction.latitude) }}, {{ "%.6f"|format(correction.longitude) }}</div>
+                </div>
+                {% endif %}
+
+                {% if correction.get('original_currency') %}
+                <div class="info-item">
+                  <div class="info-label">Original Currency</div>
+                  <div class="info-value">{{ correction.original_currency }}</div>
+                </div>
+                {% endif %}
+
+                {% if correction.get('harvest_date') %}
+                <div class="info-item">
+                  <div class="info-label">Harvest Date</div>
+                  <div class="info-value">{{ correction.harvest_date }}</div>
+                </div>
+                {% endif %}
+
+                {% if correction.get('notes') %}
+                <div class="info-item">
+                  <div class="info-label">Notes Updated</div>
+                  <div class="info-value">{{ correction.notes }}</div>
+                </div>
+                {% endif %}
+
+                {% if correction.get('batch_number') %}
+                <div class="info-item">
+                  <div class="info-label">Batch Number</div>
+                  <div class="info-value">{{ correction.batch_number }}</div>
+                </div>
+                {% endif %}
+
+                {% if correction.get('created_by') %}
+                <div class="info-item">
+                  <div class="info-label">Created By</div>
+                  <div class="info-value">{{ correction.created_by }}</div>
+                </div>
+                {% endif %}
+
                 <div class="info-item">
                   <div class="info-label">Block Index</div>
                   <div class="info-value">#{{ correction.block_index }}</div>
@@ -914,6 +1067,13 @@
               <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
                 <strong>Corrected by User ID:</strong> {{ correction.user_id[:12] if correction.user_id else 'N/A' }}...
               </p>
+
+              {% if correction.get('notes') %}
+              <div style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.3); border-radius: 8px;">
+                <div class="info-label">Correction Notes</div>
+                <div class="info-value">{{ correction.notes }}</div>
+              </div>
+              {% endif %}
             </div>
             {% endfor %}
           {% else %}
@@ -929,13 +1089,13 @@
       </div>
     </div>
 
-    <!-- Complete Blockchain History -->
+    <!-- ENHANCED: Complete Blockchain History -->
     <div class="card">
       <h2>📜 Complete Blockchain History</h2>
       <h3>⛓️ Immutable Audit Trail</h3>
       
       <div class="timeline">
-        <!-- Original Entry -->
+        <!-- Enhanced Original Entry -->
         <div class="timeline-item">
           <div class="timeline-header">
             <div class="timeline-title">
@@ -964,10 +1124,40 @@
               <div class="info-label">Created By</div>
               <div class="info-value">{{ batch.created_by or 'N/A' }}</div>
             </div>
+            
+            <!-- NEW: Original weight/pricing in timeline -->
+            {% if batch.weight_kg %}
+            <div class="info-item">
+              <div class="info-label">Original Weight</div>
+              <div class="info-value">
+                <strong style="color: #28a745;">{{ "%.3f"|format(batch.weight_kg) }}kg</strong>
+              </div>
+            </div>
+            {% endif %}
+            
+            {% if batch.total_value_inr %}
+            <div class="info-item">
+              <div class="info-label">Original Value</div>
+              <div class="info-value">
+                <strong style="color: #28a745;">₹{{ "%.2f"|format(batch.total_value_inr) }}</strong>
+              </div>
+            </div>
+            {% endif %}
+            
+            {% if batch.quality_grade %}
+            <div class="info-item">
+              <div class="info-label">Quality Grade</div>
+              <div class="info-value">
+                <span class="badge" style="background: #e8f5e8; color: #28a745; padding: 2px 6px; border-radius: 3px;">
+                  {{ batch.quality_grade }}
+                </span>
+              </div>
+            </div>
+            {% endif %}
           </div>
         </div>
 
-        <!-- Blockchain Provenance History -->
+        <!-- Enhanced Blockchain Provenance History -->
         {% if provenance %}
           {% for entry in provenance %}
           <div class="timeline-item {% if entry.action_type == 'CORRECTION' %}correction{% endif %}">
@@ -1008,19 +1198,123 @@
                 <div class="info-label">User ID</div>
                 <div class="info-value">{{ entry.user_id[:12] if entry.user_id else 'N/A' }}...</div>
               </div>
+
+              <!-- ALL POSSIBLE TIMELINE DATA FIELDS -->
+              {% if entry.get('herb_name') %}
               <div class="info-item">
                 <div class="info-label">Herb Name</div>
-                <div class="info-value">{{ entry.herb_name or 'N/A' }}</div>
+                <div class="info-value">{{ entry.herb_name }}</div>
               </div>
+              {% endif %}
+
+              {% if entry.get('collector') %}
               <div class="info-item">
                 <div class="info-label">Collector</div>
-                <div class="info-value">{{ entry.collector or 'N/A' }}</div>
+                <div class="info-value">{{ entry.collector }}</div>
               </div>
+              {% endif %}
+
+              {% if entry.get('farm_location') %}
               <div class="info-item">
                 <div class="info-label">Farm Location</div>
-                <div class="info-value">{{ entry.farm_location or 'N/A' }}</div>
+                <div class="info-value">{{ entry.farm_location }}</div>
               </div>
+              {% endif %}
+
+              {% if entry.get('weight_kg') %}
+              <div class="info-item">
+                <div class="info-label">Weight</div>
+                <div class="info-value">
+                  <strong style="color: #28a745;">{{ "%.3f"|format(entry.weight_kg) }}kg</strong>
+                </div>
+              </div>
+              {% endif %}
+
+              {% if entry.get('original_weight') %}
+              <div class="info-item">
+                <div class="info-label">Original Weight</div>
+                <div class="info-value">{{ entry.original_weight }} {{ entry.get('original_weight_unit', '') }}</div>
+              </div>
+              {% endif %}
+
+              {% if entry.get('price_per_kg_inr') %}
+              <div class="info-item">
+                <div class="info-label">Price/kg</div>
+                <div class="info-value">
+                  <strong style="color: #17a2b8;">₹{{ "%.2f"|format(entry.price_per_kg_inr) }}</strong>
+                </div>
+              </div>
+              {% endif %}
+
+              {% if entry.get('total_value_inr') %}
+              <div class="info-item">
+                <div class="info-label">Total Value</div>
+                <div class="info-value">
+                  <strong style="color: #28a745;">₹{{ "%.2f"|format(entry.total_value_inr) }}</strong>
+                </div>
+              </div>
+              {% endif %}
+
+              {% if entry.get('quality_grade') %}
+              <div class="info-item">
+                <div class="info-label">Quality</div>
+                <div class="info-value">
+                  <span class="badge" style="background: #e8f5e8; color: #28a745; padding: 2px 6px; border-radius: 3px;">
+                    {{ entry.quality_grade }}
+                  </span>
+                </div>
+              </div>
+              {% endif %}
+
+              {% if entry.get('packaging') %}
+              <div class="info-item">
+                <div class="info-label">Packaging</div>
+                <div class="info-value">{{ entry.packaging|title }}</div>
+              </div>
+              {% endif %}
+
+              {% if entry.get('latitude') and entry.get('longitude') %}
+              <div class="info-item">
+                <div class="info-label">GPS Coordinates</div>
+                <div class="info-value">{{ "%.6f"|format(entry.latitude) }}, {{ "%.6f"|format(entry.longitude) }}</div>
+              </div>
+              {% endif %}
+
+              {% if entry.get('original_currency') %}
+              <div class="info-item">
+                <div class="info-label">Original Currency</div>
+                <div class="info-value">{{ entry.original_currency }}</div>
+              </div>
+              {% endif %}
+
+              {% if entry.get('harvest_date') %}
+              <div class="info-item">
+                <div class="info-label">Harvest Date</div>
+                <div class="info-value">{{ entry.harvest_date }}</div>
+              </div>
+              {% endif %}
+
+              {% if entry.get('batch_number') %}
+              <div class="info-item">
+                <div class="info-label">Batch Number</div>
+                <div class="info-value">{{ entry.batch_number }}</div>
+              </div>
+              {% endif %}
+
+              {% if entry.get('created_by') %}
+              <div class="info-item">
+                <div class="info-label">Created By</div>
+                <div class="info-value">{{ entry.created_by }}</div>
+              </div>
+              {% endif %}
             </div>
+
+            {% if entry.get('notes') %}
+            <div style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.3); border-radius: 8px;">
+              <div class="info-label">Entry Notes</div>
+              <div class="info-value">{{ entry.notes }}</div>
+            </div>
+            {% endif %}
           </div>
           {% endfor %}
         {% else %}
@@ -1036,7 +1330,7 @@
       </div>
     </div>
 
-    <!-- Blockchain Technical Details -->
+    <!-- ENHANCED: Blockchain Technical Details -->
     <div class="card">
       <h2>🔧 Technical Blockchain Details</h2>
       <div class="info-section">
@@ -1076,6 +1370,39 @@
               {% endif %}
             </div>
           </div>
+          
+          <!-- NEW: Weight and value tracking -->
+          {% if batch.weight_kg %}
+          <div class="info-item">
+            <div class="info-label">Current Weight</div>
+            <div class="info-value">
+              <strong style="color: #28a745;">{{ "%.3f"|format(batch.weight_kg) }}kg</strong>
+            </div>
+          </div>
+          {% endif %}
+          
+          {% if batch.total_value_inr %}
+          <div class="info-item">
+            <div class="info-label">Current Value</div>
+            <div class="info-value">
+              <strong style="color: #28a745;">₹{{ "%.2f"|format(batch.total_value_inr) }}</strong>
+            </div>
+          </div>
+          {% endif %}
+          
+          {% if batch.packaging %}
+          <div class="info-item">
+            <div class="info-label">Packaging</div>
+            <div class="info-value">{{ batch.packaging|title }}</div>
+          </div>
+          {% endif %}
+          
+          {% if batch.harvest_date %}
+          <div class="info-item">
+            <div class="info-label">Harvest Date</div>
+            <div class="info-value">{{ batch.harvest_date.strftime('%Y-%m-%d') if batch.harvest_date else 'N/A' }}</div>
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>

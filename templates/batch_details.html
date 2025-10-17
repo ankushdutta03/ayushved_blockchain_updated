@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Details - {{ batch.herb_name }}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light Theme Variables */
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #a8e6cf 75%, #4ecdc4 100%);
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(255, 255, 255, 0.3);
+            --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+            --success-gradient: linear-gradient(45deg, #38a169, #2f855a);
+            --info-gradient: linear-gradient(45deg, #3182ce, #2c5282);
+            --warning-gradient: linear-gradient(45deg, #d69e2e, #b7791f);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --nav-bg: rgba(255, 255, 255, 0.15);
+            --nav-border: rgba(255, 255, 255, 0.2);
+            --nav-text: #fff;
+            --btn-text: white;
+            --detail-section-bg: rgba(248, 249, 250, 0.8);
+            --detail-border: #28a745;
+            --label-text: #2c3e50;
+            --value-text: #6c757d;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme Variables */
+            --bg-gradient: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 25%, #2d2d2d 50%, #1e1e1e 75%, #0a0a0a 100%);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --card-bg: rgba(20, 24, 32, 0.95);
+            --card-border: rgba(148, 163, 184, 0.15);
+            --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 5px 15px rgba(0, 0, 0, 0.3);
+            --success-gradient: linear-gradient(45deg, #10b981, #059669);
+            --info-gradient: linear-gradient(45deg, #3b82f6, #1e40af);
+            --warning-gradient: linear-gradient(45deg, #f59e0b, #d97706);
+            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+            --nav-bg: rgba(15, 23, 42, 0.9);
+            --nav-border: rgba(148, 163, 184, 0.2);
+            --nav-text: #f8fafc;
+            --btn-text: white;
+            --detail-section-bg: rgba(30, 41, 59, 0.8);
+            --detail-border: #10b981;
+            --label-text: #f8fafc;
+            --value-text: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all 0.5s ease;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--nav-border);
+            color: var(--nav-text);
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 1rem 0 1rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] nav {
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+
+        nav .brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] nav .brand {
+            background: linear-gradient(45deg, #ffffff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        [data-theme="dark"] nav .brand {
+            background: linear-gradient(45deg, #f8fafc, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            color: var(--btn-text);
+            text-decoration: none;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        [data-theme="dark"] .back-btn {
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(45deg, #44a08d, #2a9d8f);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(68, 160, 141, 0.4);
+        }
+
+        [data-theme="dark"] .back-btn:hover {
+            box-shadow: 0 8px 25px rgba(68, 160, 141, 0.6);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] h1 {
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        [data-theme="dark"] h1 {
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .batch-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .batch-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .batch-id {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .download-btn {
+            background: var(--success-gradient);
+            box-shadow: 0 4px 15px rgba(56, 161, 105, 0.3);
+        }
+
+        [data-theme="dark"] .download-btn {
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(56, 161, 105, 0.4);
+        }
+
+        [data-theme="dark"] .download-btn:hover {
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+        }
+
+        /* Detail Grid */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .detail-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--detail-border);
+        }
+
+        .detail-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        [data-theme="dark"] .detail-section:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .detail-section h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        [data-theme="dark"] .detail-item {
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--label-text);
+            font-size: 0.95rem;
+        }
+
+        .detail-value {
+            color: var(--value-text);
+            font-weight: 500;
+            text-align: right;
+        }
+
+        .detail-value.highlight {
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+
+        [data-theme="light"] .detail-value.highlight {
+            color: #28a745;
+        }
+
+        [data-theme="dark"] .detail-value.highlight {
+            color: #10b981;
+        }
+
+        /* Quality Badge */
+        .quality-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .quality-premium { 
+            background: linear-gradient(45deg, #ffd700, #ffed4a); 
+            color: #b45309; 
+        }
+        .quality-standard { 
+            background: linear-gradient(45deg, #38a169, #2f855a); 
+            color: white; 
+        }
+        .quality-commercial { 
+            background: linear-gradient(45deg, #3182ce, #2c5282); 
+            color: white; 
+        }
+        .quality-organic { 
+            background: linear-gradient(45deg, #22c55e, #16a34a); 
+            color: white; 
+        }
+
+        /* Additional Info Section */
+        .additional-info {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .additional-info h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .additional-info p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+                margin: 0.5rem;
+                padding: 1rem;
+            }
+
+            .container {
+                margin: 1rem auto;
+                padding: 0 0.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .detail-section {
+                padding: 1.5rem;
+            }
+
+            .detail-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .detail-value {
+                text-align: left;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+                max-width: 300px;
+            }
+        }
+
+        /* Smooth Theme Transitions */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="brand">📋 Batch Details</div>
+        <div class="nav-actions">
+            <a href="{{ url_for('dashboard') }}" class="back-btn">
+                ← Back to Dashboard
+            </a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="batch-header">
+            <h1>📋 Batch Information</h1>
+            <div class="batch-title">{{ batch.herb_name|title }}</div>
+            <div class="batch-id">
+                {% if batch.batch_number %}
+                    ID: {{ batch.batch_number }}
+                {% else %}
+                    ID: {{ batch._id|string|truncate(8, True, '...') }}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn download-btn" onclick="downloadBatchDetails()">
+                📥 Download Details
+            </button>
+        </div>
+        
+        <!-- Detail Grid -->
+        <div class="detail-grid">
+            <div class="detail-section">
+                <h3>🌿 Herb Information</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Herb Name:</span>
+                    <span class="detail-value">{{ batch.herb_name|title }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Quality Grade:</span>
+                    <span class="detail-value">
+                        {% if batch.quality_grade %}
+                            <span class="quality-badge quality-{{ batch.quality_grade.lower() }}">
+                                {{ batch.quality_grade }}
+                            </span>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Packaging:</span>
+                    <span class="detail-value">{{ batch.packaging|title if batch.packaging else 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Collector:</span>
+                    <span class="detail-value">{{ batch.collector if batch.collector else 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Farm Location:</span>
+                    <span class="detail-value">{{ batch.farm_location if batch.farm_location else 'N/A' }}</span>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h3>⚖️ Weight & Pricing</h3>
+                {% if batch.original_weight and batch.original_weight_unit %}
+                <div class="detail-item">
+                    <span class="detail-label">Original Weight:</span>
+                    <span class="detail-value">{{ batch.original_weight }} {{ batch.original_weight_unit }}</span>
+                </div>
+                {% endif %}
+                <div class="detail-item">
+                    <span class="detail-label">Weight (kg):</span>
+                    <span class="detail-value">
+                        {% if batch.weight_kg %}
+                            {{ "%.3f"|format(batch.weight_kg) }} kg
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Price per kg:</span>
+                    <span class="detail-value">
+                        {% if batch.price_per_kg_inr %}
+                            ₹{{ "%.2f"|format(batch.price_per_kg_inr) }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Total Value:</span>
+                    <span class="detail-value highlight">
+                        {% if batch.total_value_inr %}
+                            ₹{{ "%.2f"|format(batch.total_value_inr) }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </div>
+                {% if batch.original_currency and batch.original_currency != 'INR' %}
+                <div class="detail-item">
+                    <span class="detail-label">Original Currency:</span>
+                    <span class="detail-value">{{ batch.original_currency }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="detail-section">
+                <h3>📅 Dates & Tracking</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Created Date:</span>
+                    <span class="detail-value">
+                        {% if batch.created_at %}
+                            {{ batch.created_at.strftime('%d %b %Y at %H:%M') }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </div>
+                {% if batch.harvest_date %}
+                <div class="detail-item">
+                    <span class="detail-label">Harvest Date:</span>
+                    <span class="detail-value">{{ batch.harvest_date.strftime('%d %b %Y') }}</span>
+                </div>
+                {% endif %}
+                <div class="detail-item">
+                    <span class="detail-label">Batch ID:</span>
+                    <span class="detail-value">{{ batch._id|string }}</span>
+                </div>
+                {% if batch.user_id %}
+                <div class="detail-item">
+                    <span class="detail-label">User ID:</span>
+                    <span class="detail-value">{{ batch.user_id|string|truncate(12, True, '...') }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if batch.latitude and batch.longitude %}
+            <div class="detail-section">
+                <h3>🌍 Location Information</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Latitude:</span>
+                    <span class="detail-value">{{ "%.6f"|format(batch.latitude) }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Longitude:</span>
+                    <span class="detail-value">{{ "%.6f"|format(batch.longitude) }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Coordinates:</span>
+                    <span class="detail-value">{{ "%.3f"|format(batch.latitude) }}, {{ "%.3f"|format(batch.longitude) }}</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Additional Notes -->
+        {% if batch.notes %}
+        <div class="additional-info">
+            <h3>📝 Additional Notes</h3>
+            <p>{{ batch.notes }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Enhanced theme synchronization
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            console.log(`🎨 Applied ${theme} theme to batch details`);
+        }
+
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+        });
+
+        // Listen for theme changes from other pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme' && e.newValue) {
+                applyTheme(e.newValue);
+            }
+        });
+
+        // Listen for custom theme events from other pages
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail && e.detail.theme) {
+                applyTheme(e.detail.theme);
+            }
+        });
+
+        // Download batch details functionality
+        function downloadBatchDetails() {
+            const batchData = {
+                batchId: "{{ batch._id|string }}",
+                batchNumber: "{{ batch.batch_number if batch.batch_number else 'N/A' }}",
+                herbName: "{{ batch.herb_name|title }}",
+                collector: "{{ batch.collector if batch.collector else 'N/A' }}",
+                farmLocation: "{{ batch.farm_location if batch.farm_location else 'N/A' }}",
+                qualityGrade: "{{ batch.quality_grade if batch.quality_grade else 'N/A' }}",
+                packaging: "{{ batch.packaging|title if batch.packaging else 'N/A' }}",
+                originalWeight: "{{ batch.original_weight if batch.original_weight else 'N/A' }} {{ batch.original_weight_unit if batch.original_weight_unit else '' }}",
+                weightKg: "{{ '%.3f'|format(batch.weight_kg) if batch.weight_kg else 'N/A' }} kg",
+                pricePerKg: "₹{{ '%.2f'|format(batch.price_per_kg_inr) if batch.price_per_kg_inr else 'N/A' }}",
+                totalValue: "₹{{ '%.2f'|format(batch.total_value_inr) if batch.total_value_inr else 'N/A' }}",
+                originalCurrency: "{{ batch.original_currency if batch.original_currency else 'N/A' }}",
+                createdDate: "{{ batch.created_at.strftime('%d %b %Y at %H:%M') if batch.created_at else 'N/A' }}",
+                harvestDate: "{{ batch.harvest_date.strftime('%d %b %Y') if batch.harvest_date else 'N/A' }}",
+                coordinates: "{{ '%.6f'|format(batch.latitude) if batch.latitude else 'N/A' }}, {{ '%.6f'|format(batch.longitude) if batch.longitude else 'N/A' }}",
+                notes: "{{ batch.notes if batch.notes else 'N/A' }}",
+                userId: "{{ batch.user_id|string if batch.user_id else 'N/A' }}"
+            };
+
+            // Create formatted text content
+            let content = `AYUSHVED BLOCKCHAIN - BATCH DETAILS REPORT\n`;
+            content += `=============================================\n\n`;
+            content += `Batch ID: ${batchData.batchId}\n`;
+            content += `Batch Number: ${batchData.batchNumber}\n\n`;
+            content += `HERB INFORMATION:\n`;
+            content += `- Herb Name: ${batchData.herbName}\n`;
+            content += `- Quality Grade: ${batchData.qualityGrade}\n`;
+            content += `- Packaging: ${batchData.packaging}\n`;
+            content += `- Collector: ${batchData.collector}\n`;
+            content += `- Farm Location: ${batchData.farmLocation}\n\n`;
+            content += `WEIGHT & PRICING:\n`;
+            content += `- Original Weight: ${batchData.originalWeight}\n`;
+            content += `- Weight (kg): ${batchData.weightKg}\n`;
+            content += `- Price per kg: ${batchData.pricePerKg}\n`;
+            content += `- Total Value: ${batchData.totalValue}\n`;
+            content += `- Original Currency: ${batchData.originalCurrency}\n\n`;
+            content += `DATES & TRACKING:\n`;
+            content += `- Created Date: ${batchData.createdDate}\n`;
+            content += `- Harvest Date: ${batchData.harvestDate}\n`;
+            content += `- User ID: ${batchData.userId}\n\n`;
+            content += `LOCATION:\n`;
+            content += `- GPS Coordinates: ${batchData.coordinates}\n\n`;
+            content += `ADDITIONAL NOTES:\n`;
+            content += `${batchData.notes}\n\n`;
+            content += `Generated on: ${new Date().toLocaleString()}\n`;
+            content += `Report generated by AyushVed Blockchain System\n`;
+
+            // Create and download file
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `AyushVed_Batch_${batchData.herbName}_${batchData.batchNumber}_Details.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            // Show success message
+            alert('📥 Batch details downloaded successfully!');
+        }
+    </script>
+</body>
+</html>

@@ -680,7 +680,7 @@
 </head>
 <body>
 
-  <!-- Navigation -->
+ <!-- Navigation -->
   <nav>
     <div class="brand">🌿📍 Herb Journey Tracker</div>
     <div class="nav-actions">
@@ -695,7 +695,7 @@
   </nav>
 
   <div class="container">
-    <!-- Herb Summary -->
+    <!-- ENHANCED: Herb Summary -->
     <div class="herb-summary">
       <div class="herb-title">
         <div class="herb-icon">🌿</div>
@@ -719,13 +719,41 @@
         <div class="summary-item">
           <div class="icon">📅</div>
           <div class="label">Harvest Date</div>
-          <div class="value">{{ batch.created_at.strftime('%d %b %Y') if batch.created_at else 'N/A' }}</div>
+          <div class="value">{{ batch.harvest_date.strftime('%d %b %Y') if batch.harvest_date else (batch.created_at.strftime('%d %b %Y') if batch.created_at else 'N/A') }}</div>
         </div>
         <div class="summary-item">
           <div class="icon">🆔</div>
           <div class="label">Batch ID</div>
-          <div class="value">{{ batch._id|string|truncate(8, True, '...') }}</div>
+          <div class="value">{{ batch.batch_number or batch._id|string|truncate(8, True, '...') }}</div>
         </div>
+        
+        <!-- NEW: Weight Information -->
+        {% if batch.weight_kg %}
+        <div class="summary-item">
+          <div class="icon">⚖️</div>
+          <div class="label">Total Weight</div>
+          <div class="value">{{ "%.2f"|format(batch.weight_kg) }}kg</div>
+        </div>
+        {% endif %}
+        
+        <!-- NEW: Total Value -->
+        {% if batch.total_value_inr %}
+        <div class="summary-item">
+          <div class="icon">💰</div>
+          <div class="label">Total Value</div>
+          <div class="value">₹{{ "%.0f"|format(batch.total_value_inr) }}</div>
+        </div>
+        {% endif %}
+        
+        <!-- NEW: Quality Grade -->
+        {% if batch.quality_grade %}
+        <div class="summary-item">
+          <div class="icon">🏷️</div>
+          <div class="label">Quality Grade</div>
+          <div class="value">{{ batch.quality_grade }}</div>
+        </div>
+        {% endif %}
+        
         {% if batch.latitude and batch.longitude %}
         <div class="summary-item">
           <div class="icon">🌍</div>
@@ -741,7 +769,7 @@
       </div>
     </div>
 
-    <!-- ===== NEW: Correction History Section ===== -->
+    <!-- ===== ENHANCED: Correction History Section ===== -->
     <div class="correction-history">
       <h2>🔧⛓️ Correction History</h2>
       
@@ -779,6 +807,35 @@
                 <div class="correction-label">Block Index</div>
                 <div class="correction-value">#{{ correction.block_index }}</div>
               </div>
+              
+              <!-- NEW: Weight and pricing corrections -->
+              {% if correction.get('weight_kg') %}
+              <div class="correction-item">
+                <div class="correction-label">Weight</div>
+                <div class="correction-value" style="color: #28a745; font-weight: bold;">{{ "%.2f"|format(correction.weight_kg) }}kg</div>
+              </div>
+              {% endif %}
+              
+              {% if correction.get('price_per_kg_inr') %}
+              <div class="correction-item">
+                <div class="correction-label">Price/kg</div>
+                <div class="correction-value" style="color: #17a2b8; font-weight: bold;">₹{{ "%.2f"|format(correction.price_per_kg_inr) }}</div>
+              </div>
+              {% endif %}
+              
+              {% if correction.get('total_value_inr') %}
+              <div class="correction-item">
+                <div class="correction-label">Total Value</div>
+                <div class="correction-value" style="color: #28a745; font-weight: bold;">₹{{ "%.2f"|format(correction.total_value_inr) }}</div>
+              </div>
+              {% endif %}
+              
+              {% if correction.get('quality_grade') %}
+              <div class="correction-item">
+                <div class="correction-label">Quality</div>
+                <div class="correction-value" style="background: #e8f5e8; color: #28a745; padding: 2px 6px; border-radius: 3px;">{{ correction.quality_grade }}</div>
+              </div>
+              {% endif %}
             </div>
             
             <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
@@ -809,7 +866,7 @@
     </div>
     {% endif %}
 
-    <!-- Supply Chain Journey -->
+    <!-- ENHANCED: Supply Chain Journey -->
     <div class="journey-tracker">
       <div class="journey-header">
         <h2>🚚 Supply Chain Journey</h2>
@@ -819,13 +876,13 @@
       <div class="journey-steps">
         <div class="journey-line"></div>
         
-        <!-- Step 1: Collection/Harvest -->
+        <!-- ENHANCED: Step 1: Collection/Harvest -->
         <div class="journey-step">
           <div class="step-icon">🌱</div>
           <div class="step-content">
             <div class="step-header">
               <div class="step-title">Collection & Harvest</div>
-              <div class="step-date">{{ batch.created_at.strftime('%d %b %Y') if batch.created_at else 'N/A' }}</div>
+              <div class="step-date">{{ batch.harvest_date.strftime('%d %b %Y') if batch.harvest_date else (batch.created_at.strftime('%d %b %Y') if batch.created_at else 'N/A') }}</div>
             </div>
             <div class="step-details">
               <div class="detail-item">
@@ -840,6 +897,52 @@
                 <div class="detail-label">Farm Location</div>
                 <div class="detail-value">{{ batch.farm_location }}</div>
               </div>
+              
+              <!-- NEW: Weight and value details -->
+              {% if batch.weight_kg %}
+              <div class="detail-item">
+                <div class="detail-label">Harvested Weight</div>
+                <div class="detail-value" style="color: #28a745; font-weight: bold;">
+                  {{ "%.3f"|format(batch.weight_kg) }}kg
+                  {% if batch.original_weight and batch.original_weight_unit %}
+                    ({{ batch.original_weight }}{{ batch.original_weight_unit }})
+                  {% endif %}
+                </div>
+              </div>
+              {% endif %}
+              
+              {% if batch.price_per_kg_inr %}
+              <div class="detail-item">
+                <div class="detail-label">Market Price</div>
+                <div class="detail-value" style="color: #17a2b8; font-weight: bold;">₹{{ "%.2f"|format(batch.price_per_kg_inr) }}/kg</div>
+              </div>
+              {% endif %}
+              
+              {% if batch.total_value_inr %}
+              <div class="detail-item">
+                <div class="detail-label">Total Value</div>
+                <div class="detail-value" style="color: #28a745; font-weight: bold; font-size: 1.1em;">₹{{ "%.2f"|format(batch.total_value_inr) }}</div>
+              </div>
+              {% endif %}
+              
+              {% if batch.quality_grade %}
+              <div class="detail-item">
+                <div class="detail-label">Quality Grade</div>
+                <div class="detail-value">
+                  <span style="background: #e8f5e8; color: #28a745; padding: 2px 8px; border-radius: 4px; font-weight: bold;">
+                    {{ batch.quality_grade }}
+                  </span>
+                </div>
+              </div>
+              {% endif %}
+              
+              {% if batch.packaging %}
+              <div class="detail-item">
+                <div class="detail-label">Packaging</div>
+                <div class="detail-value">{{ batch.packaging|title }}</div>
+              </div>
+              {% endif %}
+              
               <div class="detail-item">
                 <div class="detail-label">Collection Method</div>
                 <div class="detail-value">Sustainable Wild Harvest</div>
@@ -877,6 +980,21 @@
                 <div class="detail-label">User ID</div>
                 <div class="detail-value">{{ provenance[0].user_id[:12] + '...' if provenance[0].user_id else 'N/A' }}</div>
               </div>
+              
+              <!-- NEW: Show blockchain recorded values -->
+              {% if provenance[0].get('weight_kg') %}
+              <div class="detail-item">
+                <div class="detail-label">Recorded Weight</div>
+                <div class="detail-value" style="color: #28a745;">{{ "%.3f"|format(provenance[0].weight_kg) }}kg</div>
+              </div>
+              {% endif %}
+              
+              {% if provenance[0].get('total_value_inr') %}
+              <div class="detail-item">
+                <div class="detail-label">Recorded Value</div>
+                <div class="detail-value" style="color: #28a745;">₹{{ "%.2f"|format(provenance[0].total_value_inr) }}</div>
+              </div>
+              {% endif %}
             </div>
             <div class="step-description">
               Batch information permanently recorded on immutable blockchain for complete traceability and authenticity verification.
@@ -910,6 +1028,18 @@
                 <div class="detail-label">Ayurvedic Validation</div>
                 <div class="detail-value">Scheduled</div>
               </div>
+              
+              <!-- NEW: Quality based on grade -->
+              {% if batch.quality_grade %}
+              <div class="detail-item">
+                <div class="detail-label">Current Grade</div>
+                <div class="detail-value">
+                  <span style="background: #e8f5e8; color: #28a745; padding: 2px 8px; border-radius: 4px;">
+                    {{ batch.quality_grade }}
+                  </span>
+                </div>
+              </div>
+              {% endif %}
             </div>
             <div class="step-description">
               Comprehensive quality testing including purity, potency, and safety analysis following Ayurvedic standards and modern pharmaceutical protocols.
@@ -942,6 +1072,14 @@
                 <div class="detail-label">Quality Control</div>
                 <div class="detail-value">Scheduled</div>
               </div>
+              
+              <!-- NEW: Weight utilization -->
+              {% if batch.weight_kg %}
+              <div class="detail-item">
+                <div class="detail-label">Available Weight</div>
+                <div class="detail-value" style="color: #28a745;">{{ "%.3f"|format(batch.available_weight_kg or batch.weight_kg) }}kg</div>
+              </div>
+              {% endif %}
             </div>
             <div class="step-description">
               Traditional Ayurvedic processing methods combined with modern pharmaceutical techniques to create standardized, potent formulations.
@@ -974,6 +1112,14 @@
                 <div class="detail-label">Consumer Access</div>
                 <div class="detail-value">Via QR Code</div>
               </div>
+              
+              <!-- NEW: Expected yield -->
+              {% if batch.weight_kg %}
+              <div class="detail-item">
+                <div class="detail-label">Expected Yield</div>
+                <div class="detail-value">~{{ "%.0f"|format(batch.weight_kg * 0.8) }} units</div>
+              </div>
+              {% endif %}
             </div>
             <div class="step-description">
               Final Ayurvedic product ready for distribution with complete transparency. Consumers can scan QR codes to view this entire journey.
@@ -983,7 +1129,7 @@
       </div>
     </div>
 
-    <!-- Quality & Sustainability Metrics -->
+    <!-- ENHANCED: Quality & Sustainability Metrics -->
     <div class="quality-metrics">
       <div class="metrics-header">
         <h2>🌱 Sustainability & Quality Metrics</h2>
@@ -1021,6 +1167,31 @@
           <div class="metric-value">{% if blockchain_verified %}Yes{% else %}Pending{% endif %}</div>
           <div class="metric-label">Blockchain Secured</div>
         </div>
+        
+        <!-- NEW: Weight and value metrics -->
+        {% if batch.weight_kg %}
+        <div class="metric-card">
+          <div class="metric-icon">⚖️</div>
+          <div class="metric-value">{{ "%.1f"|format(batch.weight_kg) }}</div>
+          <div class="metric-label">Total Weight (kg)</div>
+        </div>
+        {% endif %}
+        
+        {% if batch.total_value_inr %}
+        <div class="metric-card">
+          <div class="metric-icon">💰</div>
+          <div class="metric-value">₹{{ "%.0f"|format(batch.total_value_inr) }}</div>
+          <div class="metric-label">Market Value</div>
+        </div>
+        {% endif %}
+        
+        {% if batch.quality_grade %}
+        <div class="metric-card">
+          <div class="metric-icon">🏷️</div>
+          <div class="metric-value">{{ batch.quality_grade }}</div>
+          <div class="metric-label">Quality Grade</div>
+        </div>
+        {% endif %}
       </div>
     </div>
   </div>
