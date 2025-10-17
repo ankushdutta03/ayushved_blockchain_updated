@@ -80,7 +80,6 @@ otp_store = {}
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 # ---------------- Blockchain Implementation ----------------
 class AyurvedBlockchain:
     def __init__(self):
@@ -98,10 +97,23 @@ class AyurvedBlockchain:
         }
         self.current_transactions = []
         self.chain.append(block)
+        
+        # Save block to MongoDB
+        try:
+            block_record = {
+                'type': 'block',
+                'data': block,
+                'created_at': datetime.utcnow()
+            }
+            blockchain_records.insert_one(block_record)
+            print(f"✅ Block {block['index']} saved to MongoDB")
+        except Exception as e:
+            print(f"❌ Error saving block to MongoDB: {e}")
+        
         return block
     
     def new_transaction(self, batch_id, herb_name, collector, farm_location, user_id, action_type, weight_kg=None, original_weight=None, original_weight_unit=None, price_per_kg_inr=None, total_value_inr=None, quality_grade=None, packaging=None, notes=None, harvest_date=None, latitude=None, longitude=None, **kwargs):
-        self.current_transactions.append({
+        transaction = {
             'batch_id': batch_id,
             'herb_name': herb_name,
             'collector': collector,
@@ -120,7 +132,22 @@ class AyurvedBlockchain:
             'latitude': latitude,
             'longitude': longitude,
             'timestamp': datetime.utcnow().isoformat(),
-        })
+        }
+        
+        self.current_transactions.append(transaction)
+        
+        # Save transaction to MongoDB
+        try:
+            transaction_record = {
+                'type': 'transaction',
+                'data': transaction,
+                'created_at': datetime.utcnow()
+            }
+            blockchain_records.insert_one(transaction_record)
+            print(f"✅ Transaction for batch {batch_id} saved to MongoDB")
+        except Exception as e:
+            print(f"❌ Error saving transaction to MongoDB: {e}")
+        
         return self.last_block['index'] + 1 if self.last_block else 1
     
     @staticmethod
@@ -181,8 +208,25 @@ class AyurvedBlockchain:
         print(f"✅ Blockchain validation passed for {len(chain)} blocks")
         return True
 
+    def save_audit_trail(self, action, details):
+        """Save audit trail entry to MongoDB"""
+        try:
+            audit_entry = {
+                'type': 'audit_trail',
+                'action': action,
+                'details': details,
+                'timestamp': datetime.utcnow().isoformat(),
+                'created_at': datetime.utcnow()
+            }
+            blockchain_records.insert_one(audit_entry)
+            print(f"✅ Audit trail saved: {action}")
+        except Exception as e:
+            print(f"❌ Error saving audit trail: {e}")
+
+
 # Initialize blockchain
 blockchain = AyurvedBlockchain()
+
 
 # Load existing blockchain from MongoDB if exists
 try:
@@ -192,6 +236,7 @@ try:
         print(f"✅ Loaded {len(existing_blocks)} blocks from database")
 except Exception as e:
     print(f"⚠️ Could not load existing blockchain: {e}")
+
 
 # ---------------- Admin User ----------------
 def create_admin_user():
@@ -217,7 +262,9 @@ def create_admin_user():
     else:
         print("ℹ️  Admin user already exists")
 
+
 create_admin_user()
+
 
 # ---------------- Auth Guard ----------------
 def login_required(f):
